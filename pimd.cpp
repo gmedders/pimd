@@ -16,6 +16,8 @@
 
 #include "pimd-base.h"
 
+#include "sho.h"
+
 //
 // constant temperature PIMD
 // units are au
@@ -23,7 +25,7 @@
 
 namespace {
 
-//typedef pot::sho potential_type;
+typedef pot::sho potential_type;
 
 const size_t nsteps = 20000; 
 
@@ -94,7 +96,7 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 double pimd::force(const double* x, double* f)
 {
-//    double Epot = m_potential(x, f);
+    double Epot = m_potential(x[0], f[0]);
 
 //    for (size_t n = 0; n < ndim*natom(); ++n)
 //        f[n] *= -engunit;
