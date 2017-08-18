@@ -96,7 +96,7 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 double pimd::force(const double* x, double* f)
 {
-    double Epot = m_potential(x[0], f[0]);
+    double Epot = m_potential(m_natom, x, f);
 
 //    for (size_t n = 0; n < ndim*natom(); ++n)
 //        f[n] *= -engunit;
