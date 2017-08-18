@@ -17,59 +17,27 @@
 #include "read-xyz.h"
 
 #include "pimd-base.h"
-#include "constraining-sphere.h"
-
-//#include "mbpol.h"
-#include "pot-water-ion.h"
 
 //
-// constant temperature PIMD (with "constraining sphere")
-// units are like in DLPOLY: length = A,
-// time = ps, and energy conversion factor
-// is in pimd_base.h
+// constant temperature PIMD
+// units are au
 //
 
 namespace {
 
 typedef x2o::pot_water_ion potential_type;
-//typedef ttm::ttm3f potential_type;
-//typedef ttm::ps::pot_nasa potential_type;
 
 const size_t nsteps = 20000; 
 size_t nbead = 8; 
+size_t ndim = 3;
 
-static double  T = 200.0; // [degrees]
-const double dt = 0.0001; // time-step [ps]
+double atm_mass(2000); // au
+
+static double  T_kelvin = 200.0; // [Kelvin]
+const double dt = 1; // au
 
 const size_t nframe = 1000; // 0.5 ps
 const size_t nprint = 10;
-
-const double H_mass = 1.0079;
-const double O_mass = 15.9949;
-const double I_mass = 126;
-
-double X_params[] = { -1 ,
-                     65.60240487*0.14818471,
-		     4155.38,
-		     3.32398,
-		     31778.2,
-		     2.70971,
-		     892.645,
-		     1.78065,
-		     4944.06,
-		     2.74377};
-
-////////////////////////////////////////////////////////////////////////////////
-
-void print_xyz(std::ostream& os, char atom, const double* x)
-{
-    os << std::setw(2) << std::left << atom
-       << std::setprecision(9) << std::scientific
-       << std::setw(18) << std::right << x[0]
-       << std::setw(18) << std::right << x[1]
-       << std::setw(18) << std::right << x[2]
-       << std::endl;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -78,22 +46,15 @@ struct pimd : public parts::pimd_base {
     void load(const char* filename);
     double force(const double*, double*);
 
-    inline size_t nw()    const { return m_nw; }
-    inline size_t nI()    const { return m_nI; }
     inline size_t natom() const { return m_natom; }
     inline double Ep() const { return m_Epot_sum; }
-
-    double Es() const;
 
     void set_COM_at_origin();
     void append_frame(const char* filename, const double& time);
 
 private:
-    size_t m_nw;
-    size_t m_nI;
     size_t m_natom;
     potential_type m_potential;
-    parts::constraining_sphere m_sphere;
 };
 
 //----------------------------------------------------------------------------//
@@ -103,46 +64,31 @@ void pimd::load(const char* filename)
 
     // Load the configuration
 
-    std::vector<tools::xyz_frame> molecs;
+    //std::vector<tools::xyz_frame> molecs;
 
-    try {
-	tools::read_xyz(filename, molecs);
-    } catch (const std::exception& e) {
-	std::cerr << " ** Error ** : " << e.what() << std::endl;
-	exit(1);
-    }
+    //try {
+    //    tools::read_xyz(filename, molecs);
+    //} catch (const std::exception& e) {
+    //    std::cerr << " ** Error ** : " << e.what() << std::endl;
+    //    exit(1);
+    //}
 
-    size_t nw = molecs[0].natm/3;
-    size_t nI = 1;
     double* pos = molecs[0].xyz;
 
-    const size_t natom = 3*nw + nI;
-    m_nw = nw;
-    m_nI = nI;
+    const size_t natom = 1;
     m_natom = natom;
 
-    // define potential
-    m_potential.define_ion_params(X_params);
-
     // prepare masses
-
-    double* mass = new double[3*natom]; // for every degree of freedom
-    for (size_t i = 0; i < 3*m_nw; ++i) {
-        const double Mi = (i%3 == 0 ? O_mass : H_mass);
-        for (size_t k = 0; k < 3; ++k)
-            mass[k + 3*i] = Mi;
-    }
-    for (size_t i = 0; i < nI; ++i) {
-        const double Mi = I_mass;
-     	for (size_t k = 0; k < 3; ++k)
-            mass[k + 3*(3*m_nw + i)] = Mi;
+    double* mass = new double[ndim*natom]; // for every degree of freedom
+    for (size_t i = 0; i < natom; ++i) {
+        const double Mi = atm_mass;
+        for (size_t k = 0; k < ndim; ++k)
+            mass[k + ndim*i] = Mi;
     }
 
     // setup the simulation
 
-    init(3*natom, nbead, kB*T, mass, pos);
-
-    m_sphere.setup(4.5, 100.0);
+    init(ndim*natom, nbead, kB*T, mass, pos);
 
     // clean up
 
@@ -151,34 +97,22 @@ void pimd::load(const char* filename)
 
 //----------------------------------------------------------------------------//
 
-double pimd::Es() const
-{
-    double E(0);
-
-    for (size_t b = 0; b < nbeads(); ++b)
-        E += m_sphere(m_nw, m_pos_cart + b*ndofs(), 0);
-
-    return E;
-}
-
-//----------------------------------------------------------------------------//
-
 void pimd::set_COM_at_origin()
 {
-    double com[3] = {0.0, 0.0, 0.0}, mass_sum(0);
+    double com[ndim] = {0.0}, mass_sum(0);
 
     // centroid's COM
-    for (size_t n = 0; n < 3*natom(); n += 3) {
+    for (size_t n = 0; n < ndim*natom(); n += ndim) {
         mass_sum += m_fict_mass[n];
-        for (size_t k = 0; k < 3; ++k)
+        for (size_t k = 0; k < ndim; ++k)
             com[k] += m_fict_mass[n]*m_pos_nmode[n + k];
     }
 
-    for (size_t k = 0; k < 3; ++k)
+    for (size_t k = 0; k < ndim; ++k)
         com[k] /= mass_sum;
 
-    for (size_t n = 0; n < 3*natom(); n += 3)
-        for (size_t k = 0; k < 3; ++k)
+    for (size_t n = 0; n < ndim*natom(); n += ndim)
+        for (size_t k = 0; k < ndim; ++k)
             m_pos_nmode[n + k] -= com[k];
 
     pos_n2c();
@@ -188,11 +122,9 @@ void pimd::set_COM_at_origin()
 
 double pimd::force(const double* x, double* f)
 {
-    double Epot = m_potential(nw(), nI(), x, f);
+    double Epot = m_potential(x, f);
 
-    Epot += m_sphere(nw(), x, f);
-
-    for (size_t n = 0; n < 3*natom(); ++n)
+    for (size_t n = 0; n < ndim*natom(); ++n)
         f[n] *= -engunit;
 
     return Epot;
@@ -214,7 +146,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    nbead= strtod(argv[1], NULL);
+    nbead = strtod(argv[1], NULL);
 
     const char* input_filename = argv[2];
     const char* output_filename = argv[4];
@@ -241,8 +173,6 @@ int main(int argc, char** argv)
     }
 
     std::cerr << "molecule loaded!" << std::endl
-	      << "  > nw    = " << sim.nw() << std::endl 
-	      << "  > nI    = " << sim.nI() << std::endl 
 	      << "  > natom = " << sim.natom() << std::endl ;
 
     // 2. iterate
@@ -252,8 +182,7 @@ int main(int argc, char** argv)
         if (n%nprint == 0) {
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
-                      << sim.Ep() << ' '
-                      << sim.Es() << std::endl;
+                      << sim.Ep() << std::endl;
         }
 
         if (n%nframe == 0)
@@ -275,12 +204,9 @@ void pimd::append_frame(const char* filename, const double& t)
         << ", T = " << T << '\n';
 
     for (size_t b = 0; b < nbeads(); ++b){
-        for (size_t w = 0; w < nw(); ++w) {
-            print_xyz(ofs, 'O', m_pos_cart + b*ndofs() + 9*w + 0);
-            print_xyz(ofs, 'H', m_pos_cart + b*ndofs() + 9*w + 3);
-            print_xyz(ofs, 'H', m_pos_cart + b*ndofs() + 9*w + 6);
+        for (size_t w = 0; w < natom(); ++w) {
+            print_xyz(ofs, 'X', m_pos_cart + b*ndofs() + ndim*i);
         }
-	print_xyz(ofs, 'I', m_pos_cart + b*ndofs() + 9*nw());
     }
 }
 
