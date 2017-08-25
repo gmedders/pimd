@@ -32,13 +32,8 @@ typedef pot::sho potential_type;
 double atm_mass(2000); // au
 double omega(2.0e-4); // omega
 
-const double dt = 1; // au
-
 const size_t print_time = 20; // au
 const size_t simulation_time = 100000; // au
-
-const size_t nsteps = int(simulation_time / dt);
-const size_t nprint = int(print_time / dt);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -124,8 +119,8 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
-    if (argc != 3) {
-        std::cerr << "usage: pimd nbeads beta" << std::endl;
+    if (argc != 4) {
+        std::cerr << "usage: pimd nbeads beta dt" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -146,6 +141,22 @@ int main(int argc, char** argv)
 
         assert(beta > 0.0);
     }
+
+    double dt(1.0);
+    {
+        std::istringstream iss(argv[3]);
+        iss >> dt;
+        if (!iss || !iss.eof()) {
+            std::cerr << "could not convert '" << argv[3]
+                      << "' to real number" << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        assert(dt > 0.0);
+    }
+
+    const size_t nsteps = int(simulation_time / dt);
+    const size_t nprint = int(print_time / dt);
 
     pimd sim;
 
