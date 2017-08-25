@@ -29,14 +29,16 @@ namespace {
 
 typedef pot::sho potential_type;
 
-const size_t nsteps = 100000; 
-
 double atm_mass(2000); // au
 double omega(2.0e-4); // omega
 
 const double dt = 1; // au
 
-const size_t nprint = 25;
+const size_t print_time = 20; // au
+const size_t simulation_time = 100000; // au
+
+const size_t nsteps = int(simulation_time / dt);
+const size_t nprint = int(print_time / dt);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +50,7 @@ struct pimd : public parts::pimd_base {
     double force(const double*, double*);
 
     inline size_t natom() const { return m_natom; }
+    inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin_fict; }
 
@@ -117,7 +120,7 @@ double pimd::force(const double* x, double* f)
 int main(int argc, char** argv)
 {
     // 1. load the coordinates
-    
+
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
@@ -160,6 +163,7 @@ int main(int argc, char** argv)
         if (n%nprint == 0) {
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
+                      << sim.Espring() << ' '
                       << sim.Ek() << ' '
                       << sim.Ep() << std::endl;
         }
