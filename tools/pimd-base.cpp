@@ -123,8 +123,7 @@ void pimd_base::pimd_force()
     const size_t n_total = ndofs()*nbeads();
 
     // zero out m_frc_cart
-    for (size_t n = 0; n < n_total; ++n)
-        m_frc_cart[n] = 0.0;
+    std::fill(m_frc_cart, m_frc_cart + n_total, 0.0);
 
     // compute forces for each bead
     m_Epot_sum = 0.0;
