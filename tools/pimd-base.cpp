@@ -1,12 +1,19 @@
 #include <cmath>
 #include <cassert>
 
-#include "nhc.h"
 #include "mt19937.h"
 
 #include "pimd-base.h"
 
+#ifdef DO_NHC
+#include "nhc.h"
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+
 namespace parts {
+
+//----------------------------------------------------------------------------//
 
 pimd_base::pimd_base()
 : necklace()
@@ -15,11 +22,17 @@ pimd_base::pimd_base()
     m_thermostats = 0;
 }
 
+//----------------------------------------------------------------------------//
+
 pimd_base::~pimd_base()
 {
     delete[] m_fict_mass;
+#ifdef DO_NHC
     delete[] m_thermostats;
+#endif
 }
+
+//----------------------------------------------------------------------------//
 
 void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
                      const double* mass, const double* cartpos)
@@ -31,7 +44,9 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
     necklace::setup(ndof, nbead);
 
     delete[] m_fict_mass;
+#ifdef DO_NHC
     delete[] m_thermostats;
+#endif
 
     m_kT = kT;
     m_omega_M = std::sqrt(double(nbead))*kT/hbar;
@@ -48,8 +63,10 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
 
     // thermostats
 
+#ifdef DO_NHC
     const size_t th_size = nhc::size(nchain);
     m_thermostats = new double[ndof*nbead*th_size];
+#endif
 
     mt19937 prg(27606);
 
@@ -99,6 +116,8 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
     pimd_force();
 }
 
+//----------------------------------------------------------------------------//
+
 void pimd_base::pimd_force()
 {
     const size_t n_total = ndofs()*nbeads();
@@ -134,6 +153,8 @@ void pimd_base::pimd_force()
 
     m_Espring /= 2;
 }
+
+//----------------------------------------------------------------------------//
 
 void pimd_base::step(const double& dt)
 {
@@ -195,6 +216,8 @@ void pimd_base::step(const double& dt)
     m_Ekin_fict /= 2;
 }
 
+//----------------------------------------------------------------------------//
+
 double pimd_base::invariant() const
 {
     double accu(0);
@@ -211,4 +234,8 @@ double pimd_base::invariant() const
     return (m_Ekin_fict + m_Espring + m_kT*accu)/engunit + m_Epot_sum;
 }
 
+//----------------------------------------------------------------------------//
+
 } // namespace parts
+
+////////////////////////////////////////////////////////////////////////////////

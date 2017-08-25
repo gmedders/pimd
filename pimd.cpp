@@ -25,6 +25,8 @@
 
 namespace {
 
+////////////////////////////////////////////////////////////////////////////////
+
 typedef pot::sho potential_type;
 
 const size_t nsteps = 100000; 
@@ -65,6 +67,8 @@ pimd::~pimd()
 {
     delete[] pos;
 }
+
+//----------------------------------------------------------------------------//
 
 void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
                   const double beta)
