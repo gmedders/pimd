@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 project (Tutorial)
 
+SET(CMAKE_CXX_COMPILER /usr/local/bin/g++-6)
+
 file(GLOB tools_sources ./*.cpp ./*/*.cpp)
 set( tools ${tools_sources})
 
