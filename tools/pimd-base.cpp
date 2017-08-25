@@ -55,12 +55,14 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
 
     const double tau = 2*M_PI/m_omega_M;
 
+#ifdef DO_NHC
     for (size_t b = 0; b < nbead; ++b)
         for (size_t i = 0; i < ndof; ++i) {
             const size_t j = i + b*ndof;
             nhc::initialize(nchain,
-                m_thermostats + th_size*j, tau, prg);
+                            m_thermostats + th_size*j, tau, prg);
         }
+#endif
 
     // initialize cartesian positions
 
@@ -135,7 +137,9 @@ void pimd_base::pimd_force()
 
 void pimd_base::step(const double& dt)
 {
+#ifdef DO_NHC
     const size_t th_size = nhc::size(nchain);
+#endif
 
     // 1. advance thermostats, velocities by dt/2, nmode position on dt
 
@@ -148,9 +152,12 @@ void pimd_base::step(const double& dt)
             const double mass = m_fict_mass[j];
             const double Ekin2 = mass*m_vel_nmode[j]*m_vel_nmode[j];
 
+#ifdef DO_NHC
             const double aa = nhc::advance
                 (nchain, m_thermostats + j*th_size, tau, Ekin2/m_kT, dt2);
-
+#else
+            const double aa = 1.0;
+#endif
             m_vel_nmode[j] = aa*m_vel_nmode[j] + dt2*m_frc_nmode[j]/mass;
             m_pos_nmode[j] += dt*m_vel_nmode[j];
         }
@@ -173,11 +180,15 @@ void pimd_base::step(const double& dt)
 
             m_vel_nmode[j] += dt2*m_frc_nmode[j]/mass;
             const double Ekin2 = mass*m_vel_nmode[j]*m_vel_nmode[j];
+#ifdef DO_NHC
             const double aa = nhc::advance
                 (nchain, m_thermostats + j*th_size, tau, Ekin2/m_kT, dt2);
 
             m_vel_nmode[j] *= aa;
             m_Ekin_fict += Ekin2*aa*aa;
+#else
+            m_Ekin_fict += Ekin2;
+#endif
         }
     }
 
@@ -188,11 +199,13 @@ double pimd_base::invariant() const
 {
     double accu(0);
 
+#ifdef DO_NHC
     const size_t th_size = nhc::size(nchain);
     const double tau = 2*M_PI/m_omega_M;
 
     for (size_t n = 0; n < nbeads()*ndofs(); ++n)
         accu += nhc::invariant(nchain, m_thermostats + n*th_size, tau);
+#endif
 
     // Epot is in kcal/mol already
     return (m_Ekin_fict + m_Espring + m_kT*accu)/engunit + m_Epot_sum;

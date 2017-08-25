@@ -27,14 +27,14 @@ namespace {
 
 typedef pot::sho potential_type;
 
-const size_t nsteps = 20000; 
+const size_t nsteps = 100000; 
 
 double atm_mass(2000); // au
+double omega(2.0e-4); // omega
 
 const double dt = 1; // au
 
-const size_t nframe = 1000; // 0.5 ps
-const size_t nprint = 10;
+const size_t nprint = 25;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +47,7 @@ struct pimd : public parts::pimd_base {
 
     inline size_t natom() const { return m_natom; }
     inline double Ep() const { return m_Epot_sum; }
+    inline double Ek() const { return m_Ekin_fict; }
 
     void set_COM_at_origin();
 
@@ -75,6 +76,8 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
     pos = new double[m_ndofs];
 
+    pos[0] = 0.0;
+
     // prepare masses
     double* mass = new double[m_ndofs]; // for every degree of freedom
     for (size_t i = 0; i < natom; ++i) {
@@ -84,6 +87,8 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
     }
 
     // setup the simulation
+
+    m_potential.set_params(omega, atm_mass);
 
     init(m_ndofs, nbead, 1.0/beta, mass, pos);
 
@@ -97,9 +102,6 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 double pimd::force(const double* x, double* f)
 {
     double Epot = m_potential(m_natom, x, f);
-
-//    for (size_t n = 0; n < ndim*natom(); ++n)
-//        f[n] *= -engunit;
 
     return Epot;
 }
@@ -116,19 +118,18 @@ int main(int argc, char** argv)
     std::cout.precision(9);
 
     if (argc != 3) {
-        std::cerr << "usage: pimd nbeads T" << std::endl;
+        std::cerr << "usage: pimd nbeads beta" << std::endl;
         return EXIT_FAILURE;
     }
 
-    size_t nbead = 8; 
-    size_t ndim = 3;
+    size_t ndim = 1;
     size_t natom = 1;
 
-    nbead = strtod(argv[1], NULL);
+    size_t nbead = strtod(argv[1], NULL);
 
     double beta(1.0);
     {
-        std::istringstream iss(argv[3]);
+        std::istringstream iss(argv[2]);
         iss >> beta;
         if (!iss || !iss.eof()) {
             std::cerr << "could not convert '" << argv[2]
@@ -148,9 +149,6 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    std::cerr << "molecule loaded!" << std::endl
-	      << "  > natom = " << sim.natom() << std::endl ;
-
     // 2. iterate
 
     for (size_t n = 0; n < nsteps; ++n) {
@@ -158,6 +156,7 @@ int main(int argc, char** argv)
         if (n%nprint == 0) {
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
+                      << sim.Ek() << ' '
                       << sim.Ep() << std::endl;
         }
 

@@ -10,10 +10,13 @@ struct sho {
     double w = 1.0;
     double m = 1.0;
 
-    // a = 1/2 m w^2
     double a = 0.5 * m * w * w;
 
     double operator()(size_t natom, const double* x, double* f) const;
+
+    void set_params(double, double);
+
+    bool init = false;
 
 };
         

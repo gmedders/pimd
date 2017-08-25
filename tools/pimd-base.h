@@ -20,9 +20,12 @@ struct pimd_base : public necklace {
 
     constexpr static size_t nchain = 4;
 
-    constexpr static double engunit = 418.4; // conversion from internal units to kcal/mol
-    constexpr static double kB = 8.31451115e-01; // Boltzmann constant in internal units
-    constexpr static double hbar = 6.350780668;
+    //constexpr static double engunit = 418.4; // conversion from internal units to kcal/mol
+    //constexpr static double kB = 8.31451115e-01; // Boltzmann constant in internal units
+    //constexpr static double hbar = 6.350780668;
+    constexpr static double engunit = 1.0; // conversion from internal units to kcal/mol
+    constexpr static double kB = 1.0; // Boltzmann constant in internal units
+    constexpr static double hbar = 1.0;
 
 protected:
     double m_kT;
