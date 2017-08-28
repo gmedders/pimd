@@ -5,6 +5,8 @@
 
 #include "pimd-base.h"
 
+#define DO_NHC yes
+
 #ifdef DO_NHC
 #include "nhc.h"
 #endif
@@ -213,6 +215,7 @@ void pimd_base::step(const double& dt)
     }
 
     m_Ekin_fict /= 2;
+    m_temp_kT = m_Ekin_fict*2.0/ndofs()/nbeads(); // not actual temperature, kT
 }
 
 //----------------------------------------------------------------------------//

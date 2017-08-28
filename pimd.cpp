@@ -48,6 +48,7 @@ struct pimd : public parts::pimd_base {
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin_fict; }
+    inline double temp_kT() const { return m_temp_kT; }
 
     void set_COM_at_origin();
 
@@ -176,7 +177,8 @@ int main(int argc, char** argv)
                       << sim.invariant() << ' '
                       << sim.Espring() << ' '
                       << sim.Ek() << ' '
-                      << sim.Ep() << std::endl;
+                      << sim.Ep() << ' '
+                      << sim.temp_kT() << std::endl;
         }
 
     }

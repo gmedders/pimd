@@ -37,6 +37,7 @@ protected:
     double m_Espring;
     double m_Epot_sum;
     double m_Ekin_fict;
+    double m_temp_kT;
 
     void pimd_force();
 };
