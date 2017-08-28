@@ -1,12 +1,21 @@
 #include <cmath>
 #include <cassert>
 
-#include "nhc.h"
 #include "mt19937.h"
 
 #include "pimd-base.h"
 
+#define DO_NHC yes
+
+#ifdef DO_NHC
+#include "nhc.h"
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+
 namespace parts {
+
+//----------------------------------------------------------------------------//
 
 pimd_base::pimd_base()
 : necklace()
@@ -15,11 +24,17 @@ pimd_base::pimd_base()
     m_thermostats = 0;
 }
 
+//----------------------------------------------------------------------------//
+
 pimd_base::~pimd_base()
 {
     delete[] m_fict_mass;
+#ifdef DO_NHC
     delete[] m_thermostats;
+#endif
 }
+
+//----------------------------------------------------------------------------//
 
 void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
                      const double* mass, const double* cartpos)
@@ -31,7 +46,9 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
     necklace::setup(ndof, nbead);
 
     delete[] m_fict_mass;
+#ifdef DO_NHC
     delete[] m_thermostats;
+#endif
 
     m_kT = kT;
     m_omega_M = std::sqrt(double(nbead))*kT/hbar;
@@ -48,19 +65,23 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
 
     // thermostats
 
+#ifdef DO_NHC
     const size_t th_size = nhc::size(nchain);
     m_thermostats = new double[ndof*nbead*th_size];
+#endif
 
     mt19937 prg(27606);
 
     const double tau = 2*M_PI/m_omega_M;
 
+#ifdef DO_NHC
     for (size_t b = 0; b < nbead; ++b)
         for (size_t i = 0; i < ndof; ++i) {
             const size_t j = i + b*ndof;
             nhc::initialize(nchain,
-                m_thermostats + th_size*j, tau, prg);
+                            m_thermostats + th_size*j, tau, prg);
         }
+#endif
 
     // initialize cartesian positions
 
@@ -97,13 +118,14 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
     pimd_force();
 }
 
+//----------------------------------------------------------------------------//
+
 void pimd_base::pimd_force()
 {
     const size_t n_total = ndofs()*nbeads();
 
     // zero out m_frc_cart
-    for (size_t n = 0; n < n_total; ++n)
-        m_frc_cart[n] = 0.0;
+    std::fill(m_frc_cart, m_frc_cart + n_total, 0.0);
 
     // compute forces for each bead
     m_Epot_sum = 0.0;
@@ -133,9 +155,13 @@ void pimd_base::pimd_force()
     m_Espring /= 2;
 }
 
+//----------------------------------------------------------------------------//
+
 void pimd_base::step(const double& dt)
 {
+#ifdef DO_NHC
     const size_t th_size = nhc::size(nchain);
+#endif
 
     // 1. advance thermostats, velocities by dt/2, nmode position on dt
 
@@ -148,9 +174,12 @@ void pimd_base::step(const double& dt)
             const double mass = m_fict_mass[j];
             const double Ekin2 = mass*m_vel_nmode[j]*m_vel_nmode[j];
 
+#ifdef DO_NHC
             const double aa = nhc::advance
                 (nchain, m_thermostats + j*th_size, tau, Ekin2/m_kT, dt2);
-
+#else
+            const double aa = 1.0;
+#endif
             m_vel_nmode[j] = aa*m_vel_nmode[j] + dt2*m_frc_nmode[j]/mass;
             m_pos_nmode[j] += dt*m_vel_nmode[j];
         }
@@ -173,29 +202,42 @@ void pimd_base::step(const double& dt)
 
             m_vel_nmode[j] += dt2*m_frc_nmode[j]/mass;
             const double Ekin2 = mass*m_vel_nmode[j]*m_vel_nmode[j];
+#ifdef DO_NHC
             const double aa = nhc::advance
                 (nchain, m_thermostats + j*th_size, tau, Ekin2/m_kT, dt2);
 
             m_vel_nmode[j] *= aa;
             m_Ekin_fict += Ekin2*aa*aa;
+#else
+            m_Ekin_fict += Ekin2;
+#endif
         }
     }
 
     m_Ekin_fict /= 2;
+    m_temp_kT = m_Ekin_fict*2.0/ndofs()/nbeads(); // not actual temperature, kT
 }
+
+//----------------------------------------------------------------------------//
 
 double pimd_base::invariant() const
 {
     double accu(0);
 
+#ifdef DO_NHC
     const size_t th_size = nhc::size(nchain);
     const double tau = 2*M_PI/m_omega_M;
 
     for (size_t n = 0; n < nbeads()*ndofs(); ++n)
         accu += nhc::invariant(nchain, m_thermostats + n*th_size, tau);
+#endif
 
     // Epot is in kcal/mol already
     return (m_Ekin_fict + m_Espring + m_kT*accu)/engunit + m_Epot_sum;
 }
 
+//----------------------------------------------------------------------------//
+
 } // namespace parts
+
+////////////////////////////////////////////////////////////////////////////////
