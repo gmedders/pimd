@@ -30,10 +30,12 @@ namespace {
 typedef pot::sho potential_type;
 
 double atm_mass(2000); // au
-double omega(2.0e-4); // omega
+double omega(0.2); // omega
 
 const size_t print_time = 20; // au
-const size_t simulation_time = 100000; // au
+const size_t equil_time = 100000;
+const size_t prod_time = 100000;
+const size_t simulation_time = equil_time + prod_time; // au
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -49,13 +51,15 @@ struct pimd : public parts::pimd_base {
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin_fict; }
     inline double temp_kT() const { return m_temp_kT; }
+    double avg_cart_pos(void);
 
-    void set_COM_at_origin();
+    void dump_1D_frame(std::ofstream&);
 
 private:
     size_t m_natom;
     size_t m_ndim;
     size_t m_ndofs;
+    size_t m_nbead;
     double* pos;
     potential_type m_potential;
 };
@@ -69,11 +73,83 @@ pimd::~pimd()
 
 //----------------------------------------------------------------------------//
 
+double pimd::avg_cart_pos(void)
+{
+    double avg(0);
+    for(size_t i = 0; i < m_nbead; ++i)
+        avg += m_pos_cart[i*m_ndofs];
+    return avg/m_nbead;
+}
+
+//----------------------------------------------------------------------------//
+
+void pimd::dump_1D_frame(std::ofstream& of_traj)
+{
+    vel_n2c();
+
+    double ekin_cart(0);
+    of_traj << m_nbead << std::endl;
+    for(size_t i = 0; i < m_nbead; ++i) {
+        for(size_t j = 0; j < m_ndofs; ++j) {
+            of_traj << ' ' << m_pos_cart[i*m_ndofs + j]
+                    << ' ' << m_vel_cart[i*m_ndofs + j];
+            ekin_cart += atm_mass
+                         * m_vel_cart[i*m_ndofs + j]*m_vel_cart[i*m_ndofs + j];
+        }
+        of_traj << std::endl;
+    }
+#if 0
+//    of_traj << "m_pos_cart:  ";
+//    for(size_t i = 0; i < m_nbead; ++i){
+//        for(size_t j = 0; j < m_ndofs; ++j){
+//            of_traj << ' ' << m_pos_cart[i*m_ndofs + j];
+//        }
+//    }
+//    of_traj << std::endl;
+//
+//    of_traj << "m_vel_nmode: ";
+//    for(size_t i = 0; i < m_nbead; ++i){
+//        for(size_t j = 0; j < m_ndofs; ++j){
+//            of_traj << ' ' << m_vel_nmode[i*m_ndofs + j];
+//        }
+//    }
+//    of_traj << std::endl;
+//
+//    of_traj << "m_vel_cart:  ";
+//    for(size_t i = 0; i < m_nbead; ++i){
+//        for(size_t j = 0; j < m_ndofs; ++j){
+//            of_traj << ' ' << m_vel_cart[i*m_ndofs + j];
+//            m_vel_nmode[i*m_ndofs + j] = 0.0;
+//            ekin_cart += atm_mass
+//                         * m_vel_cart[i*m_ndofs + j]*m_vel_cart[i*m_ndofs + j];
+//        }
+//    }
+//    of_traj << std::endl;
+//
+//    vel_c2n();
+//
+//    of_traj << "new_v_nmode: ";
+//    for(size_t i = 0; i < m_nbead; ++i){
+//        for(size_t j = 0; j < m_ndofs; ++j){
+//            of_traj << ' ' << m_vel_nmode[i*m_ndofs + j];
+//        }
+//    }
+//    of_traj << std::endl;
+#endif
+
+    ekin_cart /= 2.0;
+//    of_traj << " Ekin_nm= " << m_Ekin_fict
+//            << " Ekin_cart= " << ekin_cart << std::endl;
+}
+
+//----------------------------------------------------------------------------//
+
 void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
                   const double beta)
 {
     m_natom = natom;
     m_ndim = ndim;
+    m_nbead = nbead;
 
     m_ndofs = m_natom*m_ndim;
 
@@ -157,6 +233,7 @@ int main(int argc, char** argv)
     }
 
     const size_t nsteps = int(simulation_time / dt);
+    const size_t nsteps_equil = int(equil_time / dt);
     const size_t nprint = int(print_time / dt);
 
     pimd sim;
@@ -169,19 +246,29 @@ int main(int argc, char** argv)
     }
 
     // 2. iterate
+    std::ofstream of_cart_traj;
+    of_cart_traj.open("cart_traj.dat");
+    of_cart_traj << std::scientific;
+    of_cart_traj.precision(15);
 
     for (size_t n = 0; n < nsteps; ++n) {
         sim.step(dt);
         if (n%nprint == 0) {
+        //if (n%nprint == 0 && n >= nsteps_equil) {
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
                       << sim.Espring() << ' '
                       << sim.Ek() << ' '
                       << sim.Ep() << ' '
-                      << sim.temp_kT() << std::endl;
+                      << sim.temp_kT() << ' '
+                      << sim.avg_cart_pos() << std::endl;
+
+            sim.dump_1D_frame(of_cart_traj);
         }
 
     }
+
+    of_cart_traj.close();
 
     return EXIT_SUCCESS;
 }

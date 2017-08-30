@@ -31,6 +31,8 @@ protected:
     double m_kT;
     double m_omega_M;
 
+    double m_tau;
+
     double* m_fict_mass;
     double* m_thermostats;
 
