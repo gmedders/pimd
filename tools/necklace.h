@@ -41,6 +41,9 @@ protected:
     void pos_c2n();
     void pos_n2c();
 
+    void vel_c2n();
+    void vel_n2c();
+
     void frc_c2n();
 
     // layout is bead1, bead2, ..., beadN, where
@@ -49,6 +52,7 @@ protected:
     double* m_pos_cart;
     double* m_pos_nmode;
 
+    double* m_vel_cart;
     double* m_vel_nmode;
 
     double* m_frc_cart;

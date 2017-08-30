@@ -72,14 +72,14 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
 
     mt19937 prg(27606);
 
-    const double tau = 2*M_PI/m_omega_M;
+    m_tau = 2*M_PI/m_omega_M;
 
 #ifdef DO_NHC
     for (size_t b = 0; b < nbead; ++b)
         for (size_t i = 0; i < ndof; ++i) {
             const size_t j = i + b*ndof;
             nhc::initialize(nchain,
-                            m_thermostats + th_size*j, tau, prg);
+                            m_thermostats + th_size*j, m_tau, prg);
         }
 #endif
 
@@ -104,14 +104,14 @@ void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
 
     m_Ekin_fict /= 2;
 
-    // scale kinetic energy to the target temperature
+    //// scale kinetic energy to the target temperature
 
-    const double scale_factor = std::sqrt(0.5*kT*nbead*ndof/m_Ekin_fict);
-    for (size_t b = 0; b < nbead; ++b)
-        for (size_t i = 0; i < ndof; ++i)
-            m_vel_nmode[i + b*ndof] *= scale_factor;
+    //const double scale_factor = std::sqrt(0.5*kT*nbead*ndof/m_Ekin_fict);
+    //for (size_t b = 0; b < nbead; ++b)
+    //    for (size_t i = 0; i < ndof; ++i)
+    //        m_vel_nmode[i + b*ndof] *= scale_factor;
 
-    m_Ekin_fict *= scale_factor*scale_factor;
+    //m_Ekin_fict *= scale_factor*scale_factor;
 
     // compute forces
 
@@ -165,7 +165,6 @@ void pimd_base::step(const double& dt)
 
     // 1. advance thermostats, velocities by dt/2, nmode position on dt
 
-    const double tau = 2*M_PI/m_omega_M;
     const double dt2 = dt/2;
 
     for (size_t b = 0; b < nbeads(); ++b) {
@@ -176,7 +175,7 @@ void pimd_base::step(const double& dt)
 
 #ifdef DO_NHC
             const double aa = nhc::advance
-                (nchain, m_thermostats + j*th_size, tau, Ekin2/m_kT, dt2);
+                (nchain, m_thermostats + j*th_size, m_tau, Ekin2/m_kT, dt2);
 #else
             const double aa = 1.0;
 #endif
@@ -204,7 +203,7 @@ void pimd_base::step(const double& dt)
             const double Ekin2 = mass*m_vel_nmode[j]*m_vel_nmode[j];
 #ifdef DO_NHC
             const double aa = nhc::advance
-                (nchain, m_thermostats + j*th_size, tau, Ekin2/m_kT, dt2);
+                (nchain, m_thermostats + j*th_size, m_tau, Ekin2/m_kT, dt2);
 
             m_vel_nmode[j] *= aa;
             m_Ekin_fict += Ekin2*aa*aa;
@@ -226,10 +225,9 @@ double pimd_base::invariant() const
 
 #ifdef DO_NHC
     const size_t th_size = nhc::size(nchain);
-    const double tau = 2*M_PI/m_omega_M;
 
     for (size_t n = 0; n < nbeads()*ndofs(); ++n)
-        accu += nhc::invariant(nchain, m_thermostats + n*th_size, tau);
+        accu += nhc::invariant(nchain, m_thermostats + n*th_size, m_tau);
 #endif
 
     // Epot is in kcal/mol already

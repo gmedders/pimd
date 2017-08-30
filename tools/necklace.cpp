@@ -5,15 +5,21 @@
 
 namespace parts {
 
+//----------------------------------------------------------------------------//
+
 necklace::necklace()
 : m_ndofs(0), m_nbeads(0)
 {
 }
 
+//----------------------------------------------------------------------------//
+
 necklace::~necklace()
 {
     setup(0, 0);
 }
+
+//----------------------------------------------------------------------------//
 
 void necklace::setup(size_t ndof, size_t nbead)
 {
@@ -29,6 +35,7 @@ void necklace::setup(size_t ndof, size_t nbead)
         fftw_free(m_pos_cart);
         fftw_free(m_pos_nmode);
 
+        fftw_free(m_vel_cart);
         fftw_free(m_vel_nmode);
 
         fftw_free(m_frc_cart);
@@ -49,6 +56,7 @@ void necklace::setup(size_t ndof, size_t nbead)
         m_pos_cart = (double*) fftw_malloc(nbytes);
         m_pos_nmode = (double*) fftw_malloc(nbytes);
 
+        m_vel_cart = (double*) fftw_malloc(nbytes);
         m_vel_nmode = (double*) fftw_malloc(nbytes);
 
         m_frc_cart = (double*) fftw_malloc(nbytes);
@@ -87,6 +95,8 @@ void necklace::setup(size_t ndof, size_t nbead)
     }
 }
 
+//----------------------------------------------------------------------------//
+
 void necklace::pos_c2n()
 {
     assert(m_nbeads > 0 && m_ndofs > 0);
@@ -98,12 +108,38 @@ void necklace::pos_c2n()
         m_pos_nmode[n] *= factor;
 }
 
+//----------------------------------------------------------------------------//
+
 void necklace::pos_n2c()
 {
     assert(m_nbeads > 0 && m_ndofs > 0);
 
     fftw_execute_r2r(m_plan_nmode2cart, m_pos_nmode, m_pos_cart);
 }
+
+//----------------------------------------------------------------------------//
+
+void necklace::vel_n2c()
+{
+    assert(m_nbeads > 0 && m_ndofs > 0);
+
+    fftw_execute_r2r(m_plan_nmode2cart, m_vel_nmode, m_vel_cart);
+}
+
+//----------------------------------------------------------------------------//
+
+void necklace::vel_c2n()
+{
+    assert(m_nbeads > 0 && m_ndofs > 0);
+
+    fftw_execute_r2r(m_plan_cart2nmode, m_vel_cart, m_vel_nmode);
+
+    const double factor = 1.0/m_nbeads;
+    for (size_t n = 0; n < m_nbeads*m_ndofs; ++n)
+        m_vel_nmode[n] *= factor;
+}
+
+//----------------------------------------------------------------------------//
 
 void necklace::frc_c2n()
 {
@@ -128,4 +164,8 @@ void necklace::frc_c2n()
         }
 }
 
+//----------------------------------------------------------------------------//
+
 } // namespace parts
+
+////////////////////////////////////////////////////////////////////////////////
