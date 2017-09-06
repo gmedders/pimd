@@ -1,18 +1,19 @@
 #ifndef RPMD_BASE_H
 #define RPMD_BASE_H
 
-#include "necklace.h"
+#include "rpmd-necklace.h"
 
 namespace parts {
 
-struct rpmd_base : public necklace {
+struct rpmd_base : public rpmd_necklace {
 
     rpmd_base();
     ~rpmd_base();
 
     virtual double force(const double*, double*) = 0;
 
-    void init(size_t ndof, size_t nbead, const double& kT,
+    void init(size_t ndof, size_t nbead,
+              const double& kT, const double& dt,
               const double* mass, const double* cartpos, const double* cartvel);
 
     void step(const double&);
@@ -31,7 +32,7 @@ protected:
     double m_kT;
     double m_omega_M;
 
-    double* m_phys_mass;
+    arma::mat m_phys_mass;
 
     double m_Espring;
     double m_Epot_sum;

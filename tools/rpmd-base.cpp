@@ -12,21 +12,20 @@ namespace parts {
 //----------------------------------------------------------------------------//
 
 rpmd_base::rpmd_base()
-: necklace()
+: rpmd_necklace()
 {
-    m_phys_mass = 0;
 }
 
 //----------------------------------------------------------------------------//
 
 rpmd_base::~rpmd_base()
 {
-    delete[] m_phys_mass;
 }
 
 //----------------------------------------------------------------------------//
 
-void rpmd_base::init(size_t ndof, size_t nbead, const double& kT,
+void rpmd_base::init(size_t ndof, size_t nbead,
+                     const double& kT, const double& dt,
                      const double* mass, const double* cartpos,
                      const double* cartvel)
 {
@@ -34,36 +33,33 @@ void rpmd_base::init(size_t ndof, size_t nbead, const double& kT,
     assert(nbead%2 == 0 || nbead == 1);
     assert(kT > 0.0 && mass != 0 && cartpos != 0 && cartvel != 0);
 
-    necklace::setup(ndof, nbead);
-
-    delete[] m_phys_mass;
-
     m_kT = kT;
-    m_omega_M = std::sqrt(double(nbead))*kT/hbar;
+    rpmd_necklace::setup(ndof, nbead, 1.0/kT, dt, mass[0]);
 
-    // fictitious masses
+    // initialize cartesian positions and momenta
+    for(size_t n = 0; n < nbead; ++n){
+        for(size_t i = 0; i < ndof; ++i){
+            const size_t j = n*ndof + i;
 
-    m_phys_mass = new double[ndof*nbead];
-
-    for (size_t b = 0; b < nbead; ++b) {
-        //const double factor = (b == 0 ? 1.0 : lambda(b));
-        for (size_t i = 0; i < ndof; ++i)
-            m_phys_mass[i + b*ndof] = mass[i];
+            m_pos_cart(n,i) = cartpos[j];
+            m_mom_cart(n,i) = mass[i]*cartvel[j];
+        }
     }
 
-    // initialize cartesian positions and velocities
+    // fictitious masses
+    m_phys_mass = arma::mat(nbead,ndof);
 
-    std::copy(cartpos, cartpos + nbead*ndof, m_pos_cart);
-    std::copy(cartvel, cartvel + nbead*ndof, m_vel_cart);
+    for (size_t n = 0; n < nbead; ++n) {
+        for (size_t i = 0; i < ndof; ++i)
+            m_phys_mass(n,i) = mass[i];
+    }
 
     // calculate the initial kinetic energy
 
     m_Ekin = 0.0;
-    for (size_t b = 0; b < nbead; ++b)
+    for (size_t n = 0; n < nbead; ++n)
         for (size_t i = 0; i < ndof; ++i) {
-            const size_t j = i + b*ndof;
-
-            m_Ekin += m_phys_mass[j]*m_vel_cart[j]*m_vel_cart[j];
+            m_Ekin += m_mom_cart(n,i)*m_mom_cart(n,i)/m_phys_mass(n,i);
         }
 
     m_Ekin /= 2;
@@ -75,74 +71,66 @@ void rpmd_base::init(size_t ndof, size_t nbead, const double& kT,
 
 void rpmd_base::pimd_force()
 {
-    const size_t n_total = ndofs()*nbeads();
-
     // zero out m_frc_cart
-    std::fill(m_frc_cart, m_frc_cart + n_total, 0.0);
+    m_frc_cart.zeros();
 
     // compute forces for each bead
     m_Epot_sum = 0.0;
     for (size_t b = 0; b < nbeads(); ++b)
-        m_Epot_sum += force(m_pos_cart + b*ndofs(), m_frc_cart + b*ndofs());
+        m_Epot_sum += force(m_pos_cart.colptr(b), m_frc_cart.colptr(b));
 
     m_Epot_sum /= nbeads();
-
-    const double omega2 = m_omega_M*m_omega_M;
-
-    m_Espring = 0.0;
-
-    // add the harmonic part
-
-    for (size_t b = 1; b < nbeads(); ++b) {
-        for (size_t i = 0; i < ndofs(); ++i) {
-            const size_t j = b*ndofs() + i;
-            //FIXME
-            const double tmp = m_phys_mass[j]*omega2*m_pos_cart[j];
-            m_frc_cart[j] -= tmp;
-            m_Espring += tmp*m_pos_cart[j];
-        }
-    }
-
-    m_Espring /= 2;
 }
 
 //----------------------------------------------------------------------------//
 
 void rpmd_base::step(const double& dt)
 {
-
-    // 1. advance thermostats, velocities by dt/2, nmode position on dt
-
     const double dt2 = dt/2;
 
-    for (size_t b = 0; b < nbeads(); ++b) {
-        for (size_t i = 0; i < ndofs(); ++i) {
-            const size_t j = b*ndofs() + i;
-            const double mass = m_phys_mass[j];
-            const double Ekin2 = mass*m_vel_cart[j]*m_vel_cart[j];
+    // Following equations 21-25 of dx.doi.org/10.1063/1.3489925
+    // 1. Evolution of RP momenta under Hamiltonian V_{n}[q(t0)] by dt/2
+    m_mom_cart = dt2*m_frc_cart;
 
-            // FIXME
-            m_vel_cart[j] += dt2*m_frc_cart[j]/mass;
-            m_pos_cart[j] += dt*m_vel_cart[j];
-        }
+
+    // 2. Transform positions & momenta from Cartesian to normal-mode
+    pos_c2n();
+    mom_c2n();
+
+
+    // 3. Evolve RP coords/momenta by dt under free RP Hamiltonian H_{n}^{0}
+    //    So, for each bead (in NM representation)...
+    for(size_t b = 0; b < nbead(); ++b){
+        arma::mat evolve = m_cart_to_nm.slice(b); // (2,2)
+        arma::mat nm_pos_mom_t0(2,ndof);
+        arma::mat nm_pos_mom_tdt(2,ndof);
+
+        nm_pos_mom_t0.col(0) = m_pos_nmode.col(b);
+        nm_pos_mom_t0.col(1) = m_mom_nmode.col(b);
+
+        // (2,ndof) = (2,2) * (2,ndof)
+        nm_pos_mom_tdt = evolve * nm_pos_mom_t0;
+
+        m_pos_nmode.col(b) = nm_pos_mom_tdt.col(0);
+        m_mom_nmode.col(b) = nm_pos_mom_tdt.col(1);
     }
 
-    // 2. transform position to cartesian, compute forces
 
-    pimd_force(); // computes normal mode forces
+    // 4. Transform positions & momenta from normal-mode to Cartesian
+    pos_n2c();
+    mom_n2c();
 
-    // 3. advance velocities and thermostats by dt/2
+
+    // 5. Final evolution of RP momenta under Hamiltonian V_{n}[q(t0+dt)]
+    pimd_force();
+
+    m_mom_cart = dt2*m_frc_cart;
 
     m_Ekin = 0.0;
 
-    for (size_t b = 0; b < nbeads(); ++b) {
+    for (size_t n = 0; n < nbeads(); ++n) {
         for (size_t i = 0; i < ndofs(); ++i) {
-            const size_t j = b*ndofs() + i;
-            const double mass = m_phys_mass[j];
-
-            // FIXME
-            m_vel_cart[j] += dt2*m_frc_cart[j]/mass;
-            m_Ekin += mass*m_vel_cart[j]*m_vel_cart[j];
+            m_Ekin += m_mom_cart(n,i)*m_mom_cart(n,i)/m_phys_mass(n,i);
         }
     }
 
