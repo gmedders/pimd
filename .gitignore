@@ -5,6 +5,8 @@ cmake_install.cmake
 .*
 libtools.a
 pimd
+rpmd
+*.dSYM
 *.dat*
 *.py
 *.gnu

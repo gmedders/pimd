@@ -16,7 +16,6 @@ namespace parts {
 struct rpmd_necklace {
 
     rpmd_necklace();
-    ~rpmd_necklace();
 
     inline size_t ndofs() const;
     inline size_t nbeads() const;

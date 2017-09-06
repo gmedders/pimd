@@ -34,7 +34,7 @@ void rpmd_base::init(size_t ndof, size_t nbead,
     assert(kT > 0.0 && mass != 0 && cartpos != 0 && cartvel != 0);
 
     m_kT = kT;
-    rpmd_necklace::setup(ndofs(), nbeads(), 1.0/kT, dt, mass[0]);
+    rpmd_necklace::setup(ndof, nbead, 1.0/kT, dt, mass[0]);
 
     // initialize cartesian positions and momenta
     for(size_t n = 0; n < nbeads(); ++n){
