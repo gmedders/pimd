@@ -31,11 +31,15 @@ private:
     size_t m_ndofs;
     size_t m_nbeads;
 
-    double m_dt;
-
 protected:
 
-    void setup(size_t ndof, size_t nbead, double dt);
+    double m_dt;
+
+    double m_beta;
+    double m_beta_n;
+    double m_omega_n;
+
+    void setup(size_t ndof, size_t nbead, double, double, double);
 
     void pos_c2n();
     void pos_n2c();
@@ -60,6 +64,11 @@ protected:
     arma::cube m_freerp_propagator;
 
     arma::vec m_omega_k;
+    
+    constexpr static double engunit = 1.0; // conversion from internal units to kcal/mol
+    constexpr static double kB = 1.0; // Boltzmann constant in internal units
+    constexpr static double hbar = 1.0;
+
 };
 
 inline size_t rpmd_necklace::ndofs() const

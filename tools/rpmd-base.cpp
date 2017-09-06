@@ -34,12 +34,12 @@ void rpmd_base::init(size_t ndof, size_t nbead,
     assert(kT > 0.0 && mass != 0 && cartpos != 0 && cartvel != 0);
 
     m_kT = kT;
-    rpmd_necklace::setup(ndof, nbead, 1.0/kT, dt, mass[0]);
+    rpmd_necklace::setup(ndofs(), nbeads(), 1.0/kT, dt, mass[0]);
 
     // initialize cartesian positions and momenta
-    for(size_t n = 0; n < nbead; ++n){
-        for(size_t i = 0; i < ndof; ++i){
-            const size_t j = n*ndof + i;
+    for(size_t n = 0; n < nbeads(); ++n){
+        for(size_t i = 0; i < ndofs(); ++i){
+            const size_t j = n*ndofs() + i;
 
             m_pos_cart(n,i) = cartpos[j];
             m_mom_cart(n,i) = mass[i]*cartvel[j];
@@ -47,18 +47,18 @@ void rpmd_base::init(size_t ndof, size_t nbead,
     }
 
     // fictitious masses
-    m_phys_mass = arma::mat(nbead,ndof);
+    m_phys_mass = arma::mat(nbeads(),ndofs());
 
-    for (size_t n = 0; n < nbead; ++n) {
-        for (size_t i = 0; i < ndof; ++i)
+    for (size_t n = 0; n < nbeads(); ++n) {
+        for (size_t i = 0; i < ndofs(); ++i)
             m_phys_mass(n,i) = mass[i];
     }
 
     // calculate the initial kinetic energy
 
     m_Ekin = 0.0;
-    for (size_t n = 0; n < nbead; ++n)
-        for (size_t i = 0; i < ndof; ++i) {
+    for (size_t n = 0; n < nbeads(); ++n)
+        for (size_t i = 0; i < ndofs(); ++i) {
             m_Ekin += m_mom_cart(n,i)*m_mom_cart(n,i)/m_phys_mass(n,i);
         }
 
@@ -100,10 +100,10 @@ void rpmd_base::step(const double& dt)
 
     // 3. Evolve RP coords/momenta by dt under free RP Hamiltonian H_{n}^{0}
     //    So, for each bead (in NM representation)...
-    for(size_t b = 0; b < nbead(); ++b){
-        arma::mat evolve = m_cart_to_nm.slice(b); // (2,2)
-        arma::mat nm_pos_mom_t0(2,ndof);
-        arma::mat nm_pos_mom_tdt(2,ndof);
+    for(size_t b = 0; b < nbeads(); ++b){
+        arma::mat evolve = m_freerp_propagator.slice(b); // (2,2)
+        arma::mat nm_pos_mom_t0(2,ndofs());
+        arma::mat nm_pos_mom_tdt(2,ndofs());
 
         nm_pos_mom_t0.col(0) = m_pos_nmode.col(b);
         nm_pos_mom_t0.col(1) = m_mom_nmode.col(b);
