@@ -91,7 +91,8 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta,
 
         m_freerp_propagator(0,0,k) = 1.0;
         m_freerp_propagator(1,0,k) = 0.0;
-        m_freerp_propagator(0,1,k) = 1.0;
+        // lim(x->0) [ 1/(m*x) * sin(x * dt) ] = dt/m
+        m_freerp_propagator(0,1,k) = m_dt / mass;
         m_freerp_propagator(1,1,k) = 1.0;
     }
 
