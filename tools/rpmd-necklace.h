@@ -63,6 +63,9 @@ protected:
     arma::cube m_freerp_propagator;
 
     arma::vec m_omega_k;
+
+    arma::vec m_mass;
+    arma::vec m_sqrt_mass;
     
     constexpr static double engunit = 1.0; // conversion from internal units to kcal/mol
     constexpr static double kB = 1.0; // Boltzmann constant in internal units

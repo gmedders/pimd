@@ -52,6 +52,9 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta,
 
     m_omega_k = arma::vec(nbead);
 
+    m_mass = arma::vec(ndof);
+    m_sqrt_mass = arma::vec(ndof);
+
     // Catesian <-> normal mode transformation matrix
     for(size_t k = 0; k < nbead; ++k) {
         if(k == 0) {

@@ -17,6 +17,7 @@ struct rpmd_base : public rpmd_necklace {
               const double* mass, const double* cartpos, const double* cartvel);
 
     void step(const double&);
+    void spring_energy();
     double invariant() const;
 
     constexpr static size_t nchain = 4;
