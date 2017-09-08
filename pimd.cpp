@@ -46,7 +46,6 @@ struct pimd : public parts::pimd_base {
     void set_up(const size_t, const size_t, const size_t, const double);
     double force(const double*, double*);
 
-    inline size_t natom() const { return m_natom; }
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin_fict; }
