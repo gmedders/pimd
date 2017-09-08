@@ -32,9 +32,13 @@ typedef pot::sho potential_type;
 double atm_mass(2000); // au
 double omega(0.2); // omega
 
-const size_t print_time = 20; // au
-const size_t equil_time = 100000;
-const size_t prod_time = 100000;
+const size_t print_time = 1; // au
+const size_t equil_time = 0;
+const size_t prod_time = 1000;
+
+//const size_t print_time = 20; // au
+//const size_t equil_time = 1000;
+//const size_t prod_time = 100000;
 const size_t simulation_time = equil_time + prod_time; // au
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +51,6 @@ struct rpmd : public parts::rpmd_base {
                 const double, const double);
     double force(const double*, double*);
 
-    inline size_t natom() const { return m_natom; }
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin; }
