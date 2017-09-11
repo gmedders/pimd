@@ -73,6 +73,18 @@ int main(int argc, char** argv)
 
     size_t lineno(0);
 
+    // Initialize arrays
+    std::vector<int> nsamples;
+    std::vector<double> tcf;
+    std::vector<double> time;
+    for (size_t n = 0; n < nsteps; ++n) {
+        if (n%nprint == 0) {
+            nsamples.push_back(0);
+            tcf.push_back(0.0);
+            time.push_back(n*dt);
+        }
+    }
+
     while(!ifs.eof()){
 
         // Read this frame of the input file
@@ -128,19 +140,40 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
+        std::vector<double> traj_pos;
+
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
             if (n%nprint == 0) {
-                std::cout << n*dt << ' '
-                          << sim.invariant() << ' '
-                          << sim.Espring() << ' '
-                          << sim.Ek() << ' '
-                          << sim.Ep() << ' '
-                          << sim.temp_kT() << ' '
-                          << sim.avg_cart_pos() << std::endl;
+                //std::cout << n*dt << ' '
+                //          << sim.invariant() << ' '
+                //          << sim.Espring() << ' '
+                //          << sim.Ek() << ' '
+                //          << sim.Ep() << ' '
+                //          << sim.temp_kT() << ' '
+                //          << sim.avg_cart_pos() << std::endl;
+                traj_pos.push_back(sim.avg_cart_pos());
+            }
+        }
+
+        // Accumulate the TCF
+        assert(traj_pos.size() == tcf.size());
+        for (size_t i = 0; i < traj_pos.size(); ++i){
+            for (size_t j = i; j < traj_pos.size(); ++j){
+                size_t delta = j - i;
+                ++nsamples[delta];
+
+                tcf[delta] += traj_pos[i] * traj_pos[j];
             }
         }
     }
+
+    for (size_t i = 0; i < tcf.size(); ++i){
+        std::cout << std::setw(12) << time[i]
+                  << std::setw(15) << tcf[i]/nsamples[i]
+                  << std::endl;
+    }
+
 
     ifs.close();
 
