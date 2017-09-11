@@ -13,7 +13,7 @@ struct anharmonic {
 
     double operator()(size_t natom, const double* crd, double* f) const;
 
-    void set_params(double, double, double);
+    void set_params(double*);
 
     bool init = false;
 

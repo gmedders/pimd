@@ -24,11 +24,11 @@ double anharmonic::operator()(size_t natom, const double* crd, double* f) const
     return e;
 }
 
-void anharmonic::set_params(double new_a, double new_b, double new_c)
+void anharmonic::set_params(double* params)
 {
-    a = new_a;
-    b = new_b;
-    c = new_c;
+    a = params[0];
+    b = params[1];
+    c = params[2];
 
     init = true;
 }

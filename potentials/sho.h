@@ -14,7 +14,7 @@ struct sho {
 
     double operator()(size_t natom, const double* x, double* f) const;
 
-    void set_params(double, double);
+    void set_params(double*);
 
     bool init = false;
 

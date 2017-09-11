@@ -16,10 +16,10 @@ double sho::operator()(size_t natom, const double* x, double* f) const
     return e;
 }
 
-void sho::set_params(double new_w, double new_m)
+void sho::set_params(double* params)
 {
-    w = new_w;
-    m = new_m;
+    w = params[0];
+    m = params[1];
 
     // a = 1/2 m w^2
     a = 0.5 * m * w * w;
