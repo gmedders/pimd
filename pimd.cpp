@@ -25,7 +25,7 @@
 
 namespace {
 
-const size_t print_time = 20; // au
+const size_t print_time = 100; // au
 const size_t equil_time = 100000;
 const size_t prod_time = 100000;
 const size_t simulation_time = equil_time + prod_time; // au
@@ -92,8 +92,11 @@ int main(int argc, char** argv)
     }
 
     // 2. iterate
+    std::ostringstream ss_filename;
+    ss_filename << "cart_traj_" << nbead << '_' << int(beta) << ".dat";
+
     std::ofstream of_cart_traj;
-    of_cart_traj.open("cart_traj.dat");
+    of_cart_traj.open(ss_filename.str());
     of_cart_traj << std::scientific;
     of_cart_traj.precision(15);
 

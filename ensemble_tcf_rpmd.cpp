@@ -17,11 +17,11 @@
 
 namespace {
 
-const size_t print_time = 0.1; // au
-const size_t prod_time = 200;
+const double print_time = 0.1; // au
+const double prod_time = 200;
 
-const size_t tcf_max_time = 30;
-const size_t simulation_time = prod_time; // au
+const double tcf_max_time = 30;
+const double simulation_time = prod_time; // au
 
 void check_parsing(std::istringstream& iss, size_t lineno)
 {
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
     size_t lineno(0);
 
     // Initialize arrays
-    std::vector<int> nsamples;
+    std::vector<double> nsamples;
     std::vector<double> tcf;
     std::vector<double> time;
 
@@ -167,7 +167,7 @@ int main(int argc, char** argv)
             {
 
                 size_t delta = j - i;
-                ++nsamples[delta];
+                nsamples[delta] += 1.0;
 
                 tcf[delta] += traj_pos[i] * traj_pos[j];
             }
@@ -175,9 +175,11 @@ int main(int argc, char** argv)
     }
 
     // Finally, print the results
+    std::cout << std::scientific;
+    std::cout.precision(10);
     for (size_t i = 0; i < tcf.size(); ++i){
-        std::cout << std::setw(12) << time[i]
-                  << std::setw(15) << tcf[i]/nsamples[i]
+        std::cout << std::setw(20) << time[i]
+                  << std::setw(20) << tcf[i]/nsamples[i]
                   << std::endl;
     }
 

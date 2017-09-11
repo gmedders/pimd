@@ -22,9 +22,10 @@ namespace parts {
 
 typedef pot::anharmonic potential_type;
 static double atm_mass(1); // au
-static double param_a(1.0);
-static double param_b(1.0);
-static double param_c(1.0);
+static double param_a(0.0);
+static double param_b(0.0);
+static double param_c(0.25);
+//static double param_c(1.0);
 static double params[] = {param_a, param_b, param_c};
 
 ////////////////////////////////////////////////////////////////////////////////
