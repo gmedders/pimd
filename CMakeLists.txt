@@ -19,8 +19,10 @@ find_package(Armadillo REQUIRED)
 
 add_executable(pimd pimd.cpp)
 add_executable(rpmd rpmd.cpp)
+add_executable(ensemble_tcf_rpmd ensemble_tcf_rpmd.cpp)
 target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
 target_link_libraries(rpmd tools ${ARMADILLO_LIBRARIES})
+target_link_libraries(ensemble_tcf_rpmd tools ${ARMADILLO_LIBRARIES})
 
 include_directories("./tools" "./potentials" ${ARMADILLO_INCLUDE_DIRS})
 #add_subdirectory(tools)

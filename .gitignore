@@ -6,6 +6,7 @@ cmake_install.cmake
 libtools.a
 pimd
 rpmd
+ensemble_tcf_rpmd
 *.dSYM
 *.dat*
 *.py
