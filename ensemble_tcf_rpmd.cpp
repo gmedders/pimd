@@ -17,9 +17,10 @@
 
 namespace {
 
-const size_t print_time = 1; // au
-const size_t prod_time = 1000;
+const size_t print_time = 0.1; // au
+const size_t prod_time = 200;
 
+const size_t tcf_max_time = 30;
 const size_t simulation_time = prod_time; // au
 
 void check_parsing(std::istringstream& iss, size_t lineno)
@@ -43,8 +44,8 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
-    if (argc != 4) {
-        std::cerr << "usage: rpmd input_file dt" << std::endl;
+    if (argc != 3) {
+        std::cerr << "usage: ensemble_tcf_rpmd input_file dt" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -53,10 +54,10 @@ int main(int argc, char** argv)
 
     double dt(1.0);
     {
-        std::istringstream iss(argv[3]);
+        std::istringstream iss(argv[2]);
         iss >> dt;
         if (!iss || !iss.eof()) {
-            std::cerr << "could not convert '" << argv[3]
+            std::cerr << "could not convert '" << argv[2]
                       << "' to real number" << std::endl;
             return EXIT_FAILURE;
         }
@@ -77,13 +78,16 @@ int main(int argc, char** argv)
     std::vector<int> nsamples;
     std::vector<double> tcf;
     std::vector<double> time;
-    for (size_t n = 0; n < nsteps; ++n) {
-        if (n%nprint == 0) {
+
+    for (size_t i = 0; i < nsteps; ++i) {
+        double itime = i*dt;
+        if (i%nprint == 0 && itime <= tcf_max_time) {
             nsamples.push_back(0);
             tcf.push_back(0.0);
-            time.push_back(n*dt);
+            time.push_back(i*dt);
         }
     }
+    const size_t tcf_max_nsteps = time.size();
 
     while(!ifs.eof()){
 
@@ -157,9 +161,11 @@ int main(int argc, char** argv)
         }
 
         // Accumulate the TCF
-        assert(traj_pos.size() == tcf.size());
         for (size_t i = 0; i < traj_pos.size(); ++i){
-            for (size_t j = i; j < traj_pos.size(); ++j){
+            for (size_t j = i; (j < traj_pos.size())
+                            && ((j - i) < tcf_max_nsteps); ++j)
+            {
+
                 size_t delta = j - i;
                 ++nsamples[delta];
 
@@ -168,6 +174,7 @@ int main(int argc, char** argv)
         }
     }
 
+    // Finally, print the results
     for (size_t i = 0; i < tcf.size(); ++i){
         std::cout << std::setw(12) << time[i]
                   << std::setw(15) << tcf[i]/nsamples[i]

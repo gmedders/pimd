@@ -16,12 +16,11 @@ namespace parts {
 ////////////////////////////////////////////////////////////////////////////////
 
 //typedef pot::sho potential_type;
-typedef pot::anharmonic potential_type;
-
 //static double tatm_mass(2000); // au
 //static double tomega(0.2); // omega
 //static double params[] = {omega, atm_mass};
 
+typedef pot::anharmonic potential_type;
 static double atm_mass(1); // au
 static double param_a(1.0);
 static double param_b(1.0);
