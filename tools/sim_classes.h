@@ -16,7 +16,7 @@ namespace parts {
 ////////////////////////////////////////////////////////////////////////////////
 
 //typedef pot::sho potential_type;
-//static double tatm_mass(2000); // au
+//static double atm_mass(2000); // au
 //static double tomega(0.2); // omega
 //static double params[] = {omega, atm_mass};
 
@@ -25,7 +25,9 @@ static double atm_mass(1); // au
 static double param_a(0.0);
 static double param_b(0.0);
 static double param_c(0.25);
-//static double param_c(1.0);
+//static double param_a(1.0/2.0);
+//static double param_b(1.0/10.0);
+//static double param_c(1.0/100.0);
 static double params[] = {param_a, param_b, param_c};
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,6 +65,8 @@ struct rpmd : public parts::rpmd_base {
 
     void set_up_new_init_cond(const size_t, const size_t, const size_t,
                               const double, const double);
+    void set_up_new_init_cond(const size_t, const size_t, const size_t,
+                              const double, const double, double*);
     void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);

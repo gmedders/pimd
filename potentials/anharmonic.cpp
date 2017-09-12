@@ -16,8 +16,8 @@ double anharmonic::operator()(size_t natom, const double* crd, double* f) const
     double x3 = x*x2;
     double x4 = x*x3;
 
-    double e    = a * 1.0/2.0 * x2 + b * 1.0/10.0 * x3 + c * 1.0/100.0 * x4;
-    double dedx = a *           x  + b * 3.0/10.0 * x2 + c * 4.0/100.0 * x3;
+    double e    =       a * x2 +       b * x3 +       c * x4;
+    double dedx = 2.0 * a * x  + 3.0 * b * x2 + 4.0 * c * x3;
 
     f[0] = -dedx;
 

@@ -15,7 +15,7 @@ rpmd_necklace::rpmd_necklace()
 //----------------------------------------------------------------------------//
 
 void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta,
-                          double dt = 1.0, double mass = 2000.0)
+                          double dt, double mass)
 {
     assert(ndof == 1);
     assert(nbead > 0);

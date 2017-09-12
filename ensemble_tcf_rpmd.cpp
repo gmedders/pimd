@@ -78,16 +78,20 @@ int main(int argc, char** argv)
     std::vector<double> nsamples;
     std::vector<double> tcf;
     std::vector<double> time;
+    std::vector<double> temp;
 
     for (size_t i = 0; i < nsteps; ++i) {
         double itime = i*dt;
         if (i%nprint == 0 && itime <= tcf_max_time) {
             nsamples.push_back(0);
             tcf.push_back(0.0);
-            time.push_back(i*dt);
+            time.push_back(itime);
+            temp.push_back(0.0);
         }
     }
     const size_t tcf_max_nsteps = time.size();
+
+    int ntemp(0);
 
     while(!ifs.eof()){
 
@@ -137,14 +141,17 @@ int main(int argc, char** argv)
         parts::rpmd sim;
 
         try {
-            sim.set_up(nbead, ndim, natom, beta, dt,
-                       &all_bead_crd[0], &all_bead_vel[0]);
+            sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
+                                     &all_bead_crd[0]);
+            //sim.set_up(nbead, ndim, natom, beta, dt,
+            //           &all_bead_crd[0], &all_bead_vel[0]);
         } catch (const std::exception& e) {
             std::cerr << " ** Error ** : " << e.what() << std::endl;
             return EXIT_FAILURE;
         }
 
         std::vector<double> traj_pos;
+        std::vector<double> traj_temp;
 
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
@@ -157,6 +164,7 @@ int main(int argc, char** argv)
                 //          << sim.temp_kT() << ' '
                 //          << sim.avg_cart_pos() << std::endl;
                 traj_pos.push_back(sim.avg_cart_pos());
+                traj_temp.push_back(sim.temp_kT());
             }
         }
 
@@ -171,7 +179,12 @@ int main(int argc, char** argv)
 
                 tcf[delta] += traj_pos[i] * traj_pos[j];
             }
+            if(i < temp.size()){
+                temp[i] += traj_temp[i];
+            }
         }
+        ++ntemp;
+        //std::cerr << traj_temp[0] << std::endl;
     }
 
     // Finally, print the results
@@ -180,6 +193,9 @@ int main(int argc, char** argv)
     for (size_t i = 0; i < tcf.size(); ++i){
         std::cout << std::setw(20) << time[i]
                   << std::setw(20) << tcf[i]/nsamples[i]
+                  << std::setw(20) << temp[i]/ntemp
+         //         << std::setw(20) << temp[i]
+         //         << std::setw(20) << ntemp
                   << std::endl;
     }
 

@@ -26,8 +26,9 @@
 namespace {
 
 const size_t print_time = 100; // au
+//const size_t print_time = 100; // au
 const size_t equil_time = 100000;
-const size_t prod_time = 100000;
+const size_t prod_time = 1000000;
 const size_t simulation_time = equil_time + prod_time; // au
 
 } // namespace

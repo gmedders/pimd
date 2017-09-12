@@ -95,10 +95,26 @@ double rpmd::avg_cart_pos(void)
 //----------------------------------------------------------------------------//
 
 void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
-                                const size_t natom,
-                                const double beta, const double dt)
+                                const size_t natom, const double beta,
+                                const double dt)
 {
     std::vector<double> all_bead_crd;
+
+    size_t ndofs = ndim*natom;
+
+    for(size_t i = 0; i < nbead*ndofs; ++i){
+        all_bead_crd.push_back(0.0);
+    }
+    set_up_new_init_cond(nbead, ndim, natom, beta, dt,
+                         &all_bead_crd[0]);
+}
+
+//----------------------------------------------------------------------------//
+
+void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
+                                const size_t natom, const double beta,
+                                const double dt, double* pos)
+{
     std::vector<double> all_bead_vel;
 
     parts::mt19937 prg(27606);
@@ -107,13 +123,13 @@ void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
     double kT = 1.0/beta;
 
     for(size_t i = 0; i < nbead*ndofs; ++i){
-        all_bead_crd.push_back(0.0);
         const double sigma = std::sqrt(kT/atm_mass);
-        double v = sigma*prg.random_gaussian();
+        double v = sigma;
+        //double v = sigma*prg.random_gaussian();
         all_bead_vel.push_back(v);
     }
     set_up(nbead, ndim, natom, beta, dt,
-           &all_bead_crd[0], &all_bead_vel[0]);
+           pos, &all_bead_vel[0]);
 }
 
 //----------------------------------------------------------------------------//
