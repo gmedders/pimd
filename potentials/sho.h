@@ -7,14 +7,14 @@ namespace pot {
 
 struct sho {
 
-    double w = 1.0;
-    double m = 1.0;
+    double w;
+    double m;
 
-    double a = 0.5 * m * w * w;
+    double a;
 
     double operator()(size_t natom, const double* x, double* f) const;
 
-    void set_params(double, double);
+    void set_params(double*);
 
     bool init = false;
 

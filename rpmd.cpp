@@ -25,10 +25,13 @@
 
 namespace {
 
-const size_t print_time = 100; // au
-//const size_t print_time = 100; // au
-const size_t equil_time = 100000;
-const size_t prod_time = 1000000;
+const size_t print_time = 1; // au
+const size_t equil_time = 0;
+const size_t prod_time = 1000;
+
+//const size_t print_time = 20; // au
+//const size_t equil_time = 1000;
+//const size_t prod_time = 100000;
 const size_t simulation_time = equil_time + prod_time; // au
 
 } // namespace
@@ -43,7 +46,7 @@ int main(int argc, char** argv)
     std::cout.precision(9);
 
     if (argc != 4) {
-        std::cerr << "usage: pimd nbeads beta dt" << std::endl;
+        std::cerr << "usage: rpmd nbeads beta dt" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -82,28 +85,26 @@ int main(int argc, char** argv)
     const size_t nsteps_equil = int(equil_time / dt);
     const size_t nprint = int(print_time / dt);
 
-    //pimd sim;
-    parts::pimd sim;
+    //rpmd sim;
+    parts::rpmd sim;
 
     try {
-        sim.set_up(nbead, ndim, natom, beta);
+        sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 
     // 2. iterate
-    std::ostringstream ss_filename;
-    ss_filename << "cart_traj_" << nbead << '_' << int(beta) << ".dat";
-
     std::ofstream of_cart_traj;
-    of_cart_traj.open(ss_filename.str());
+    of_cart_traj.open("cart_traj.dat");
     of_cart_traj << std::scientific;
     of_cart_traj.precision(15);
 
     for (size_t n = 0; n < nsteps; ++n) {
         sim.step(dt);
-        if (n%nprint == 0 && n >= nsteps_equil) {
+        if (n%nprint == 0) {
+        //if (n%nprint == 0 && n >= nsteps_equil) {
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
                       << sim.Espring() << ' '
@@ -112,7 +113,7 @@ int main(int argc, char** argv)
                       << sim.temp_kT() << ' '
                       << sim.avg_cart_pos() << std::endl;
 
-            sim.dump_1D_frame(of_cart_traj);
+            //sim.dump_1D_frame(of_cart_traj);
         }
 
     }
