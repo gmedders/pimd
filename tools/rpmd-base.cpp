@@ -70,7 +70,7 @@ void rpmd_base::init(size_t ndof, size_t nbead,
 void rpmd_base::pimd_force()
 {
     m_Epot_sum = force(ndofs(), nbeads(),
-                       m_pos_cart.memptr, m_frc_cart.memptr());
+                       m_pos_cart.memptr(), m_frc_cart.memptr());
 }
 
 //----------------------------------------------------------------------------//

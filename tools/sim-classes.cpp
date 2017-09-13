@@ -1,4 +1,4 @@
-#include "sim_classes.h"
+#include "sim-classes.h"
 
 #include "mt19937.h"
 
