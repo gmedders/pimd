@@ -14,13 +14,14 @@ struct sho {
 
     double operator()(const size_t, const size_t,
                       const double* x, double* f) const;
+    double VAA(const double* crd, double* f);
 
     void set_params(double*);
 
     bool init = false;
 
 };
-        
+
 } // namespace pot
 
 #endif // SHO_H

@@ -11,14 +11,16 @@ struct anharmonic {
     double b;
     double c;
 
-    double operator()(size_t natom, const double* crd, double* f) const;
+    double operator()(const size_t, const size_t,
+                      const double* x, double* f) const;
+    double VAA(const double* crd, double* f);
 
     void set_params(double*);
 
     bool init = false;
 
 };
-        
+
 } // namespace pot
 
 #endif // ANHARMONIC_H
