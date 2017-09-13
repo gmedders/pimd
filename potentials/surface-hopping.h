@@ -34,6 +34,7 @@ struct surface_hopping {
     double hop_probability(const double);
     void hop();
 
+    void set_active_state(const int);
     void set_hopping_params(double*);
 
     parts::mt19937 prng;

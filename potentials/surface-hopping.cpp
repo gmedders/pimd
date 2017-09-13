@@ -91,6 +91,14 @@ void surface_hopping::hop()
 
 //----------------------------------------------------------------------------//
 
+void surface_hopping::set_active_state(int state_id)
+{
+    assert(state_id == 0 || state_id == 1);
+    active_state = state_id;
+}
+
+//----------------------------------------------------------------------------//
+
 // These parameters define the hopping probability
 void surface_hopping::set_hopping_params(double* params)
 {

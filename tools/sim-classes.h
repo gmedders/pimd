@@ -6,6 +6,7 @@
 
 #include "sho.h"
 #include "anharmonic.h"
+#include "double-well.h"
 
 //
 // units are au
@@ -16,19 +17,25 @@ namespace parts {
 ////////////////////////////////////////////////////////////////////////////////
 
 //typedef pot::sho potential_type;
+//static double omega(0.2); // omega
 //static double atm_mass(2000); // au
-//static double tomega(0.2); // omega
 //static double params[] = {omega, atm_mass};
 
-typedef pot::anharmonic potential_type;
-static double atm_mass(1); // au
-static double param_a(0.0);
-static double param_b(0.0);
-static double param_c(0.25);
+typedef pot::double_well potential_type;
+static double omega(0.2); // omega
+static double atm_mass(2000); // au
+static double bb_x0(21.795);
+static double params[] = {omega, atm_mass, bb_x0};
+
+//typedef pot::anharmonic potential_type;
+//static double atm_mass(1); // au
+//static double param_a(0.0);
+//static double param_b(0.0);
+//static double param_c(0.25);
 //static double param_a(1.0/2.0);
 //static double param_b(1.0/10.0);
 //static double param_c(1.0/100.0);
-static double params[] = {param_a, param_b, param_c};
+//static double params[] = {param_a, param_b, param_c};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -78,12 +85,13 @@ struct rpmd : public parts::rpmd_base {
     inline double temp_kT() const { return m_temp_kT; }
     double avg_cart_pos(void);
 
+    potential_type m_potential;
+
 private:
     size_t m_natom;
     size_t m_ndim;
     size_t m_ndofs;
     size_t m_nbead;
-    potential_type m_potential;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
