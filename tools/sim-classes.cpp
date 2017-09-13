@@ -75,11 +75,10 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 //----------------------------------------------------------------------------//
 
-double pimd::force(const double* x, double* f)
+double pimd::force(const size_t ndofs, const size_t nbead,
+                   const double* x, double* f)
 {
-    double Epot = m_potential(m_natom, x, f);
-
-    return Epot;
+    return m_potential(ndofs, nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -164,11 +163,10 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 //----------------------------------------------------------------------------//
 
-double rpmd::force(const double* x, double* f)
+double rpmd::force(const size_t ndofs, const size_t nbead,
+                   const double* x, double* f)
 {
-    double Epot = m_potential(m_natom, x, f);
-
-    return Epot;
+    return m_potential(ndofs, nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

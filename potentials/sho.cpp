@@ -2,19 +2,40 @@
 
 #include <cassert>
 
+////////////////////////////////////////////////////////////////////////////////
+
 namespace pot {
 
-double sho::operator()(size_t natom, const double* x, double* f) const
+//----------------------------------------------------------------------------//
+
+double sho::operator()(const size_t ndofs, const size_t nbead,
+                       const double* crd, double* f) const
 {
-    assert(natom == 1);
+    assert(ndof == 1);
+    assert(nbead > 0);
     assert(init == true);
 
-    double e = a * x[0]*x[0];
-    double dedx = 2.0 * a * x[0];
+    double energy(0);
+    for(size_t n = 0; n < nbead, ++n)
+        energy += VAA(crd + ndof*n, f + ndof*n);
+
+    return energy;
+}
+
+//----------------------------------------------------------------------------//
+
+double sho::VAA(const double* crd, double* f)
+{
+    double x = crd[0];
+
+    double e = a * x * x;
+    double dedx = 2.0 * a * x;
     f[0] = -dedx;
 
     return e;
 }
+
+//----------------------------------------------------------------------------//
 
 void sho::set_params(double* params)
 {
@@ -27,4 +48,8 @@ void sho::set_params(double* params)
     init = true;
 }
 
+//----------------------------------------------------------------------------//
+
 } // namespace pot
+
+////////////////////////////////////////////////////////////////////////////////
