@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "sim_classes.h"
+#include "sim-classes.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ void check_parsing(std::istringstream& iss, size_t lineno)
     if (iss.fail()) {
         std::ostringstream oss;
         oss << "failed to parse line " << lineno
-            << " of the input file:" << std::endl << iss << std::endl;
+            << " of the input file:" << std::endl << iss.str() << std::endl;
         throw std::runtime_error(oss.str());
     }
 }
