@@ -3,30 +3,45 @@
 
 #include <cstdlib>
 
+#include <armadillo>
+
 namespace pot {
 
 struct double_well {
 
+    bool init_pot = false;
     double w;
     double m;
     double g;
 
+    bool init_hop = false;
+    double Gamma;
+    double dt;
+    double beta;
+
     double a;
 
-    int active_state;
+    arma::vec fAA;
+    arma::vec fBB;
 
-    double operator()(size_t, size_t, const double*, double*) const;
+    int active_state;
+    int nhops;
+
+    double force(size_t, size_t, const double*, double*);
     double VAA(const double* x, double* f);
     double VBB(const double* x, double* f);
 
-    double hop_probability()(size_t natom, const double* x, double* f) const;
+    void check_allocation(size_t, arma::vec&);
+
+    double fermi_function(const double);
+    double hop_probability(const double);
+    void hop();
 
     void set_params(double*);
-
-    bool init = false;
+    void set_hopping_params(double*);
 
 };
-        
+
 } // namespace pot
 
 #endif // DOUBLE_WELL_H

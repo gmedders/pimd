@@ -78,7 +78,7 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 double pimd::force(const size_t ndofs, const size_t nbead,
                    const double* x, double* f)
 {
-    return m_potential(ndofs, nbead, x, f);
+    return m_potential.force(ndofs, nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 double rpmd::force(const size_t ndofs, const size_t nbead,
                    const double* x, double* f)
 {
-    return m_potential(ndofs, nbead, x, f);
+    return m_potential.force(ndofs, nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

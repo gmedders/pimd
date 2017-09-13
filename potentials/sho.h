@@ -12,8 +12,8 @@ struct sho {
 
     double a;
 
-    double operator()(const size_t, const size_t,
-                      const double* x, double* f) const;
+    double force(const size_t, const size_t,
+                 const double* x, double* f);
     double VAA(const double* crd, double* f);
 
     void set_params(double*);

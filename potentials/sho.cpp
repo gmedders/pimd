@@ -8,15 +8,15 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
-double sho::operator()(const size_t ndofs, const size_t nbead,
-                       const double* crd, double* f) const
+double sho::force(const size_t ndof, const size_t nbead,
+                  const double* crd, double* f)
 {
     assert(ndof == 1);
     assert(nbead > 0);
     assert(init == true);
 
     double energy(0);
-    for(size_t n = 0; n < nbead, ++n)
+    for(size_t n = 0; n < nbead; ++n)
         energy += VAA(crd + ndof*n, f + ndof*n);
 
     return energy;
