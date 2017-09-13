@@ -1,5 +1,5 @@
-#ifndef DOUBLE_WELL_H
-#define DOUBLE_WELL_H
+#ifndef AH_H
+#define AH_H
 
 #include <cstdlib>
 
@@ -9,13 +9,15 @@
 
 namespace pot {
 
-struct double_well : public surface_hopping {
+struct ah : public surface_hopping {
 
     double w;
     double m;
     double g;
 
     double a;
+    double b;
+    double Ed;
 
     double VAA(const double* x, double* f);
     double VBB(const double* x, double* f);
@@ -26,4 +28,4 @@ struct double_well : public surface_hopping {
 
 } // namespace pot
 
-#endif // DOUBLE_WELL_H
+#endif // AH_H
