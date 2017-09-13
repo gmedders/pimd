@@ -40,7 +40,7 @@ double double_well::force(size_t ndof, size_t nbead,
 
     // Determine if the active state should be changed
     double dE = (EAA - EBB)/nbead;
-    if(hop_probability(dE) > m_prng.random_double())
+    if(hop_probability(dE) > prng.random_double())
         hop();
 
     // Set the force and energy to the active state values
@@ -126,6 +126,8 @@ void double_well::set_params(double* params)
 
     // a = 1/2 m w^2
     a = 0.5 * m * w * w;
+
+    prng.seed(19104);
 
     init_pot = true;
 }

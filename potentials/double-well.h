@@ -5,6 +5,8 @@
 
 #include <armadillo>
 
+#include "mt19937.h"
+
 namespace pot {
 
 struct double_well {
@@ -39,6 +41,8 @@ struct double_well {
 
     void set_params(double*);
     void set_hopping_params(double*);
+
+    parts::mt19937 prng;
 
 };
 
