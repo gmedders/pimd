@@ -28,7 +28,7 @@ static double params[] = {omega, atm_mass};
 #if 0
 // DOUBLE WELL
 typedef pot::double_well potential_type;
-static double omega(0.2); // omega
+static double omega(2.0e-4); // omega
 static double atm_mass(2000); // au
 static double bb_x0(21.795);
 static double params[] = {omega, atm_mass, bb_x0};
