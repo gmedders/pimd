@@ -116,6 +116,33 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
+struct vv : public parts::vv_base {
+
+    void set_up_new_init_cond(const size_t, const size_t,
+                              const double, const double);
+    void set_up_new_init_cond(const size_t, const size_t,
+                              const double, const double, double*);
+    void set_up(const size_t, const size_t,
+                const double, const double,
+                double*, double*);
+    double force(const size_t, const size_t, const double*, double*);
+
+    inline double Espring() const { return 0.0; }
+    inline double Ep() const { return m_Epot; }
+    inline double Ek() const { return m_Ekin; }
+    inline double temp_kT() const { return m_temp_kT; }
+    double avg_cart_pos(void);
+
+    potential_type m_potential;
+
+private:
+    size_t m_natom;
+    size_t m_ndim;
+    size_t m_ndofs;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
 } // namespace
 
 #endif // SIM_CLASSES_H

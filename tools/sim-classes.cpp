@@ -171,6 +171,90 @@ double rpmd::force(const size_t ndofs, const size_t nbead,
 
 ////////////////////////////////////////////////////////////////////////////////
 
+double vv::avg_cart_pos(void)
+{
+    return m_pos_cart[0];
+}
+
+//----------------------------------------------------------------------------//
+
+void vv::set_up_new_init_cond(const size_t ndim,
+                                const size_t natom, const double beta,
+                                const double dt)
+{
+    std::vector<double> all_crd;
+
+    size_t ndofs = ndim*natom;
+
+    for(size_t i = 0; i < ndofs; ++i){
+        all_crd.push_back(0.0);
+    }
+    set_up_new_init_cond(ndim, natom, beta, dt,
+                         &all_crd[0]);
+}
+
+//----------------------------------------------------------------------------//
+
+void vv::set_up_new_init_cond(const size_t ndim,
+                                const size_t natom, const double beta,
+                                const double dt, double* pos)
+{
+    std::vector<double> all_vel;
+
+    parts::mt19937 prg(27606);
+
+    size_t ndofs = ndim*natom;
+    double kT = 1.0/beta;
+
+    for(size_t i = 0; i < ndofs; ++i){
+        const double sigma = std::sqrt(kT/atm_mass);
+        double v = sigma;
+        //double v = sigma*prg.random_gaussian();
+        all_vel.push_back(v);
+    }
+    set_up(ndim, natom, beta, dt,
+           pos, &all_vel[0]);
+}
+
+//----------------------------------------------------------------------------//
+
+void vv::set_up(const size_t ndim, const size_t natom,
+                  const double beta, const double dt, double* pos, double* vel)
+{
+    m_ndim = ndim;
+    m_natom = natom;
+
+    m_ndofs = m_natom*m_ndim;
+
+    // prepare masses
+    double* mass = new double[m_ndofs]; // for every degree of freedom
+    for (size_t i = 0; i < natom; ++i) {
+        const double Mi = atm_mass;
+        for (size_t k = 0; k < ndim; ++k)
+            mass[k + ndim*i] = Mi;
+    }
+
+    // setup the simulation
+
+    m_potential.set_params(params);
+
+    init(m_ndofs, 1.0/beta, dt, mass, pos, vel);
+
+    // clean up
+
+    delete[] mass;
+}
+
+//----------------------------------------------------------------------------//
+
+double vv::force(const size_t ndofs, const size_t nbead,
+                   const double* x, double* f)
+{
+    return m_potential.force(ndofs, nbead, x, f);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 } // namespace
 
 ////////////////////////////////////////////////////////////////////////////////
