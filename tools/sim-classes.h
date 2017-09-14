@@ -7,6 +7,7 @@
 #include "sho.h"
 #include "anharmonic.h"
 #include "double-well.h"
+#include "ah.h"
 
 //
 // units are au
@@ -16,26 +17,45 @@ namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//typedef pot::sho potential_type;
-//static double omega(0.2); // omega
-//static double atm_mass(2000); // au
-//static double params[] = {omega, atm_mass};
+#if 0
+// SHO
+typedef pot::sho potential_type;
+static double omega(0.2); // omega
+static double atm_mass(2000); // au
+static double params[] = {omega, atm_mass};
+#endif
 
+#if 0
+// DOUBLE WELL
 typedef pot::double_well potential_type;
 static double omega(0.2); // omega
 static double atm_mass(2000); // au
 static double bb_x0(21.795);
 static double params[] = {omega, atm_mass, bb_x0};
+#endif
 
-//typedef pot::anharmonic potential_type;
-//static double atm_mass(1); // au
-//static double param_a(0.0);
-//static double param_b(0.0);
-//static double param_c(0.25);
-//static double param_a(1.0/2.0);
-//static double param_b(1.0/10.0);
-//static double param_c(1.0/100.0);
-//static double params[] = {param_a, param_b, param_c};
+#if 1
+// Anderson-Holstein
+typedef pot::ah potential_type;
+static double param_w(0.003);
+static double atm_mass(2000);
+static double param_g(0.02);
+static double param_Ed_bar(0.0);
+static double params[] = {param_w, atm_mass, param_g, param_Ed_bar};
+#endif
+
+#if 0
+// ANHARMONIC OSCILLATOR
+typedef pot::anharmonic potential_type;
+static double atm_mass(1); // au
+static double param_a(0.0);
+static double param_b(0.0);
+static double param_c(0.25);
+static double param_a(1.0/2.0);
+static double param_b(1.0/10.0);
+static double param_c(1.0/100.0);
+static double params[] = {param_a, param_b, param_c};
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 

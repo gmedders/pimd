@@ -87,9 +87,16 @@ int main(int argc, char** argv)
 
     //rpmd sim;
     parts::rpmd sim;
+    sim.m_potential.set_active_state(1);
+    double hop_params[] = {0.02, dt, beta};
+    sim.m_potential.set_hopping_params(hop_params);
 
     try {
-        sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
+        //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
+        double x[] = {-1.68934160929};
+        double v[] = {-0.0181340309621};
+        x[0] = -1.70748535872;
+        sim.set_up(nbead, ndim, natom, beta, dt, x, v);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;
         return EXIT_FAILURE;
@@ -108,7 +115,9 @@ int main(int argc, char** argv)
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
                       << sim.Espring() << ' '
-                      << sim.Ek() << ' '
+                      << sim.Ek()*beta << ' '
+                      //<< sim.Ek() << ' '
+                      << sim.m_potential.active_state << ' '
                       << sim.Ep() << ' '
                       << sim.temp_kT() << ' '
                       << sim.avg_cart_pos() << std::endl;

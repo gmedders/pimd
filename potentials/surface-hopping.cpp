@@ -26,20 +26,22 @@ double surface_hopping::force(size_t ndof, size_t nbead,
     assert(init_pot == true);
     assert(init_hop == true);
 
-    check_allocation(ndof*nbead, fAA);
-    check_allocation(ndof*nbead, fBB);
+    //std::cout << crd[0] << std::endl;
 
+    check_allocation(ndof*nbead, fAA);
     double EAA(0);
+    for(size_t n = 0; n < nbead; ++n)
+        EAA += VAA(crd + ndof*n, fAA.memptr() + ndof*n);
+
+    check_allocation(ndof*nbead, fBB);
     double EBB(0);
-    if(active_state == 0)
-        for(size_t n = 0; n < nbead; ++n)
-            EAA += VAA(crd + ndof*n, fAA.memptr() + ndof*n);
-    else
-        for(size_t n = 0; n < nbead; ++n)
-            EBB += VBB(crd + ndof*n, fBB.memptr() + ndof*n);
+    for(size_t n = 0; n < nbead; ++n)
+        EBB += VBB(crd + ndof*n, fBB.memptr() + ndof*n);
 
     // Determine if the active state should be changed
-    double dE = (EAA - EBB)/nbead;
+    //std::cout << EBB << ' ' << EAA << ' ' << nbead << std::endl;
+    double dE = (EBB - EAA) / nbead;
+
     if(hop_probability(dE) > prng.random_double())
         hop();
 
@@ -59,6 +61,8 @@ double surface_hopping::force(size_t ndof, size_t nbead,
 double surface_hopping::fermi_function(const double dE)
 {
     double exp_arg = beta * dE;
+    //std::cout << " Beta = " << beta << ' ' << dE << ' ' << exp_arg << std::endl;
+    //exit(0);
     if(exp_arg > 100.0)
         return 0.0;
     else
@@ -106,7 +110,7 @@ void surface_hopping::set_hopping_params(double* params)
     dt = params[1];
     beta = params[2];
 
-    prng.seed(19104);
+    //prng.seed(19104);
 
     init_hop = true;
 }
