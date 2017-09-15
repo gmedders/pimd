@@ -19,6 +19,10 @@ struct anharmonic {
 
     bool init = false;
 
+    int active_state;
+    void set_active_state(const int);
+    void set_hopping_params(double*);
+
 };
 
 } // namespace pot

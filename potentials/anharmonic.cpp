@@ -8,6 +8,12 @@
 
 namespace pot {
 
+void anharmonic::set_active_state(const int)
+{
+    active_state = -1;
+}
+void anharmonic::set_hopping_params(double*){};
+
 //----------------------------------------------------------------------------//
 
 double anharmonic::force(const size_t ndof, const size_t nbead,

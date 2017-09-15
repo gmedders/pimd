@@ -6,6 +6,13 @@
 
 namespace pot {
 
+
+void sho::set_active_state(const int)
+{
+    active_state = -1;
+}
+void sho::set_hopping_params(double*){};
+
 //----------------------------------------------------------------------------//
 
 double sho::force(const size_t ndof, const size_t nbead,
