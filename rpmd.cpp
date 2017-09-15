@@ -25,10 +25,10 @@
 
 namespace {
 
-const size_t print_time = 1; // au
-const size_t equil_time = 0;
-//const size_t prod_time = 1000;
-const double prod_time = 60/0.003; // au
+const size_t print_time = 100; // au
+const size_t equil_time = 100000;
+const size_t prod_time = 100000;
+//const double prod_time = 60/0.003; // au
 
 //const size_t print_time = 20; // au
 //const size_t equil_time = 1000;
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
     //rpmd sim;
     parts::rpmd sim;
     sim.m_potential.set_active_state(1);
-    double GammaEl(1.0e-8);
+    double GammaEl(0.0);
     double hop_params[] = {GammaEl, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);
 
@@ -104,15 +104,18 @@ int main(int argc, char** argv)
     }
 
     // 2. iterate
+    std::ostringstream ss_filename;
+    ss_filename << "cart_traj-rpmd_" << nbead << '_' << int(beta) << ".dat";
+
     std::ofstream of_cart_traj;
-    of_cart_traj.open("cart_traj.dat");
+    of_cart_traj.open(ss_filename.str());
     of_cart_traj << std::scientific;
     of_cart_traj.precision(15);
 
     for (size_t n = 0; n < nsteps; ++n) {
         sim.step(dt);
-        if (n%nprint == 0) {
-        //if (n%nprint == 0 && n >= nsteps_equil) {
+        //if (n%nprint == 0) {
+        if (n%nprint == 0 && n >= nsteps_equil) {
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
                       << sim.Espring() << ' '
@@ -123,7 +126,7 @@ int main(int argc, char** argv)
                       << sim.temp_kT() << ' '
                       << sim.avg_cart_pos() << std::endl;
 
-            //sim.dump_1D_frame(of_cart_traj);
+            sim.dump_1D_frame(of_cart_traj);
         }
 
     }
