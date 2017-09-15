@@ -39,21 +39,24 @@ double surface_hopping::force(size_t ndof, size_t nbead,
         EBB += VBB(crd + ndof*n, fBB.memptr() + ndof*n);
 
     // Determine if the active state should be changed
-    //std::cout << EBB << ' ' << EAA << ' ' << nbead << std::endl;
     double dE = (EBB - EAA) / nbead;
+
+//    std::cout << EBB << ' ' << EAA << ' ' << hop_probability(dE) << std::endl;
+
+    // Set the force and energy to the active state values
+    double Eactive;
+    if(active_state == 0){
+        std::copy(fAA.memptr(), fAA.memptr() + ndof*nbead, f);
+        Eactive = EAA;
+    } else {
+        std::copy(fBB.memptr(), fBB.memptr() + ndof*nbead, f);
+        Eactive = EBB;
+    }
 
     if(hop_probability(dE) > prng.random_double())
         hop();
 
-    // Set the force and energy to the active state values
-    if(active_state == 0){
-        std::copy(fAA.memptr(), fAA.memptr() + ndof*nbead, f);
-        return EAA;
-    } else {
-        std::copy(fBB.memptr(), fBB.memptr() + ndof*nbead, f);
-        return EBB;
-    }
-
+    return Eactive;
 }
 
 //----------------------------------------------------------------------------//
