@@ -154,6 +154,8 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
     m_ndim = ndim;
     m_natom = natom;
 
+    m_beta = beta;
+
     m_ndofs = m_natom*m_ndim;
 
     // prepare masses
