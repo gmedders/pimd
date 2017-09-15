@@ -3,6 +3,7 @@
 
 #include "pimd-base.h"
 #include "rpmd-base.h"
+#include "vv-base.h"
 
 #include "sho.h"
 #include "anharmonic.h"
@@ -51,9 +52,9 @@ static double atm_mass(1); // au
 static double param_a(0.0);
 static double param_b(0.0);
 static double param_c(0.25);
-static double param_a(1.0/2.0);
-static double param_b(1.0/10.0);
-static double param_c(1.0/100.0);
+//static double param_a(1.0/2.0);
+//static double param_b(1.0/10.0);
+//static double param_c(1.0/100.0);
 static double params[] = {param_a, param_b, param_c};
 #endif
 
@@ -118,11 +119,11 @@ private:
 
 struct vv : public parts::vv_base {
 
-    void set_up_new_init_cond(const size_t, const size_t,
+    void set_up_new_init_cond(const size_t, const size_t, const size_t,
                               const double, const double);
-    void set_up_new_init_cond(const size_t, const size_t,
+    void set_up_new_init_cond(const size_t, const size_t, const size_t,
                               const double, const double, double*);
-    void set_up(const size_t, const size_t,
+    void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);
     double force(const size_t, const size_t, const double*, double*);

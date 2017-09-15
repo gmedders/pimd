@@ -173,12 +173,12 @@ double rpmd::force(const size_t ndofs, const size_t nbead,
 
 double vv::avg_cart_pos(void)
 {
-    return m_pos_cart[0];
+    return m_pos[0];
 }
 
 //----------------------------------------------------------------------------//
 
-void vv::set_up_new_init_cond(const size_t ndim,
+void vv::set_up_new_init_cond(const size_t nbead, const size_t ndim,
                                 const size_t natom, const double beta,
                                 const double dt)
 {
@@ -189,13 +189,13 @@ void vv::set_up_new_init_cond(const size_t ndim,
     for(size_t i = 0; i < ndofs; ++i){
         all_crd.push_back(0.0);
     }
-    set_up_new_init_cond(ndim, natom, beta, dt,
+    set_up_new_init_cond(nbead, ndim, natom, beta, dt,
                          &all_crd[0]);
 }
 
 //----------------------------------------------------------------------------//
 
-void vv::set_up_new_init_cond(const size_t ndim,
+void vv::set_up_new_init_cond(const size_t nbead, const size_t ndim,
                                 const size_t natom, const double beta,
                                 const double dt, double* pos)
 {
@@ -212,15 +212,17 @@ void vv::set_up_new_init_cond(const size_t ndim,
         //double v = sigma*prg.random_gaussian();
         all_vel.push_back(v);
     }
-    set_up(ndim, natom, beta, dt,
+    set_up(nbead, ndim, natom, beta, dt,
            pos, &all_vel[0]);
 }
 
 //----------------------------------------------------------------------------//
 
-void vv::set_up(const size_t ndim, const size_t natom,
-                  const double beta, const double dt, double* pos, double* vel)
+void vv::set_up(const size_t nbead, const size_t ndim, const size_t natom,
+                double beta, const double dt, double* pos, double* vel)
 {
+    assert(nbead == 1);
+
     m_ndim = ndim;
     m_natom = natom;
 
@@ -238,7 +240,7 @@ void vv::set_up(const size_t ndim, const size_t natom,
 
     m_potential.set_params(params);
 
-    init(m_ndofs, 1.0/beta, dt, mass, pos, vel);
+    init(m_ndofs, dt, mass, pos, vel);
 
     // clean up
 

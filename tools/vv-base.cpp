@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include "rpmd-base.h"
+#include "vv-base.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -12,9 +12,9 @@ namespace parts {
 //----------------------------------------------------------------------------//
 
 void vv_base::init(size_t ndof,
-              const double& dt,
-              const double* mass, const double* cartpos,
-              const double* cartvel)
+                   const double& dt,
+                   const double* mass, const double* cartpos,
+                   const double* cartvel)
 {
     assert(ndof > 0);
     assert(mass != 0 && cartpos != 0 && cartvel != 0);
@@ -49,13 +49,6 @@ void vv_base::init(size_t ndof,
 
     m_Ekin /= 2;
 
-    force();
-}
-
-//----------------------------------------------------------------------------//
-
-void vv_base::force()
-{
     m_Epot = force(ndofs(), 1,
                    m_pos.memptr(), m_frc.memptr());
 }
@@ -74,7 +67,8 @@ void vv_base::step(const double& dt)
     m_pos += dt*m_mom/m_mass;
 
     // 3. Final evolution of RP momenta under Hamiltonian V_{n}[q(t0+dt)]
-    force();
+    m_Epot = force(ndofs(), 1,
+                   m_pos.memptr(), m_frc.memptr());
 
     m_mom += dt2*m_frc;
 

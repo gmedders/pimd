@@ -13,7 +13,7 @@ struct vv_base {
                          const double*, double*) = 0;
 
     void init(size_t ndof,
-              const double& kT, const double& dt,
+              const double& dt,
               const double* mass, const double* cartpos, const double* cartvel);
 
     void step(const double&);
