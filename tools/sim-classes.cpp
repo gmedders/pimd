@@ -93,6 +93,20 @@ double rpmd::avg_cart_pos(void)
 
 //----------------------------------------------------------------------------//
 
+void rpmd::dump_1D_frame(std::ofstream& of_traj)
+{
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
+    for(size_t n = 0; n < m_nbead; ++n) {
+        for(size_t i = 0; i < m_ndofs; ++i) {
+            of_traj << ' ' << m_pos_cart(i,n)
+                    << ' ' << m_mom_cart(i,n)/m_mass(i);
+        }
+        of_traj << std::endl;
+    }
+}
+
+//----------------------------------------------------------------------------//
+
 void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
                                 const size_t natom, const double beta,
                                 const double dt)

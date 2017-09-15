@@ -107,6 +107,8 @@ struct rpmd : public parts::rpmd_base {
     inline double temp_kT() const { return m_temp_kT; }
     double avg_cart_pos(void);
 
+    void dump_1D_frame(std::ofstream&);
+
     potential_type m_potential;
 
 private:
