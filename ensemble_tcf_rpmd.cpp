@@ -11,16 +11,18 @@
 #include <iomanip>
 #include <iostream>
 
-#include "sim_classes.h"
+#include "sim-classes.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace {
 
-const double print_time = 0.1; // au
-const double prod_time = 200;
+const double print_time = 1.0; // au
+const double prod_time = 60/0.003; // au
+//const double prod_time = 200;
 
-const double tcf_max_time = 30;
+const double tcf_max_time = prod_time;
+//const double tcf_max_time = 30;
 const double simulation_time = prod_time; // au
 
 void check_parsing(std::istringstream& iss, size_t lineno)
@@ -28,7 +30,7 @@ void check_parsing(std::istringstream& iss, size_t lineno)
     if (iss.fail()) {
         std::ostringstream oss;
         oss << "failed to parse line " << lineno
-            << " of the input file:" << std::endl << iss << std::endl;
+            << " of the input file:" << std::endl << iss.str() << std::endl;
         throw std::runtime_error(oss.str());
     }
 }
@@ -135,16 +137,21 @@ int main(int argc, char** argv)
             }
         }
 
+        std::cerr << ntemp << ' ' << std::endl;
+
         // Now set up this simulation
         
         //rpmd sim;
         parts::rpmd sim;
+        sim.m_potential.set_active_state(1);
+        double hop_params[] = {0.02, dt, beta};
+        sim.m_potential.set_hopping_params(hop_params);
 
         try {
-            sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
-                                     &all_bead_crd[0]);
-            //sim.set_up(nbead, ndim, natom, beta, dt,
-            //           &all_bead_crd[0], &all_bead_vel[0]);
+            //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
+            //                         &all_bead_crd[0]);
+            sim.set_up(nbead, ndim, natom, beta, dt,
+                       &all_bead_crd[0], &all_bead_vel[0]);
         } catch (const std::exception& e) {
             std::cerr << " ** Error ** : " << e.what() << std::endl;
             return EXIT_FAILURE;
@@ -156,18 +163,13 @@ int main(int argc, char** argv)
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
             if (n%nprint == 0) {
-                //std::cout << n*dt << ' '
-                //          << sim.invariant() << ' '
-                //          << sim.Espring() << ' '
-                //          << sim.Ek() << ' '
-                //          << sim.Ep() << ' '
-                //          << sim.temp_kT() << ' '
-                //          << sim.avg_cart_pos() << std::endl;
                 traj_pos.push_back(sim.avg_cart_pos());
-                traj_temp.push_back(sim.temp_kT());
+                traj_temp.push_back(sim.Ek()*beta);
+                //traj_temp.push_back(sim.temp_kT());
             }
         }
 
+#if 0
         // Accumulate the TCF
         for (size_t i = 0; i < traj_pos.size(); ++i){
             for (size_t j = i; (j < traj_pos.size())
@@ -179,12 +181,13 @@ int main(int argc, char** argv)
 
                 tcf[delta] += traj_pos[i] * traj_pos[j];
             }
-            if(i < temp.size()){
-                temp[i] += traj_temp[i];
-            }
+        }
+#endif
+        // Accumulate the Average Temperature
+        for (size_t i = 0; i < temp.size(); ++i){
+            temp[i] += traj_temp[i];
         }
         ++ntemp;
-        //std::cerr << traj_temp[0] << std::endl;
     }
 
     // Finally, print the results
@@ -192,10 +195,8 @@ int main(int argc, char** argv)
     std::cout.precision(10);
     for (size_t i = 0; i < tcf.size(); ++i){
         std::cout << std::setw(20) << time[i]
-                  << std::setw(20) << tcf[i]/nsamples[i]
+//                  << std::setw(20) << tcf[i]/nsamples[i]
                   << std::setw(20) << temp[i]/ntemp
-         //         << std::setw(20) << temp[i]
-         //         << std::setw(20) << ntemp
                   << std::endl;
     }
 

@@ -69,13 +69,8 @@ void rpmd_base::init(size_t ndof, size_t nbead,
 
 void rpmd_base::pimd_force()
 {
-    // zero out m_frc_cart
-    m_frc_cart.zeros();
-
-    // compute forces for each bead
-    m_Epot_sum = 0.0;
-    for (size_t b = 0; b < nbeads(); ++b)
-        m_Epot_sum += force(m_pos_cart.colptr(b), m_frc_cart.colptr(b));
+    m_Epot_sum = force(ndofs(), nbeads(),
+                       m_pos_cart.memptr(), m_frc_cart.memptr());
 }
 
 //----------------------------------------------------------------------------//
