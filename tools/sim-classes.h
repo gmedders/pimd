@@ -26,7 +26,7 @@ static double atm_mass(2000); // au
 static double params[] = {omega, atm_mass};
 #endif
 
-#if 0
+#if 1
 // DOUBLE WELL
 typedef pot::double_well potential_type;
 static double omega(2.0e-4); // omega
@@ -35,7 +35,7 @@ static double bb_x0(21.795);
 static double params[] = {omega, atm_mass, bb_x0};
 #endif
 
-#if 1
+#if 0
 // Anderson-Holstein
 typedef pot::ah potential_type;
 static double param_w(0.003);
@@ -75,6 +75,8 @@ struct pimd : public parts::pimd_base {
 
     void dump_1D_frame(std::ofstream&);
 
+    potential_type m_potential;
+
 private:
     size_t m_natom;
     size_t m_ndim;
@@ -84,7 +86,6 @@ private:
     double m_beta;
 
     double* pos;
-    potential_type m_potential;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
