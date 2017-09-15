@@ -27,7 +27,8 @@ namespace {
 
 const size_t print_time = 1; // au
 const size_t equil_time = 0;
-const size_t prod_time = 1000;
+//const size_t prod_time = 1000;
+const double prod_time = 60/0.003; // au
 
 //const size_t print_time = 20; // au
 //const size_t equil_time = 1000;
@@ -88,14 +89,14 @@ int main(int argc, char** argv)
     //rpmd sim;
     parts::rpmd sim;
     sim.m_potential.set_active_state(1);
-    double hop_params[] = {0.02, dt, beta};
+    double GammaEl(1.0e-8);
+    double hop_params[] = {GammaEl, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);
 
     try {
         //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
         double x[] = {-1.68934160929};
         double v[] = {-0.0181340309621};
-        x[0] = -1.70748535872;
         sim.set_up(nbead, ndim, natom, beta, dt, x, v);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;

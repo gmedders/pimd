@@ -18,7 +18,7 @@
 namespace {
 
 const double print_time = 1.0; // au
-const double prod_time = 60/0.003; // au
+const double prod_time = 1.0/0.003; // au
 //const double prod_time = 200;
 
 const double tcf_max_time = prod_time;
@@ -142,9 +142,11 @@ int main(int argc, char** argv)
         // Now set up this simulation
         
         //rpmd sim;
+        //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_active_state(1);
-        double hop_params[] = {0.02, dt, beta};
+        double GammaEl(1.0e-8);
+        double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);
 
         try {
@@ -164,8 +166,8 @@ int main(int argc, char** argv)
             sim.step(dt);
             if (n%nprint == 0) {
                 traj_pos.push_back(sim.avg_cart_pos());
-                traj_temp.push_back(sim.Ek()*beta);
-                //traj_temp.push_back(sim.temp_kT());
+                //traj_temp.push_back(sim.Ek()*beta);
+                traj_temp.push_back(sim.temp_kT()); // beta
             }
         }
 
