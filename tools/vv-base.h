@@ -9,6 +9,8 @@ struct vv_base {
 
     inline size_t ndofs() const;
 
+    inline double* cart_ptr(){return m_pos.memptr();};
+
     virtual double force(const size_t, const size_t,
                          const double*, double*) = 0;
 
