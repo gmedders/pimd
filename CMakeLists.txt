@@ -18,11 +18,16 @@ find_package(Armadillo REQUIRED)
 #include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 add_executable(pimd pimd.cpp)
-add_executable(rpmd rpmd.cpp)
-add_executable(ensemble_tcf_rpmd ensemble_tcf_rpmd.cpp)
 target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(rpmd rpmd.cpp)
 target_link_libraries(rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(ensemble_tcf_rpmd ensemble_tcf_rpmd.cpp)
 target_link_libraries(ensemble_tcf_rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(scan_potential scan_potential.cpp)
+target_link_libraries(scan_potential tools fftw3 ${ARMADILLO_LIBRARIES})
 
 include_directories("./tools" "./potentials" ${ARMADILLO_INCLUDE_DIRS})
 #add_subdirectory(tools)
