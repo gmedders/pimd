@@ -26,7 +26,7 @@ double surface_hopping::force(size_t ndof, size_t nbead,
     assert(init_pot == true);
     assert(init_hop == true);
 
-    //std::cout << crd[0] << std::endl;
+    //std::cerr << crd[0] << std::endl;
 
     check_allocation(ndof*nbead, fAA);
     double EAA(0);
@@ -40,8 +40,11 @@ double surface_hopping::force(size_t ndof, size_t nbead,
 
     // Determine if the active state should be changed
     double dE = (EBB - EAA) / nbead;
+    double random_number = ((double) rand() / (RAND_MAX));
+    assert(random_number >= 0.0 && random_number <= 1.0);
 
-//    std::cout << EBB << ' ' << EAA << ' ' << hop_probability(dE) << std::endl;
+    //std::cerr << EBB << ' ' << EAA << ' ' << hop_probability(dE)
+    //          << ' ' << random_number << std::endl;
 
     // Set the force and energy to the active state values
     double Eactive;
@@ -53,7 +56,7 @@ double surface_hopping::force(size_t ndof, size_t nbead,
         Eactive = EBB;
     }
 
-    if(hop_probability(dE) > prng.random_double())
+    if(hop_probability(dE) > random_number)
         hop();
 
     return Eactive;
