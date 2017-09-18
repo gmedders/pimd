@@ -5,8 +5,6 @@
 
 #include <armadillo>
 
-#include "mt19937.h"
-
 namespace pot {
 
 struct surface_hopping {
@@ -36,8 +34,6 @@ struct surface_hopping {
 
     void set_active_state(const int);
     void set_hopping_params(double*);
-
-    parts::mt19937 prng;
 
 };
 
