@@ -5,7 +5,7 @@
 
 #include "rpmd-base.h"
 
-#define DO_NHC yes
+//#define DO_NHC yes
 
 #ifdef DO_NHC
 #include "nhc.h"
