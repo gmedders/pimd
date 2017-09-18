@@ -14,6 +14,7 @@ struct double_well : public surface_hopping {
     double w;
     double m;
     double g;
+    double dG;
 
     double a;
 

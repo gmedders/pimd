@@ -25,7 +25,7 @@ double double_well::VBB(const double* crd, double* f)
 {
     double xg = crd[0] - g;
 
-    double e = a * xg * xg;
+    double e = a * xg * xg + dG;
     double dedx = 2.0 * a * xg;
     f[0] = -dedx;
 
@@ -40,6 +40,7 @@ void double_well::set_params(double* params)
     w = params[0];
     m = params[1];
     g = params[2];
+    dG = params[3];
 
     // a = 1/2 m w^2
     a = 0.5 * m * w * w;
