@@ -18,7 +18,7 @@
 namespace {
 
 const double print_time = 1.0; // au
-const double prod_time = 1.0/0.003; // au
+const double prod_time = 60.0/0.0002; // au
 //const double prod_time = 200;
 
 const double tcf_max_time = prod_time;
@@ -82,6 +82,10 @@ int main(int argc, char** argv)
     std::vector<double> time;
     std::vector<double> temp;
 
+    std::vector<double> traj_pos;
+    std::vector<double> traj_temp;
+
+
     for (size_t i = 0; i < nsteps; ++i) {
         double itime = i*dt;
         if (i%nprint == 0 && itime <= tcf_max_time) {
@@ -89,6 +93,9 @@ int main(int argc, char** argv)
             tcf.push_back(0.0);
             time.push_back(itime);
             temp.push_back(0.0);
+
+            traj_pos.push_back(0.0);
+            traj_temp.push_back(0.0);
         }
     }
     const size_t tcf_max_nsteps = time.size();
@@ -137,7 +144,7 @@ int main(int argc, char** argv)
             }
         }
 
-        std::cerr << ntemp << ' ' << std::endl;
+        //std::cerr << ntemp << ' ' << std::endl;
 
         // Now set up this simulation
         
@@ -145,9 +152,16 @@ int main(int argc, char** argv)
         //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_active_state(1);
-        double GammaEl(1.0e-8);
+        double GammaEl(1.0e-3);
         double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);
+
+        //std::ostringstream ss_filename;
+        //ss_filename << "traj_" << ntemp << ".dat";
+        //std::ofstream of_cart_traj;
+        //of_cart_traj.open(ss_filename.str());
+        //of_cart_traj << std::scientific;
+        //of_cart_traj.precision(15);
 
         try {
             //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
@@ -159,15 +173,17 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
-        std::vector<double> traj_pos;
-        std::vector<double> traj_temp;
-
+        size_t count(0);
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
             if (n%nprint == 0) {
-                traj_pos.push_back(sim.avg_cart_pos());
+                traj_pos[count] = sim.avg_cart_pos();
                 //traj_temp.push_back(sim.Ek()*beta);
-                traj_temp.push_back(sim.temp_kT()); // beta
+
+                //of_cart_traj << time[count] << ' ' << sim.m_potential.active_state << ' '
+                //             << sim.avg_cart_pos() << std::endl;
+                traj_temp[count] = sim.m_potential.active_state; // beta
+                ++count;
             }
         }
 

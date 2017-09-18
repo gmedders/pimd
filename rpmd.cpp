@@ -25,9 +25,9 @@
 
 namespace {
 
-const size_t print_time = 100; // au
+const size_t print_time = 1000; // au
 const size_t equil_time = 100000;
-const size_t prod_time = 100000;
+const size_t prod_time = 1000000;
 //const double prod_time = 60/0.003; // au
 
 //const size_t print_time = 20; // au
