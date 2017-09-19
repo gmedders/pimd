@@ -2,8 +2,11 @@
 #define SIM_CLASSES_H
 
 #include "pimd-base.h"
+
 #include "rpmd-base.h"
 #include "rpmd-nhc.h"
+#include "rpmd-pile.h"
+
 #include "vv-base.h"
 
 #include "sho.h"
@@ -97,7 +100,8 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 
 //struct rpmd : public parts::rpmd_base {
-struct rpmd : public parts::rpmd_nhc {
+//struct rpmd : public parts::rpmd_nhc {
+struct rpmd : public parts::rpmd_pile {
 
     void set_up_new_init_cond(const size_t, const size_t, const size_t,
                               const double, const double);
