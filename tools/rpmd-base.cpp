@@ -5,32 +5,9 @@
 
 #include "rpmd-base.h"
 
-//#define DO_NHC yes
-
-#ifdef DO_NHC
-#include "nhc.h"
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace parts {
-
-//----------------------------------------------------------------------------//
-
-rpmd_base::rpmd_base()
-: rpmd_necklace()
-{
-    m_thermostats = 0;
-}
-
-//----------------------------------------------------------------------------//
-
-rpmd_base::~rpmd_base()
-{
-#ifdef DO_NHC
-    delete[] m_thermostats;
-#endif
-}
 
 //----------------------------------------------------------------------------//
 
@@ -46,11 +23,6 @@ void rpmd_base::init(size_t ndof, size_t nbead,
     m_kT = kT;
     rpmd_necklace::setup(ndof, nbead, 1.0/kT, dt, mass[0]);
 
-#ifdef DO_NHC
-    std::cerr << "<<< Thermostatting >>>" << std::endl;
-    delete[] m_thermostats;
-#endif
-
     // initialize cartesian positions and momenta
     for(size_t n = 0; n < nbeads(); ++n){
         for(size_t i = 0; i < ndofs(); ++i){
@@ -65,23 +37,6 @@ void rpmd_base::init(size_t ndof, size_t nbead,
         m_mass(i) = mass[i];
         m_sqrt_mass(i) = std::sqrt(mass[i]);
     }
-
-#ifdef DO_NHC
-    const size_t th_size = nhc::size(nchain);
-    m_thermostats = new double[ndof*nbead*th_size];
-
-    mt19937 prg(27606);
-
-    m_omega_M = kT/hbar;
-    m_tau = 2*M_PI/m_omega_M;
-
-    for (size_t b = 0; b < nbead; ++b)
-        for (size_t i = 0; i < ndof; ++i) {
-            const size_t j = i + b*ndof;
-            nhc::initialize(nchain,
-                            m_thermostats + th_size*j, m_tau, prg);
-        }
-#endif
 
     // calculate the initial kinetic energy
 
@@ -137,22 +92,6 @@ void rpmd_base::spring_energy()
 void rpmd_base::step(const double& dt)
 {
     const double dt2 = dt/2;
-
-#ifdef DO_NHC
-    const size_t th_size = nhc::size(nchain);
-
-    for (size_t n = 0; n < nbeads(); ++n) {
-        for (size_t i = 0; i < ndofs(); ++i) {
-            const size_t j = n*ndofs() + i;
-            const double mass = m_mass(i);
-            const double Ekin2 = m_mom_cart(i,n)*m_mom_cart(i,n)/mass;
-
-            const double aa = nhc::advance
-                    (nchain, m_thermostats + j*th_size, m_tau, Ekin2/m_kT, dt2);
-            m_mom_cart(i,n) *= aa;
-        }
-    }
-#endif
 
     // Following equations 21-25 of dx.doi.org/10.1063/1.3489925
     // 1. Evolution of RP momenta under Hamiltonian V_{n}[q(t0)] by dt/2
@@ -211,16 +150,7 @@ void rpmd_base::step(const double& dt)
         for (size_t i = 0; i < ndofs(); ++i) {
             double mass = m_mass(i);
             const double Ekin2 = m_mom_cart(i,n)*m_mom_cart(i,n)/mass;
-#ifdef DO_NHC
-            const size_t j = n*ndofs() + i;
-            const double aa = nhc::advance
-                (nchain, m_thermostats + j*th_size, m_tau, Ekin2/m_kT, dt2);
-
-            m_mom_cart(i,n) *= aa;
-            m_Ekin += Ekin2*aa*aa;
-#else
             m_Ekin += Ekin2;
-#endif
         }
     }
 
@@ -233,13 +163,6 @@ void rpmd_base::step(const double& dt)
 double rpmd_base::invariant() const
 {
     double accu(0);
-
-#ifdef DO_NHC
-    const size_t th_size = nhc::size(nchain);
-
-    for (size_t n = 0; n < nbeads()*ndofs(); ++n)
-        accu += nhc::invariant(nchain, m_thermostats + n*th_size, m_tau);
-#endif
 
     // Epot is in kcal/mol already
     return (m_Ekin + m_Espring + m_kT*accu)/engunit + m_Epot_sum;

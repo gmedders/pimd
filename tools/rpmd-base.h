@@ -7,9 +7,6 @@ namespace parts {
 
 struct rpmd_base : public rpmd_necklace {
 
-    rpmd_base();
-    ~rpmd_base();
-
     virtual double force(const size_t, const size_t,
                          const double*, double*) = 0;
 
