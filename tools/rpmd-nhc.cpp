@@ -14,7 +14,7 @@ namespace parts {
 //----------------------------------------------------------------------------//
 
 rpmd_nhc::rpmd_nhc()
-: rpmd_necklace()
+: rpmd_base()
 {
     m_thermostats = 0;
 }
