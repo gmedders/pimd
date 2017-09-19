@@ -22,12 +22,6 @@ struct rpmd_base : public rpmd_necklace {
 
 protected:
     double m_kT;
-    double m_omega_M;
-
-    arma::mat m_phys_mass;
-
-    double m_tau;
-    double* m_thermostats;
 
     double m_Espring;
     double m_Epot_sum;
