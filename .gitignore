@@ -12,3 +12,5 @@ scan_potential
 *.dat*
 *.py
 *.gnu
+*.txt
+*.sh
