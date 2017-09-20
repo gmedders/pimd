@@ -80,10 +80,14 @@ int main(int argc, char** argv)
     std::vector<double> nsamples;
     std::vector<double> tcf;
     std::vector<double> time;
-    std::vector<double> temp;
+
+    std::vector<double> avg_pos;
+    std::vector<double> avg_temp;
+    std::vector<double> avg_state;
 
     std::vector<double> traj_pos;
     std::vector<double> traj_temp;
+    std::vector<double> traj_state;
 
 
     for (size_t i = 0; i < nsteps; ++i) {
@@ -92,10 +96,14 @@ int main(int argc, char** argv)
             nsamples.push_back(0);
             tcf.push_back(0.0);
             time.push_back(itime);
-            temp.push_back(0.0);
+
+            avg_pos.push_back(0.0);
+            avg_temp.push_back(0.0);
+            avg_state.push_back(0.0);
 
             traj_pos.push_back(0.0);
             traj_temp.push_back(0.0);
+            traj_state.push_back(0.0);
         }
     }
     const size_t tcf_max_nsteps = time.size();
@@ -178,11 +186,8 @@ int main(int argc, char** argv)
             sim.step(dt);
             if (n%nprint == 0) {
                 traj_pos[count] = sim.avg_cart_pos();
-                //traj_temp.push_back(sim.Ek()*beta);
-
-                //of_cart_traj << time[count] << ' ' << sim.m_potential.active_state << ' '
-                //             << sim.avg_cart_pos() << std::endl;
-                traj_temp[count] = sim.m_potential.active_state; // beta
+                traj_temp[count] = sim.Ek()*beta; // beta
+                traj_state[count] = sim.m_potential.active_state; // beta
                 ++count;
             }
         }
@@ -202,8 +207,10 @@ int main(int argc, char** argv)
         }
 #endif
         // Accumulate the Average Temperature
-        for (size_t i = 0; i < temp.size(); ++i){
-            temp[i] += traj_temp[i];
+        for (size_t i = 0; i < avg_temp.size(); ++i){
+            avg_pos[i] += traj_pos[i];
+            avg_temp[i] += traj_temp[i];
+            avg_state[i] += traj_state[i];
         }
         ++ntemp;
     }
@@ -214,7 +221,9 @@ int main(int argc, char** argv)
     for (size_t i = 0; i < tcf.size(); ++i){
         std::cout << std::setw(20) << time[i]
 //                  << std::setw(20) << tcf[i]/nsamples[i]
-                  << std::setw(20) << temp[i]/ntemp
+                  << std::setw(20) << avg_state[i]/ntemp
+                  << std::setw(20) << avg_temp[i]/ntemp
+                  << std::setw(20) << avg_pos[i]/ntemp
                   << std::endl;
     }
 
