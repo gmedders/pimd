@@ -12,7 +12,8 @@ struct rpmd_nhc : public rpmd_base {
 
     void init(size_t ndof, size_t nbead,
               const double& kT, const double& dt,
-              const double* mass, const double* cartpos, const double* cartvel);
+              const double* mass, const double* cartpos, const double* cartvel,
+              double dummy);
 
     void step(const double&);
     double invariant() const;

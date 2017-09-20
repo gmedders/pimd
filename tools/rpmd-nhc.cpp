@@ -31,12 +31,12 @@ rpmd_nhc::~rpmd_nhc()
 void rpmd_nhc::init(size_t ndof, size_t nbead,
                      const double& kT, const double& dt,
                      const double* mass, const double* cartpos,
-                     const double* cartvel)
+                     const double* cartvel, double dummy)
 {
 
     // Intialize the RPMD base class
     rpmd_base::init(ndof, nbead, kT, dt,
-                    mass, cartpos, cartvel);
+                    mass, cartpos, cartvel, dummy);
 
     // Now do all the RPMD-NHC specific stuff
 

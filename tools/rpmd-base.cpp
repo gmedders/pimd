@@ -14,7 +14,7 @@ namespace parts {
 void rpmd_base::init(size_t ndof, size_t nbead,
                      const double& kT, const double& dt,
                      const double* mass, const double* cartpos,
-                     const double* cartvel)
+                     const double* cartvel, double dummy)
 {
     assert(ndof > 0 && nbead > 0);
     assert(nbead%2 == 0 || nbead == 1);

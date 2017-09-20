@@ -18,7 +18,7 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
 {
     // Intialize the RPMD base class
     rpmd_base::init(ndof, nbead, kT, dt,
-                    mass, cartpos, cartvel);
+                    mass, cartpos, cartvel, tau);
 
     // Now do all the RPMD-NHC specific stuff
 
@@ -42,7 +42,7 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
 
     prg.seed(19103);
 
-    std::cerr << "<<< Thermostatting ( tau = " << m_tau0 << " ) >>>"<<std::endl;
+    //std::cerr << "<<< Thermostatting ( tau = " << m_tau0 << " ) >>>"<<std::endl;
 }
 
 //----------------------------------------------------------------------------//

@@ -12,7 +12,8 @@ struct rpmd_base : public rpmd_necklace {
 
     void init(size_t ndof, size_t nbead,
               const double& kT, const double& dt,
-              const double* mass, const double* cartpos, const double* cartvel);
+              const double* mass, const double* cartpos, const double* cartvel,
+              double dummy);
 
     void step(const double&);
     void spring_energy();

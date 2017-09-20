@@ -170,7 +170,7 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
     m_potential.set_params(params);
 
-    init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel, 2.7);
+    init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel, 1.0/2.7);
     //init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel);
 
     // clean up
