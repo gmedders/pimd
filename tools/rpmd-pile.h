@@ -3,7 +3,7 @@
 
 #include "rpmd-base.h"
 
-#include "mt19937.h"
+#include "rand_gauss.h"
 
 namespace parts {
 
@@ -21,7 +21,6 @@ struct rpmd_pile : public rpmd_base {
     arma::vec c1;
     arma::vec c2;
 
-    mt19937 prg;
 };
 
 } // namespace parts

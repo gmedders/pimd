@@ -27,7 +27,8 @@ void pimd::dump_1D_frame(std::ofstream& of_traj)
 {
     vel_n2c();
 
-    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << ' '
+            << m_potential.active_state << std::endl;
     for(size_t i = 0; i < m_nbead; ++i) {
         for(size_t j = 0; j < m_ndofs; ++j) {
             of_traj << ' ' << m_pos_cart[i*m_ndofs + j]
@@ -95,7 +96,8 @@ double rpmd::avg_cart_pos(void)
 
 void rpmd::dump_1D_frame(std::ofstream& of_traj)
 {
-    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << ' '
+            << m_potential.active_state << std::endl;
     for(size_t n = 0; n < m_nbead; ++n) {
         for(size_t i = 0; i < m_ndofs; ++i) {
             of_traj << ' ' << m_pos_cart(i,n)
@@ -170,8 +172,7 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
     m_potential.set_params(params);
 
-    init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel, 1.0/2.7);
-    //init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel);
+    init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel, 1.0/gamma);
 
     // clean up
 

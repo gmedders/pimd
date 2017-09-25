@@ -40,8 +40,6 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
         c2(k) = std::sqrt(1.0 - c1(k)*c1(k));
     }
 
-    prg.seed(19103);
-
     //std::cerr << "<<< Thermostatting ( tau = " << m_tau0 << " ) >>>"<<std::endl;
 }
 
@@ -50,14 +48,14 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
 void rpmd_pile::step(const double& dt)
 {
     const double dt2 = dt/2;
-
+    const double sqrt_beta_n = std::sqrt(m_beta_n);
 
     // 1. Advance thermostats dt2
     mom_c2n();
     for (size_t i = 0; i < ndofs(); ++i) {
-        double fac = m_sqrt_mass(i)/m_beta_n;
+        double fac = m_sqrt_mass(i)/sqrt_beta_n;
         for (size_t k = 0; k < nbeads(); ++k) {
-            double rand_gaussian = prg.random_gaussian();
+            double rand_gaussian = randn(0, 1);
             m_mom_nmode(i,k) = m_mom_nmode(i,k)*c1(k)
                              + fac * c2(k) * rand_gaussian;
         }
@@ -70,9 +68,9 @@ void rpmd_pile::step(const double& dt)
     // 3. Advance thermostats final dt2 and recalc KE
     mom_c2n();
     for (size_t i = 0; i < ndofs(); ++i) {
-        double fac = m_sqrt_mass(i)/m_beta_n;
+        double fac = m_sqrt_mass(i)/sqrt_beta_n;
         for (size_t k = 0; k < nbeads(); ++k) {
-            double rand_gaussian = prg.random_gaussian();
+            double rand_gaussian = randn(0, 1);
             m_mom_nmode(i,k) = m_mom_nmode(i,k)*c1(k)
                              + fac * c2(k) * rand_gaussian;
         }

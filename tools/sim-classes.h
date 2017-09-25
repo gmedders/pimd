@@ -100,8 +100,8 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 
 //struct rpmd : public parts::rpmd_base {
-//struct rpmd : public parts::rpmd_nhc {
 struct rpmd : public parts::rpmd_pile {
+//struct rpmd : public parts::rpmd_nhc {
 
     void set_up_new_init_cond(const size_t, const size_t, const size_t,
                               const double, const double);
@@ -123,6 +123,11 @@ struct rpmd : public parts::rpmd_pile {
     potential_type m_potential;
 
 private:
+    //double gamma = 1.0e-300;
+    double gamma = 2.0*omega;
+    //double gamma = 0.8;
+    //double gamma(2.7);
+
     size_t m_natom;
     size_t m_ndim;
     size_t m_ndofs;
