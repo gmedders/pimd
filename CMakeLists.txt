@@ -29,6 +29,12 @@ target_link_libraries(ensemble_tcf_rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
 add_executable(scan_potential scan_potential.cpp)
 target_link_libraries(scan_potential tools fftw3 ${ARMADILLO_LIBRARIES})
 
+add_executable(test-initial-conditions test-initial-conditions.cpp)
+target_link_libraries(test-initial-conditions tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(test-randn test-randn.cpp)
+target_link_libraries(test-randn tools)
+
 include_directories("./tools" "./potentials" ${ARMADILLO_INCLUDE_DIRS})
 #add_subdirectory(tools)
 #
