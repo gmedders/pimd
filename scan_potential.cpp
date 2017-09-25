@@ -15,30 +15,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace {
-
-const double print_time = 1.0; // au
-const double prod_time = 60/0.003; // au
-//const double prod_time = 200;
-
-const double tcf_max_time = prod_time;
-//const double tcf_max_time = 30;
-const double simulation_time = prod_time; // au
-
-void check_parsing(std::istringstream& iss, size_t lineno)
-{
-    if (iss.fail()) {
-        std::ostringstream oss;
-        oss << "failed to parse line " << lineno
-            << " of the input file:" << std::endl << iss.str() << std::endl;
-        throw std::runtime_error(oss.str());
-    }
-}
-
-} // namespace
-
-////////////////////////////////////////////////////////////////////////////////
-
 int main(int argc, char** argv)
 {
     // 1. load the coordinates
@@ -74,7 +50,11 @@ int main(int argc, char** argv)
     for(double x = -100.0; x < 100.0; x += 0.1){
         sim.cart_ptr()[0] = x;
         std::cout << x << ' ';
-        sim.force(1, 1, sim.cart_ptr(), frc);
+        sim.m_potential.set_active_state(0);
+        std::cout << sim.force(1, 1, sim.cart_ptr(), frc) << ' ';
+        sim.m_potential.set_active_state(1);
+        std::cout << sim.force(1, 1, sim.cart_ptr(), frc) << ' ';
+        std::cout << std::endl;
         //sim.m_pos(0) = x;
         //sim.force(1, 1, sim.m_pos.memptr(), frc);
     }

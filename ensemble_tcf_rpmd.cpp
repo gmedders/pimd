@@ -124,8 +124,9 @@ int main(int argc, char** argv)
         size_t nbead;
         size_t ndof;
         double beta;
+        size_t init_active_state;
         std::istringstream iss(line);
-        iss >> nbead >> ndof >> beta;
+        iss >> nbead >> ndof >> beta >> init_active_state;
         check_parsing(iss, lineno);
 
         assert(nbead > 0);
@@ -159,7 +160,7 @@ int main(int argc, char** argv)
         //rpmd sim;
         //parts::vv sim;
         parts::rpmd sim;
-        sim.m_potential.set_active_state(1);
+        sim.m_potential.set_active_state(init_active_state);
         double GammaEl(1.0e-3);
         double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);
@@ -186,8 +187,8 @@ int main(int argc, char** argv)
             sim.step(dt);
             if (n%nprint == 0) {
                 traj_pos[count] = sim.avg_cart_pos();
-                traj_temp[count] = sim.Ek()*beta; // beta
-                traj_state[count] = sim.m_potential.active_state; // beta
+                traj_temp[count] = sim.temp_kT(); // kT
+                traj_state[count] = sim.m_potential.active_state;
                 ++count;
             }
         }
