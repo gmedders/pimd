@@ -13,12 +13,24 @@ pimd::~pimd()
 
 //----------------------------------------------------------------------------//
 
-double pimd::avg_cart_pos(void)
+void pimd::calc_pos_stats(void)
 {
-    double avg(0);
+    assert(m_ndofs == 1);
+
+    m_avg_cart_pos = 0;
     for(size_t i = 0; i < m_nbead; ++i)
-        avg += m_pos_cart[i*m_ndofs];
-    return avg/m_nbead;
+        m_avg_cart_pos += m_pos_cart[i*m_ndofs];
+    m_avg_cart_pos /= m_nbead;
+
+    m_linf_cart_pos = 0;
+    m_l2_cart_pos = 0;
+    for(size_t i = 0; i < m_nbead; ++i){
+        double diff = m_pos_cart[i*m_ndofs] - m_avg_cart_pos;
+        if(diff > m_linf_cart_pos)
+            m_linf_cart_pos = diff;
+        m_l2_cart_pos += std::abs(diff);
+    }
+    m_l2_cart_pos = m_l2_cart_pos/m_nbead;
 }
 
 //----------------------------------------------------------------------------//
@@ -84,12 +96,24 @@ double pimd::force(const size_t ndofs, const size_t nbead,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-double rpmd::avg_cart_pos(void)
+void rpmd::calc_pos_stats(void)
 {
-    double avg(0);
+    assert(m_ndofs == 1);
+
+    m_avg_cart_pos = 0;
     for(size_t i = 0; i < m_nbead; ++i)
-        avg += m_pos_cart[i*m_ndofs];
-    return avg/m_nbead;
+        m_avg_cart_pos += m_pos_cart[i*m_ndofs];
+    m_avg_cart_pos /= m_nbead;
+
+    m_linf_cart_pos = 0;
+    m_l2_cart_pos = 0;
+    for(size_t i = 0; i < m_nbead; ++i){
+        double diff = m_pos_cart[i*m_ndofs] - m_avg_cart_pos;
+        if(diff > m_linf_cart_pos)
+            m_linf_cart_pos = diff;
+        m_l2_cart_pos += std::abs(diff);
+    }
+    m_l2_cart_pos = m_l2_cart_pos/m_nbead;
 }
 
 //----------------------------------------------------------------------------//
@@ -189,9 +213,13 @@ double rpmd::force(const size_t ndofs, const size_t nbead,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-double vv::avg_cart_pos(void)
+void vv::calc_pos_stats(void)
 {
-    return m_pos[0];
+    assert(m_ndofs == 1);
+
+    m_avg_cart_pos = m_pos[0];
+    m_linf_cart_pos = 0;
+    m_l2_cart_pos = 0;
 }
 
 //----------------------------------------------------------------------------//

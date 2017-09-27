@@ -33,14 +33,26 @@ static double params[] = {omega, atm_mass};
 #if 1
 // DOUBLE WELL
 typedef pot::double_well potential_type;
-//static double omega(2.0e-4); // omega
+//static double omega(1.25e-4); // omega
 //static double atm_mass(2000); // au
-//static double bb_x0(21.795);
-//static double dG(0.0);
-static double omega(2.0e-4); // omega
+//static double bb_x0(20.6097);
+//static double dG(-0.0038);
+//
+//static double omega(0.001); // omega
+//static double atm_mass(2000); // au
+//static double bb_x0(3.1);
+//static double dG(-0.004);
+//
+//static double omega(0.0009765625); // omega
+//static double atm_mass(2000); // au
+//static double bb_x0(3.9);
+//static double dG(-0.003906252);
+//
+static double omega(0.006132813); // omega
 static double atm_mass(2000); // au
-static double bb_x0(20.6097);
-static double dG(-0.0038);
+static double bb_x0(0.62);
+static double dG(-0.003906252);
+//
 static double params[] = {omega, atm_mass, bb_x0, dG};
 #endif
 
@@ -80,7 +92,10 @@ struct pimd : public parts::pimd_base {
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin_fict; }
     inline double temp_kT() const { return m_temp_kT; }
-    double avg_cart_pos(void);
+    double avg_cart_pos() const { return m_avg_cart_pos; };
+    double l2_cart_pos() const { return m_l2_cart_pos; };
+    double linf_cart_pos() const { return m_linf_cart_pos; };
+    void calc_pos_stats(void);
 
     void dump_1D_frame(std::ofstream&);
 
@@ -93,6 +108,10 @@ private:
     size_t m_nbead;
 
     double m_beta;
+
+    double m_avg_cart_pos;
+    double m_l2_cart_pos;
+    double m_linf_cart_pos;
 
     double* pos;
 };
@@ -116,7 +135,10 @@ struct rpmd : public parts::rpmd_pile {
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin; }
     inline double temp_kT() const { return m_temp_kT; }
-    double avg_cart_pos(void);
+    double avg_cart_pos() const { return m_avg_cart_pos; };
+    double l2_cart_pos() const { return m_l2_cart_pos; };
+    double linf_cart_pos() const { return m_linf_cart_pos; };
+    void calc_pos_stats(void);
 
     void dump_1D_frame(std::ofstream&);
 
@@ -127,6 +149,10 @@ private:
     double gamma = 2.0*omega;
     //double gamma = 0.8;
     //double gamma(2.7);
+
+    double m_avg_cart_pos;
+    double m_l2_cart_pos;
+    double m_linf_cart_pos;
 
     size_t m_natom;
     size_t m_ndim;
@@ -151,11 +177,18 @@ struct vv : public parts::vv_base {
     inline double Ep() const { return m_Epot; }
     inline double Ek() const { return m_Ekin; }
     inline double temp_kT() const { return m_temp_kT; }
-    double avg_cart_pos(void);
+    double avg_cart_pos() const { return m_avg_cart_pos; };
+    double l2_cart_pos() const { return m_l2_cart_pos; };
+    double linf_cart_pos() const { return m_linf_cart_pos; };
+    void calc_pos_stats(void);
 
     potential_type m_potential;
 
 private:
+    double m_avg_cart_pos;
+    double m_l2_cart_pos;
+    double m_linf_cart_pos;
+
     size_t m_natom;
     size_t m_ndim;
     size_t m_ndofs;
