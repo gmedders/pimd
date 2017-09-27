@@ -19,7 +19,7 @@ namespace {
 
     const double r_min = -50;
     const double r_max = 50;
-    const double dr = 0.1;
+    const double dr = 0.01;
 
 void check_parsing(std::istringstream& iss, size_t lineno)
 {
