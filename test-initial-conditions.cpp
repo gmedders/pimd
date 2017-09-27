@@ -17,8 +17,8 @@
 
 namespace {
 
-const double print_time = 0.05/0.0002; // au
-const double prod_time = 60.0/0.0002; // au
+const double print_time = 1.0; // au
+const double prod_time = 300.0/0.0002; // au
 //const double prod_time = 200;
 
 const double tcf_max_time = prod_time;
@@ -67,11 +67,6 @@ int main(int argc, char** argv)
         assert(dt > 0.0);
     }
 
-    std::cout << "# w  = " << parts::omega << std::endl;
-    std::cout << "# m  = " << parts::atm_mass << std::endl;
-    std::cout << "# g  = " << parts::bb_x0 << std::endl;
-    std::cout << "# dG = " << parts::dG << std::endl;
-
     const size_t nsteps = int(simulation_time / dt);
     const size_t nprint = int(print_time / dt);
 
@@ -87,14 +82,10 @@ int main(int argc, char** argv)
     std::vector<double> time;
 
     std::vector<double> avg_pos;
-    std::vector<double> avg_pos_l2;
-    std::vector<double> avg_pos_linf;
     std::vector<double> avg_temp;
     std::vector<double> avg_state;
 
     std::vector<double> traj_pos;
-    std::vector<double> traj_pos_l2;
-    std::vector<double> traj_pos_linf;
     std::vector<double> traj_temp;
     std::vector<double> traj_state;
 
@@ -107,14 +98,10 @@ int main(int argc, char** argv)
             time.push_back(itime);
 
             avg_pos.push_back(0.0);
-            avg_pos_l2.push_back(0.0);
-            avg_pos_linf.push_back(0.0);
             avg_temp.push_back(0.0);
             avg_state.push_back(0.0);
 
             traj_pos.push_back(0.0);
-            traj_pos_l2.push_back(0.0);
-            traj_pos_linf.push_back(0.0);
             traj_temp.push_back(0.0);
             traj_state.push_back(0.0);
         }
@@ -195,59 +182,9 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
-        size_t count(0);
-        for (size_t n = 0; n < nsteps; ++n) {
-            sim.step(dt);
-            if (n%nprint == 0) {
-                sim.calc_pos_stats();
-                traj_pos[count] = sim.avg_cart_pos();
-                traj_pos_l2[count] = sim.l2_cart_pos();
-                traj_pos_linf[count] = sim.linf_cart_pos();
-                traj_temp[count] = sim.temp_kT(); // kT
-                traj_state[count] = sim.m_potential.active_state;
-                ++count;
-            }
-        }
+        std::cout << sim.avg_cart_pos() << std::endl;
 
-#if 0
-        // Accumulate the TCF
-        for (size_t i = 0; i < traj_pos.size(); ++i){
-            for (size_t j = i; (j < traj_pos.size())
-                            && ((j - i) < tcf_max_nsteps); ++j)
-            {
-
-                size_t delta = j - i;
-                nsamples[delta] += 1.0;
-
-                tcf[delta] += traj_pos[i] * traj_pos[j];
-            }
-        }
-#endif
-        // Accumulate the Average Temperature
-        for (size_t i = 0; i < avg_temp.size(); ++i){
-            avg_pos[i] += traj_pos[i];
-            avg_pos_l2[i] += traj_pos_l2[i];
-            avg_pos_linf[i] += traj_pos_linf[i];
-            avg_temp[i] += traj_temp[i];
-            avg_state[i] += traj_state[i];
-        }
-        ++ntemp;
     }
-
-    // Finally, print the results
-    std::cout << std::scientific;
-    std::cout.precision(10);
-    for (size_t i = 0; i < tcf.size(); ++i){
-        std::cout << std::setw(20) << time[i]
-//                  << std::setw(20) << tcf[i]/nsamples[i]
-                  << std::setw(20) << avg_state[i]/ntemp
-                  << std::setw(20) << avg_temp[i]/ntemp
-                  << std::setw(20) << avg_pos[i]/ntemp
-                  << std::setw(20) << avg_pos_l2[i]/ntemp
-                  << std::setw(20) << avg_pos_linf[i]/ntemp
-                  << std::endl;
-    }
-
 
     ifs.close();
 

@@ -7,15 +7,13 @@ namespace parts {
 
 struct rpmd_base : public rpmd_necklace {
 
-    rpmd_base();
-    ~rpmd_base();
-
     virtual double force(const size_t, const size_t,
                          const double*, double*) = 0;
 
     void init(size_t ndof, size_t nbead,
               const double& kT, const double& dt,
-              const double* mass, const double* cartpos, const double* cartvel);
+              const double* mass, const double* cartpos, const double* cartvel,
+              double dummy);
 
     void step(const double&);
     void spring_energy();
@@ -25,12 +23,6 @@ struct rpmd_base : public rpmd_necklace {
 
 protected:
     double m_kT;
-    double m_omega_M;
-
-    arma::mat m_phys_mass;
-
-    double m_tau;
-    double* m_thermostats;
 
     double m_Espring;
     double m_Epot_sum;

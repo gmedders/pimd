@@ -25,9 +25,12 @@
 
 namespace {
 
+//const size_t print_time = 100; // au
+//const size_t equil_time = 100000;
+//const size_t prod_time = 100000;
 const size_t print_time = 100; // au
-const size_t equil_time = 100000;
-const size_t prod_time = 100000;
+const size_t equil_time = 5000000;
+const size_t prod_time = 10000000;
 const size_t simulation_time = equil_time + prod_time; // au
 
 } // namespace
@@ -83,7 +86,7 @@ int main(int argc, char** argv)
 
     //pimd sim;
     parts::pimd sim;
-    sim.m_potential.set_active_state(1);
+    sim.m_potential.set_active_state(0);
     double GammaEl(0.0);
     double hop_params[] = {GammaEl, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);

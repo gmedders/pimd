@@ -8,6 +8,9 @@ pimd
 rpmd
 ensemble_tcf_rpmd
 scan_potential
+test-initial-conditions
+test-randn
+rdf
 *.dSYM
 *.dat*
 *.py

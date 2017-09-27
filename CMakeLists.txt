@@ -3,8 +3,8 @@ project (Tutorial)
 
 #SET(CMAKE_CXX_COMPILER /usr/local/bin/g++-7)
 
-SET(GCC_COVERAGE_COMPILE_FLAGS "--std=c++11")
-SET(GCC_COVERAGE_LINK_FLAGS    "--std=c++11")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-g --std=c++11")
+SET(GCC_COVERAGE_LINK_FLAGS    "-g --std=c++11")
 
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
@@ -28,6 +28,15 @@ target_link_libraries(ensemble_tcf_rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
 
 add_executable(scan_potential scan_potential.cpp)
 target_link_libraries(scan_potential tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(rdf rdf.cpp)
+target_link_libraries(rdf tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(test-initial-conditions test-initial-conditions.cpp)
+target_link_libraries(test-initial-conditions tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(test-randn test-randn.cpp)
+target_link_libraries(test-randn tools)
 
 include_directories("./tools" "./potentials" ${ARMADILLO_INCLUDE_DIRS})
 #add_subdirectory(tools)

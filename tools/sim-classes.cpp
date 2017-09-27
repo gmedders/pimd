@@ -13,12 +13,24 @@ pimd::~pimd()
 
 //----------------------------------------------------------------------------//
 
-double pimd::avg_cart_pos(void)
+void pimd::calc_pos_stats(void)
 {
-    double avg(0);
+    assert(m_ndofs == 1);
+
+    m_avg_cart_pos = 0;
     for(size_t i = 0; i < m_nbead; ++i)
-        avg += m_pos_cart[i*m_ndofs];
-    return avg/m_nbead;
+        m_avg_cart_pos += m_pos_cart[i*m_ndofs];
+    m_avg_cart_pos /= m_nbead;
+
+    m_linf_cart_pos = 0;
+    m_l2_cart_pos = 0;
+    for(size_t i = 0; i < m_nbead; ++i){
+        double diff = m_pos_cart[i*m_ndofs] - m_avg_cart_pos;
+        if(diff > m_linf_cart_pos)
+            m_linf_cart_pos = diff;
+        m_l2_cart_pos += std::abs(diff);
+    }
+    m_l2_cart_pos = m_l2_cart_pos/m_nbead;
 }
 
 //----------------------------------------------------------------------------//
@@ -27,7 +39,8 @@ void pimd::dump_1D_frame(std::ofstream& of_traj)
 {
     vel_n2c();
 
-    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << ' '
+            << m_potential.active_state << std::endl;
     for(size_t i = 0; i < m_nbead; ++i) {
         for(size_t j = 0; j < m_ndofs; ++j) {
             of_traj << ' ' << m_pos_cart[i*m_ndofs + j]
@@ -83,19 +96,32 @@ double pimd::force(const size_t ndofs, const size_t nbead,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-double rpmd::avg_cart_pos(void)
+void rpmd::calc_pos_stats(void)
 {
-    double avg(0);
+    assert(m_ndofs == 1);
+
+    m_avg_cart_pos = 0;
     for(size_t i = 0; i < m_nbead; ++i)
-        avg += m_pos_cart[i*m_ndofs];
-    return avg/m_nbead;
+        m_avg_cart_pos += m_pos_cart[i*m_ndofs];
+    m_avg_cart_pos /= m_nbead;
+
+    m_linf_cart_pos = 0;
+    m_l2_cart_pos = 0;
+    for(size_t i = 0; i < m_nbead; ++i){
+        double diff = m_pos_cart[i*m_ndofs] - m_avg_cart_pos;
+        if(diff > m_linf_cart_pos)
+            m_linf_cart_pos = diff;
+        m_l2_cart_pos += std::abs(diff);
+    }
+    m_l2_cart_pos = m_l2_cart_pos/m_nbead;
 }
 
 //----------------------------------------------------------------------------//
 
 void rpmd::dump_1D_frame(std::ofstream& of_traj)
 {
-    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << ' '
+            << m_potential.active_state << std::endl;
     for(size_t n = 0; n < m_nbead; ++n) {
         for(size_t i = 0; i < m_ndofs; ++i) {
             of_traj << ' ' << m_pos_cart(i,n)
@@ -170,7 +196,7 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
     m_potential.set_params(params);
 
-    init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel);
+    init(m_ndofs, nbead, 1.0/beta, dt, mass, pos, vel, 1.0/gamma);
 
     // clean up
 
@@ -187,9 +213,13 @@ double rpmd::force(const size_t ndofs, const size_t nbead,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-double vv::avg_cart_pos(void)
+void vv::calc_pos_stats(void)
 {
-    return m_pos[0];
+    assert(m_ndofs == 1);
+
+    m_avg_cart_pos = m_pos[0];
+    m_linf_cart_pos = 0;
+    m_l2_cart_pos = 0;
 }
 
 //----------------------------------------------------------------------------//
