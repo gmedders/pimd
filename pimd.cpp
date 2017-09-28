@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
     //pimd sim;
     parts::pimd sim;
-    sim.m_potential.set_active_state(0);
+    sim.m_potential.set_all_bead_states(0, nbead);
     double GammaEl(0.0);
     double hop_params[] = {GammaEl, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);

@@ -124,9 +124,8 @@ int main(int argc, char** argv)
         size_t nbead;
         size_t ndof;
         double beta;
-        size_t init_active_state;
         std::istringstream iss(line);
-        iss >> nbead >> ndof >> beta >> init_active_state;
+        iss >> nbead >> ndof >> beta;
         check_parsing(iss, lineno);
 
         assert(nbead > 0);
@@ -136,6 +135,7 @@ int main(int argc, char** argv)
         // Next NBead lines: q1 v1 q2 v2
         std::vector<double> all_bead_crd;
         std::vector<double> all_bead_vel;
+        std::vector<int> init_active_state;
 
         for(size_t n = 0; n < nbead; ++n){
             std::string line;
@@ -143,14 +143,18 @@ int main(int argc, char** argv)
             ++lineno;
             std::istringstream iss(line);
 
+             int this_state;
+             iss >> this_state;
+             init_active_state.push_back(this_state);
+
             for(size_t i = 0; i < ndof; ++i){
                 double q;
                 double v;
                 iss >> q >> v;
-                check_parsing(iss, lineno);
                 all_bead_crd.push_back(q);
                 all_bead_vel.push_back(v);
             }
+            check_parsing(iss, lineno);
         }
 
         //std::cerr << ntemp << ' ' << std::endl;
@@ -160,7 +164,7 @@ int main(int argc, char** argv)
         //rpmd sim;
         //parts::vv sim;
         parts::rpmd sim;
-        sim.m_potential.set_active_state(init_active_state);
+        sim.m_potential.set_individual_bead_states(init_active_state);
         double GammaEl(1.0e-3);
         double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);

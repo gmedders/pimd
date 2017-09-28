@@ -22,15 +22,18 @@ void pimd::calc_pos_stats(void)
         m_avg_cart_pos += m_pos_cart[i*m_ndofs];
     m_avg_cart_pos /= m_nbead;
 
-    m_linf_cart_pos = 0;
-    m_l2_cart_pos = 0;
+    m_Linf_cart_pos = 0;
+    m_L2_cart_pos = 0;
+    m_L1_cart_pos = 0;
     for(size_t i = 0; i < m_nbead; ++i){
         double diff = m_pos_cart[i*m_ndofs] - m_avg_cart_pos;
-        if(diff > m_linf_cart_pos)
-            m_linf_cart_pos = diff;
-        m_l2_cart_pos += std::abs(diff);
+        if(diff > m_Linf_cart_pos)
+            m_Linf_cart_pos = diff;
+        m_L1_cart_pos += std::abs(diff);
+        m_L2_cart_pos += diff*diff;
     }
-    m_l2_cart_pos = m_l2_cart_pos/m_nbead;
+    m_L2_cart_pos = std::sqrt(m_L2_cart_pos)/m_nbead;
+    m_L1_cart_pos = m_L1_cart_pos/m_nbead;
 }
 
 //----------------------------------------------------------------------------//
@@ -39,9 +42,9 @@ void pimd::dump_1D_frame(std::ofstream& of_traj)
 {
     vel_n2c();
 
-    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << ' '
-            << m_potential.active_state << std::endl;
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
     for(size_t i = 0; i < m_nbead; ++i) {
+        of_traj << m_potential.state_id[i] << ' ';
         for(size_t j = 0; j < m_ndofs; ++j) {
             of_traj << ' ' << m_pos_cart[i*m_ndofs + j]
                     << ' ' << m_vel_cart[i*m_ndofs + j];
@@ -105,24 +108,27 @@ void rpmd::calc_pos_stats(void)
         m_avg_cart_pos += m_pos_cart[i*m_ndofs];
     m_avg_cart_pos /= m_nbead;
 
-    m_linf_cart_pos = 0;
-    m_l2_cart_pos = 0;
+    m_Linf_cart_pos = 0;
+    m_L2_cart_pos = 0;
+    m_L1_cart_pos = 0;
     for(size_t i = 0; i < m_nbead; ++i){
         double diff = m_pos_cart[i*m_ndofs] - m_avg_cart_pos;
-        if(diff > m_linf_cart_pos)
-            m_linf_cart_pos = diff;
-        m_l2_cart_pos += std::abs(diff);
+        if(diff > m_Linf_cart_pos)
+            m_Linf_cart_pos = diff;
+        m_L1_cart_pos += std::abs(diff);
+        m_L2_cart_pos += diff*diff;
     }
-    m_l2_cart_pos = m_l2_cart_pos/m_nbead;
+    m_L2_cart_pos = std::sqrt(m_L2_cart_pos)/m_nbead;
+    m_L1_cart_pos = m_L1_cart_pos/m_nbead;
 }
 
 //----------------------------------------------------------------------------//
 
 void rpmd::dump_1D_frame(std::ofstream& of_traj)
 {
-    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << ' '
-            << m_potential.active_state << std::endl;
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
     for(size_t n = 0; n < m_nbead; ++n) {
+        of_traj << m_potential.state_id[n] << ' ';
         for(size_t i = 0; i < m_ndofs; ++i) {
             of_traj << ' ' << m_pos_cart(i,n)
                     << ' ' << m_mom_cart(i,n)/m_mass(i);
@@ -218,8 +224,9 @@ void vv::calc_pos_stats(void)
     assert(m_ndofs == 1);
 
     m_avg_cart_pos = m_pos[0];
-    m_linf_cart_pos = 0;
-    m_l2_cart_pos = 0;
+    m_Linf_cart_pos = 0;
+    m_L2_cart_pos = 0;
+    m_L1_cart_pos = 0;
 }
 
 //----------------------------------------------------------------------------//

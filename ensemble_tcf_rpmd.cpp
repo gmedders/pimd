@@ -86,17 +86,19 @@ int main(int argc, char** argv)
     std::vector<double> tcf;
     std::vector<double> time;
 
-    std::vector<double> avg_pos;
-    std::vector<double> avg_pos_l2;
-    std::vector<double> avg_pos_linf;
-    std::vector<double> avg_temp;
-    std::vector<double> avg_state;
+    std::vector<double> sum_pos;
+    std::vector<double> sum_pos_L1;
+    std::vector<double> sum_pos_L2;
+    std::vector<double> sum_pos_Linf;
+    std::vector<double> sum_temp;
+    std::vector<double> sum_state;
 
     std::vector<double> traj_pos;
-    std::vector<double> traj_pos_l2;
-    std::vector<double> traj_pos_linf;
+    std::vector<double> traj_pos_L1;
+    std::vector<double> traj_pos_L2;
+    std::vector<double> traj_pos_Linf;
     std::vector<double> traj_temp;
-    std::vector<double> traj_state;
+    std::vector<double> traj_sum_state;
 
 
     for (size_t i = 0; i < nsteps; ++i) {
@@ -106,17 +108,19 @@ int main(int argc, char** argv)
             tcf.push_back(0.0);
             time.push_back(itime);
 
-            avg_pos.push_back(0.0);
-            avg_pos_l2.push_back(0.0);
-            avg_pos_linf.push_back(0.0);
-            avg_temp.push_back(0.0);
-            avg_state.push_back(0.0);
+            sum_pos.push_back(0.0);
+            sum_pos_L1.push_back(0.0);
+            sum_pos_L2.push_back(0.0);
+            sum_pos_Linf.push_back(0.0);
+            sum_temp.push_back(0.0);
+            sum_state.push_back(0.0);
 
             traj_pos.push_back(0.0);
-            traj_pos_l2.push_back(0.0);
-            traj_pos_linf.push_back(0.0);
+            traj_pos_L1.push_back(0.0);
+            traj_pos_L2.push_back(0.0);
+            traj_pos_Linf.push_back(0.0);
             traj_temp.push_back(0.0);
-            traj_state.push_back(0.0);
+            traj_sum_state.push_back(0.0);
         }
     }
     const size_t tcf_max_nsteps = time.size();
@@ -137,9 +141,8 @@ int main(int argc, char** argv)
         size_t nbead;
         size_t ndof;
         double beta;
-        size_t init_active_state;
         std::istringstream iss(line);
-        iss >> nbead >> ndof >> beta >> init_active_state;
+        iss >> nbead >> ndof >> beta;
         check_parsing(iss, lineno);
 
         assert(nbead > 0);
@@ -149,6 +152,7 @@ int main(int argc, char** argv)
         // Next NBead lines: q1 v1 q2 v2
         std::vector<double> all_bead_crd;
         std::vector<double> all_bead_vel;
+        std::vector<int> init_active_state;
 
         for(size_t n = 0; n < nbead; ++n){
             std::string line;
@@ -156,14 +160,18 @@ int main(int argc, char** argv)
             ++lineno;
             std::istringstream iss(line);
 
+            int this_state;
+            iss >> this_state;
+            init_active_state.push_back(this_state);
+
             for(size_t i = 0; i < ndof; ++i){
                 double q;
                 double v;
                 iss >> q >> v;
-                check_parsing(iss, lineno);
                 all_bead_crd.push_back(q);
                 all_bead_vel.push_back(v);
             }
+            check_parsing(iss, lineno);
         }
 
         //std::cerr << ntemp << ' ' << std::endl;
@@ -173,7 +181,7 @@ int main(int argc, char** argv)
         //rpmd sim;
         //parts::vv sim;
         parts::rpmd sim;
-        sim.m_potential.set_active_state(init_active_state);
+        sim.m_potential.set_individual_bead_states(init_active_state);
         double GammaEl(1.0e-3);
         double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);
@@ -201,10 +209,11 @@ int main(int argc, char** argv)
             if (n%nprint == 0) {
                 sim.calc_pos_stats();
                 traj_pos[count] = sim.avg_cart_pos();
-                traj_pos_l2[count] = sim.l2_cart_pos();
-                traj_pos_linf[count] = sim.linf_cart_pos();
+                traj_pos_L1[count] = sim.L1_cart_pos();
+                traj_pos_L2[count] = sim.L2_cart_pos();
+                traj_pos_Linf[count] = sim.Linf_cart_pos();
                 traj_temp[count] = sim.temp_kT(); // kT
-                traj_state[count] = sim.m_potential.active_state;
+                traj_sum_state[count] = sim.m_potential.sum_active_state();
                 ++count;
             }
         }
@@ -224,12 +233,13 @@ int main(int argc, char** argv)
         }
 #endif
         // Accumulate the Average Temperature
-        for (size_t i = 0; i < avg_temp.size(); ++i){
-            avg_pos[i] += traj_pos[i];
-            avg_pos_l2[i] += traj_pos_l2[i];
-            avg_pos_linf[i] += traj_pos_linf[i];
-            avg_temp[i] += traj_temp[i];
-            avg_state[i] += traj_state[i];
+        for (size_t i = 0; i < sum_temp.size(); ++i){
+            sum_pos[i] += traj_pos[i];
+            sum_pos_L1[i] += traj_pos_L1[i];
+            sum_pos_L2[i] += traj_pos_L2[i];
+            sum_pos_Linf[i] += traj_pos_Linf[i];
+            sum_temp[i] += traj_temp[i];
+            sum_state[i] += traj_sum_state[i]/nbead;
         }
         ++ntemp;
     }
@@ -240,11 +250,12 @@ int main(int argc, char** argv)
     for (size_t i = 0; i < tcf.size(); ++i){
         std::cout << std::setw(20) << time[i]
 //                  << std::setw(20) << tcf[i]/nsamples[i]
-                  << std::setw(20) << avg_state[i]/ntemp
-                  << std::setw(20) << avg_temp[i]/ntemp
-                  << std::setw(20) << avg_pos[i]/ntemp
-                  << std::setw(20) << avg_pos_l2[i]/ntemp
-                  << std::setw(20) << avg_pos_linf[i]/ntemp
+                  << std::setw(20) << sum_state[i]/ntemp
+                  << std::setw(20) << sum_temp[i]/ntemp
+                  << std::setw(20) << sum_pos[i]/ntemp
+                  << std::setw(20) << sum_pos_L1[i]/ntemp
+                  << std::setw(20) << sum_pos_L2[i]/ntemp
+                  << std::setw(20) << sum_pos_Linf[i]/ntemp
                   << std::endl;
     }
 
