@@ -13,6 +13,7 @@
 
 #include "nhc.h"
 #include "mt19937.h"
+#include "helpers.h"
 
 #include "sim-classes.h"
 
@@ -25,13 +26,13 @@
 
 namespace {
 
-//const size_t print_time = 10000; // au
+const size_t print_time = 10000; // au
 //10000
 //const size_t equil_time = 10000000;
 //const size_t prod_time = 100000000;
 //1000
-//const size_t equil_time = 10000000;
-//const size_t prod_time = 10000000;
+const size_t equil_time = 10000000;
+const size_t prod_time = 10000000;
 //test
 //const size_t equil_time = 0;
 ////const size_t prod_time = 30000000;
@@ -41,9 +42,9 @@ namespace {
 //const size_t equil_time = 5000000;
 //const size_t prod_time = 10000000;
 
-const size_t print_time = 10000000; // au
-const size_t equil_time = 0;
-const size_t prod_time = 20000;
+//const size_t print_time = 10000000; // au
+//const size_t equil_time = 0;
+//const size_t prod_time = 20000;
 
 //const size_t print_time = 50; // au
 //const size_t equil_time = 0;
@@ -61,7 +62,7 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
-    if (argc != 4) {
+    if (argc != 5) {
         std::cerr << "usage: rpmd nbeads beta dt" << std::endl;
         return EXIT_FAILURE;
     }
@@ -69,33 +70,10 @@ int main(int argc, char** argv)
     size_t ndim = 1;
     size_t natom = 1;
 
-    size_t nbead = strtod(argv[1], NULL);
-
-    double beta(1.0);
-    {
-        std::istringstream iss(argv[2]);
-        iss >> beta;
-        if (!iss || !iss.eof()) {
-            std::cerr << "could not convert '" << argv[2]
-                      << "' to real number" << std::endl;
-            return EXIT_FAILURE;
-        }
-
-        assert(beta > 0.0);
-    }
-
-    double dt(1.0);
-    {
-        std::istringstream iss(argv[3]);
-        iss >> dt;
-        if (!iss || !iss.eof()) {
-            std::cerr << "could not convert '" << argv[3]
-                      << "' to real number" << std::endl;
-            return EXIT_FAILURE;
-        }
-
-        assert(dt > 0.0);
-    }
+    int nbead = parts::parse_to_int(argv[1]);
+    double beta = parts::parse_to_double(argv[2]);
+    double dt = parts::parse_to_double(argv[3]);
+    double GammaEl = parts::parse_to_double(argv[4]);
 
     const size_t nsteps = int(simulation_time / dt);
     const size_t nsteps_equil = int(equil_time / dt);
@@ -104,7 +82,6 @@ int main(int argc, char** argv)
     //rpmd sim;
     parts::rpmd sim;
     sim.m_potential.set_all_bead_states(0, nbead);
-    double GammaEl(0.0);
     double hop_params[] = {GammaEl, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);
 

@@ -15,6 +15,8 @@
 #include <iomanip>
 #include <iostream>
 
+#include "helpers.h"
+
 #include "sim-classes.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +65,7 @@ int main(int argc, char** argv)
     //srand(rand_seed[my_rank]);
     srand(time(NULL) + my_rank);
 
-    if (argc != 3) {
+    if (argc != 4) {
         if(my_rank == 0)
             std::cerr << "usage: ensemble_tcf_rpmd input_file dt" << std::endl;
         return EXIT_FAILURE;
@@ -72,18 +74,8 @@ int main(int argc, char** argv)
     size_t ndim = 1;
     size_t natom = 1;
 
-    double dt(1.0);
-    {
-        std::istringstream iss(argv[2]);
-        iss >> dt;
-        if (!iss || !iss.eof()) {
-            std::cerr << "could not convert '" << argv[2]
-                      << "' to real number" << std::endl;
-            return EXIT_FAILURE;
-        }
-
-        assert(dt > 0.0);
-    }
+    double dt = parts::parse_to_double(argv[2]);
+    double GammaEl = parts::parse_to_double(argv[3]);
 
     if(my_rank == 0){
         std::cout << "# w  = " << parts::omega << std::endl;
@@ -216,7 +208,6 @@ int main(int argc, char** argv)
         //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_individual_bead_states(init_active_state);
-        double GammaEl(1.0e-3);
         double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);
 
