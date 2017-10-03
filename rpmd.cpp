@@ -36,14 +36,14 @@ namespace {
 //const size_t equil_time = 0;
 ////const size_t prod_time = 30000000;
 //const size_t prod_time = 20*0.0002;
+//
+//const size_t print_time = 100; // au
+//const size_t equil_time = 5000000;
+//const size_t prod_time = 10000000;
 
-const size_t print_time = 100; // au
-const size_t equil_time = 5000000;
-const size_t prod_time = 10000000;
-
-//const size_t print_time = 1000; // au
-//const size_t equil_time = 0;
-//const size_t prod_time = 5000;
+const size_t print_time = 10000000; // au
+const size_t equil_time = 0;
+const size_t prod_time = 20000;
 
 //const size_t print_time = 50; // au
 //const size_t equil_time = 0;
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 
     //rpmd sim;
     parts::rpmd sim;
-    sim.m_potential.set_active_state(0);
+    sim.m_potential.set_all_bead_states(0, nbead);
     double GammaEl(0.0);
     double hop_params[] = {GammaEl, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
                       << sim.Espring() << ' '
                       << sum_Espring / count << ' '
                       //<< sim.Ek() << ' '
-                      << sim.m_potential.active_state << ' '
+                      << sim.m_potential.avg_active_state() << ' '
                       << sim.Ep() << ' '
                       << sim.temp_kT() << ' '
                       << sim.avg_cart_pos() << std::endl;

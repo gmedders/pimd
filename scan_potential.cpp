@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
     //rpmd sim;
     parts::vv sim;
-    sim.m_potential.set_active_state(1);
+    sim.m_potential.set_all_bead_states(1, nbead);
     double hop_params[] = {0.02, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);
 
@@ -50,9 +50,9 @@ int main(int argc, char** argv)
     for(double x = -100.0; x < 100.0; x += 0.1){
         sim.cart_ptr()[0] = x;
         std::cout << x << ' ';
-        sim.m_potential.set_active_state(0);
+        sim.m_potential.set_all_bead_states(0, nbead);
         std::cout << sim.force(1, 1, sim.cart_ptr(), frc) << ' ';
-        sim.m_potential.set_active_state(1);
+        sim.m_potential.set_all_bead_states(1, nbead);
         std::cout << sim.force(1, 1, sim.cart_ptr(), frc) << ' ';
         std::cout << std::endl;
         //sim.m_pos(0) = x;

@@ -3,13 +3,14 @@ project (Tutorial)
 
 #SET(CMAKE_CXX_COMPILER /usr/local/bin/g++-7)
 
-SET(GCC_COVERAGE_COMPILE_FLAGS "-g --std=c++11")
-SET(GCC_COVERAGE_LINK_FLAGS    "-g --std=c++11")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-g -O3 --std=c++11")
+SET(GCC_COVERAGE_LINK_FLAGS    "-g -O3 --std=c++11")
 
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
 
-file(GLOB tools_sources ./*.cpp ./*/*.cpp)
+file(GLOB tools_sources ./*/*.cpp)
+#file(GLOB tools_sources ./*.cpp ./*/*.cpp)
 set( tools ${tools_sources})
 
 add_library( tools ${tools})

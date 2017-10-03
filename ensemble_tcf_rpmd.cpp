@@ -2,6 +2,10 @@
 #  include "config.h"
 #endif // HAVE_CONFIG_H
 
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 #include <cmath>
 #include <cassert>
 #include <cstdlib>
@@ -16,6 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace {
+
+int my_rank(0), my_size(1);
 
 const double print_time = 0.05/0.0002; // au
 const double prod_time = 60.0/0.0002; // au
@@ -46,8 +52,20 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
+#ifdef ENABLE_MPI
+    MPI_Init(&argc, &argv);
+
+    MPI_Comm_size(MPI_COMM_WORLD, &my_size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+#endif
+
+    //int rand_seed[] = {1507040009, 1507040010, 1507040011, 1507040012};
+    //srand(rand_seed[my_rank]);
+    srand(time(NULL) + my_rank);
+
     if (argc != 3) {
-        std::cerr << "usage: ensemble_tcf_rpmd input_file dt" << std::endl;
+        if(my_rank == 0)
+            std::cerr << "usage: ensemble_tcf_rpmd input_file dt" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -67,10 +85,12 @@ int main(int argc, char** argv)
         assert(dt > 0.0);
     }
 
-    std::cout << "# w  = " << parts::omega << std::endl;
-    std::cout << "# m  = " << parts::atm_mass << std::endl;
-    std::cout << "# g  = " << parts::bb_x0 << std::endl;
-    std::cout << "# dG = " << parts::dG << std::endl;
+    if(my_rank == 0){
+        std::cout << "# w  = " << parts::omega << std::endl;
+        std::cout << "# m  = " << parts::atm_mass << std::endl;
+        std::cout << "# g  = " << parts::bb_x0 << std::endl;
+        std::cout << "# dG = " << parts::dG << std::endl;
+    }
 
     const size_t nsteps = int(simulation_time / dt);
     const size_t nprint = int(print_time / dt);
@@ -86,17 +106,20 @@ int main(int argc, char** argv)
     std::vector<double> tcf;
     std::vector<double> time;
 
-    std::vector<double> avg_pos;
-    std::vector<double> avg_pos_l2;
-    std::vector<double> avg_pos_linf;
-    std::vector<double> avg_temp;
-    std::vector<double> avg_state;
+    std::vector<double> sum_pos;
+    std::vector<double> sum_pos_L1;
+    std::vector<double> sum_pos_L2;
+    std::vector<double> sum_pos_Linf;
+    std::vector<double> sum_temp;
+    std::vector<double> sum_state;
 
     std::vector<double> traj_pos;
-    std::vector<double> traj_pos_l2;
-    std::vector<double> traj_pos_linf;
+    std::vector<double> traj_pos_L1;
+    std::vector<double> traj_pos_L2;
+    std::vector<double> traj_pos_Linf;
     std::vector<double> traj_temp;
-    std::vector<double> traj_state;
+    std::vector<double> traj_temp_count;
+    std::vector<double> traj_sum_state;
 
 
     for (size_t i = 0; i < nsteps; ++i) {
@@ -106,22 +129,25 @@ int main(int argc, char** argv)
             tcf.push_back(0.0);
             time.push_back(itime);
 
-            avg_pos.push_back(0.0);
-            avg_pos_l2.push_back(0.0);
-            avg_pos_linf.push_back(0.0);
-            avg_temp.push_back(0.0);
-            avg_state.push_back(0.0);
+            sum_pos.push_back(0.0);
+            sum_pos_L1.push_back(0.0);
+            sum_pos_L2.push_back(0.0);
+            sum_pos_Linf.push_back(0.0);
+            sum_temp.push_back(0.0);
+            sum_state.push_back(0.0);
 
             traj_pos.push_back(0.0);
-            traj_pos_l2.push_back(0.0);
-            traj_pos_linf.push_back(0.0);
+            traj_pos_L1.push_back(0.0);
+            traj_pos_L2.push_back(0.0);
+            traj_pos_Linf.push_back(0.0);
             traj_temp.push_back(0.0);
-            traj_state.push_back(0.0);
+            traj_temp_count.push_back(0.0);
+            traj_sum_state.push_back(0.0);
         }
     }
     const size_t tcf_max_nsteps = time.size();
 
-    int ntemp(0);
+    int iframe(0);
 
     while(!ifs.eof()){
 
@@ -137,9 +163,8 @@ int main(int argc, char** argv)
         size_t nbead;
         size_t ndof;
         double beta;
-        size_t init_active_state;
         std::istringstream iss(line);
-        iss >> nbead >> ndof >> beta >> init_active_state;
+        iss >> nbead >> ndof >> beta;
         check_parsing(iss, lineno);
 
         assert(nbead > 0);
@@ -149,6 +174,7 @@ int main(int argc, char** argv)
         // Next NBead lines: q1 v1 q2 v2
         std::vector<double> all_bead_crd;
         std::vector<double> all_bead_vel;
+        std::vector<int> init_active_state;
 
         for(size_t n = 0; n < nbead; ++n){
             std::string line;
@@ -156,34 +182,43 @@ int main(int argc, char** argv)
             ++lineno;
             std::istringstream iss(line);
 
+            int this_state;
+            iss >> this_state;
+            init_active_state.push_back(this_state);
+
             for(size_t i = 0; i < ndof; ++i){
                 double q;
                 double v;
                 iss >> q >> v;
-                check_parsing(iss, lineno);
                 all_bead_crd.push_back(q);
                 all_bead_vel.push_back(v);
             }
+            check_parsing(iss, lineno);
         }
 
-        //std::cerr << ntemp << ' ' << std::endl;
+        // Every process reads the entire file, but only run the simulation
+        // if the frame id matches process rank
+        if(iframe % my_size != my_rank){
+            ++iframe;
+            continue;
+        }else{
+            ++iframe;
+        }
+
+
+#ifdef ENABLE_MPI
+        //std::cerr << "Rank " << my_rank << " running frame " << iframe << std::endl;
+#endif
 
         // Now set up this simulation
         
         //rpmd sim;
         //parts::vv sim;
         parts::rpmd sim;
-        sim.m_potential.set_active_state(init_active_state);
+        sim.m_potential.set_individual_bead_states(init_active_state);
         double GammaEl(1.0e-3);
         double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);
-
-        //std::ostringstream ss_filename;
-        //ss_filename << "traj_" << ntemp << ".dat";
-        //std::ofstream of_cart_traj;
-        //of_cart_traj.open(ss_filename.str());
-        //of_cart_traj << std::scientific;
-        //of_cart_traj.precision(15);
 
         try {
             //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
@@ -195,17 +230,37 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
+        //std::fill(traj_temp_count.begin(), traj_temp_count.end(), 0.0);
+
+        //std::ostringstream ss_filename;
+        //ss_filename << "traj_" << iframe << "_proc" << my_rank << ".dat";
+        //std::ofstream of_cart_traj;
+        //of_cart_traj.open(ss_filename.str());
+        //of_cart_traj << std::scientific;
+        //of_cart_traj.precision(15);
+
+        //of_cart_traj << "# " << all_bead_crd[0] << ' ' << all_bead_vel[0]
+        //             << std::endl;
+
         size_t count(0);
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
             if (n%nprint == 0) {
                 sim.calc_pos_stats();
                 traj_pos[count] = sim.avg_cart_pos();
-                traj_pos_l2[count] = sim.l2_cart_pos();
-                traj_pos_linf[count] = sim.linf_cart_pos();
-                traj_temp[count] = sim.temp_kT(); // kT
-                traj_state[count] = sim.m_potential.active_state;
+                traj_pos_L1[count] = sim.L1_cart_pos();
+                traj_pos_L2[count] = sim.L2_cart_pos();
+                traj_pos_Linf[count] = sim.Linf_cart_pos();
+                traj_sum_state[count] = sim.m_potential.sum_active_state();
+
+                //of_cart_traj << time[count] << ' ' << traj_sum_state[count]
+                //    << ' ' << sim.m_potential.prev_rand() <<std::endl;
                 ++count;
+
+                //if(sim.m_potential.sum_active_state() == 0){
+                    traj_temp[count] = sim.temp_kT(); // kT
+                    traj_temp_count[count] += 1.0;
+                //}
             }
         }
 
@@ -224,32 +279,59 @@ int main(int argc, char** argv)
         }
 #endif
         // Accumulate the Average Temperature
-        for (size_t i = 0; i < avg_temp.size(); ++i){
-            avg_pos[i] += traj_pos[i];
-            avg_pos_l2[i] += traj_pos_l2[i];
-            avg_pos_linf[i] += traj_pos_linf[i];
-            avg_temp[i] += traj_temp[i];
-            avg_state[i] += traj_state[i];
+        for (size_t i = 0; i < sum_temp.size(); ++i){
+            sum_pos[i] += traj_pos[i];
+            sum_pos_L1[i] += traj_pos_L1[i];
+            sum_pos_L2[i] += traj_pos_L2[i];
+            sum_pos_Linf[i] += traj_pos_Linf[i];
+            sum_temp[i] += traj_temp[i];
+            sum_state[i] += traj_sum_state[i]/nbead;
+            //std::cerr << time[i] << ' ' << sum_state[i]/iframe << std::endl;
         }
-        ++ntemp;
     }
 
-    // Finally, print the results
-    std::cout << std::scientific;
-    std::cout.precision(10);
-    for (size_t i = 0; i < tcf.size(); ++i){
-        std::cout << std::setw(20) << time[i]
-//                  << std::setw(20) << tcf[i]/nsamples[i]
-                  << std::setw(20) << avg_state[i]/ntemp
-                  << std::setw(20) << avg_temp[i]/ntemp
-                  << std::setw(20) << avg_pos[i]/ntemp
-                  << std::setw(20) << avg_pos_l2[i]/ntemp
-                  << std::setw(20) << avg_pos_linf[i]/ntemp
-                  << std::endl;
-    }
+#ifdef ENABLE_MPI
+    MPI_Allreduce(MPI_IN_PLACE, &sum_state[0], sum_state.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &sum_temp[0], sum_temp.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &sum_pos[0], sum_pos.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &sum_pos_L1[0], sum_pos_L1.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &sum_pos_L2[0], sum_pos_L2.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &sum_pos_Linf[0], sum_pos_Linf.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &traj_temp_count[0], traj_temp_count.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+#endif
 
+    if(my_rank == 0){
+        // Finally, print the results
+        std::cout << std::scientific;
+        std::cout.precision(10);
+        for (size_t i = 0; i < tcf.size(); ++i){
+            std::cout << std::setw(20) << time[i]
+                //                  << std::setw(20) << tcf[i]/nsamples[i]
+                << std::setw(20) << sum_state[i]/iframe
+                << std::setw(20) << sum_temp[i]/traj_temp_count[i]
+                << std::setw(20) << traj_temp_count[i]
+                //<< std::setw(20) << sum_temp[i]/iframe
+                << std::setw(20) << sum_pos[i]/iframe
+                << std::setw(20) << sum_pos_L1[i]/iframe
+                << std::setw(20) << sum_pos_L2[i]/iframe
+                << std::setw(20) << sum_pos_Linf[i]/iframe
+                << std::endl;
+        }
+    }
 
     ifs.close();
+
+#ifdef ENABLE_MPI
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Finalize();
+#endif
 
     return EXIT_SUCCESS;
 }

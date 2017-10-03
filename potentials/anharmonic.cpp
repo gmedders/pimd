@@ -8,7 +8,7 @@
 
 namespace pot {
 
-void anharmonic::set_active_state(const int)
+void anharmonic::set_all_bead_states(const int)
 {
     active_state = -1;
 }

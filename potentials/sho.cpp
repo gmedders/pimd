@@ -7,7 +7,7 @@
 namespace pot {
 
 
-void sho::set_active_state(const int)
+void sho::set_all_bead_states(const int)
 {
     active_state = -1;
 }
