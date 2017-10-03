@@ -59,6 +59,10 @@ int main(int argc, char** argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 #endif
 
+    //int rand_seed[] = {1507040009, 1507040010, 1507040011, 1507040012};
+    //srand(rand_seed[my_rank]);
+    srand(time(NULL) + my_rank);
+
     if (argc != 3) {
         if(my_rank == 0)
             std::cerr << "usage: ensemble_tcf_rpmd input_file dt" << std::endl;
@@ -203,7 +207,7 @@ int main(int argc, char** argv)
 
 
 #ifdef ENABLE_MPI
-        std::cerr << "Rank " << my_rank << " running frame " << iframe << std::endl;
+        //std::cerr << "Rank " << my_rank << " running frame " << iframe << std::endl;
 #endif
 
         // Now set up this simulation
@@ -215,13 +219,6 @@ int main(int argc, char** argv)
         double GammaEl(1.0e-3);
         double hop_params[] = {GammaEl, dt, beta};
         sim.m_potential.set_hopping_params(hop_params);
-
-        //std::ostringstream ss_filename;
-        //ss_filename << "traj_" << iframe << ".dat";
-        //std::ofstream of_cart_traj;
-        //of_cart_traj.open(ss_filename.str());
-        //of_cart_traj << std::scientific;
-        //of_cart_traj.precision(15);
 
         try {
             //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
@@ -235,6 +232,16 @@ int main(int argc, char** argv)
 
         //std::fill(traj_temp_count.begin(), traj_temp_count.end(), 0.0);
 
+        //std::ostringstream ss_filename;
+        //ss_filename << "traj_" << iframe << "_proc" << my_rank << ".dat";
+        //std::ofstream of_cart_traj;
+        //of_cart_traj.open(ss_filename.str());
+        //of_cart_traj << std::scientific;
+        //of_cart_traj.precision(15);
+
+        //of_cart_traj << "# " << all_bead_crd[0] << ' ' << all_bead_vel[0]
+        //             << std::endl;
+
         size_t count(0);
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
@@ -245,6 +252,9 @@ int main(int argc, char** argv)
                 traj_pos_L2[count] = sim.L2_cart_pos();
                 traj_pos_Linf[count] = sim.Linf_cart_pos();
                 traj_sum_state[count] = sim.m_potential.sum_active_state();
+
+                //of_cart_traj << time[count] << ' ' << traj_sum_state[count]
+                //    << ' ' << sim.m_potential.prev_rand() <<std::endl;
                 ++count;
 
                 //if(sim.m_potential.sum_active_state() == 0){
