@@ -26,7 +26,7 @@ namespace {
 int my_rank(0), my_size(1);
 
 const double print_time = 0.05/0.0002; // au
-const double prod_time = 60.0/0.0002; // au
+const double prod_time = 150.0/0.0002; // au
 //const double prod_time = 200;
 
 const double tcf_max_time = prod_time;
@@ -307,8 +307,6 @@ int main(int argc, char** argv)
                 //                  << std::setw(20) << tcf[i]/nsamples[i]
                 << std::setw(20) << sum_state[i]/iframe
                 << std::setw(20) << sum_temp[i]/traj_temp_count[i]
-                << std::setw(20) << traj_temp_count[i]
-                //<< std::setw(20) << sum_temp[i]/iframe
                 << std::setw(20) << sum_pos[i]/iframe
                 << std::setw(20) << sum_pos_L1[i]/iframe
                 << std::setw(20) << sum_pos_L2[i]/iframe
