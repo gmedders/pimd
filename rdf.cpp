@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
     // 2. iterate
     std::string filename(argv[1]);
-    std::ifstream ifs(filename);
+    std::ifstream ifs(filename.c_str());
 
     size_t lineno(0);
 

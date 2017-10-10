@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     ss_filename << "cart_traj-pimd_" << nbead << '_' << int(beta) << ".dat";
 
     std::ofstream of_cart_traj;
-    of_cart_traj.open(ss_filename.str());
+    of_cart_traj.open(ss_filename.str().c_str());
     of_cart_traj << std::scientific;
     of_cart_traj.precision(15);
 
