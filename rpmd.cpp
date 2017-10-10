@@ -32,7 +32,6 @@ const size_t print_time = 10000; // au
 //const size_t prod_time = 100000000;
 //1000
 const size_t equil_time = 10000000;
-const size_t prod_time = 10000000;
 //test
 //const size_t equil_time = 0;
 ////const size_t prod_time = 30000000;
@@ -49,7 +48,6 @@ const size_t prod_time = 10000000;
 //const size_t print_time = 50; // au
 //const size_t equil_time = 0;
 //const size_t prod_time = 100000;
-const size_t simulation_time = equil_time + prod_time; // au
 
 } // namespace
 
@@ -62,8 +60,8 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
-    if (argc != 5) {
-        std::cerr << "usage: rpmd nbeads beta dt" << std::endl;
+    if (argc != 6) {
+        std::cerr << "usage: rpmd nbeads beta dt Gamma nsamples" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -74,6 +72,13 @@ int main(int argc, char** argv)
     double beta = parts::parse_to_double(argv[2]);
     double dt = parts::parse_to_double(argv[3]);
     double GammaEl = parts::parse_to_double(argv[4]);
+    int nsamples = parts::parse_to_int(argv[5]);
+
+    if(nsamples <= 0)
+        nsamples = 1000;
+
+    const size_t prod_time = print_time*nsamples;
+    const size_t simulation_time = equil_time + prod_time; // au
 
     const size_t nsteps = int(simulation_time / dt);
     const size_t nsteps_equil = int(equil_time / dt);
