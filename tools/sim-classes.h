@@ -33,7 +33,7 @@ static double params[] = {omega, atm_mass};
 #if 1
 // DOUBLE WELL
 typedef pot::double_well potential_type;
-//static double omega(1.25e-4); // omega
+//static double omega(2.0e-4); // omega
 //static double atm_mass(2000); // au
 //static double bb_x0(20.6097);
 //static double dG(-0.0038);
@@ -92,7 +92,7 @@ struct pimd : public parts::pimd_base {
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin_fict; }
     inline double temp_kT() const { return m_temp_kT; }
-    double avg_cart_pos() const { return m_avg_cart_pos; };
+    double avg_cart_pos() { calc_pos_stats(); return m_avg_cart_pos; };
     double L1_cart_pos() const { return m_L1_cart_pos; };
     double L2_cart_pos() const { return m_L2_cart_pos; };
     double Linf_cart_pos() const { return m_Linf_cart_pos; };
@@ -137,7 +137,8 @@ struct rpmd : public parts::rpmd_pile {
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin; }
     inline double temp_kT() const { return m_temp_kT; }
-    double avg_cart_pos() const { return m_avg_cart_pos; };
+    double avg_cart_pos() { calc_pos_stats(); return m_avg_cart_pos; };
+    //double avg_cart_pos() const { return m_avg_cart_pos; };
     double L1_cart_pos() const { return m_L1_cart_pos; };
     double L2_cart_pos() const { return m_L2_cart_pos; };
     double Linf_cart_pos() const { return m_Linf_cart_pos; };
@@ -148,10 +149,8 @@ struct rpmd : public parts::rpmd_pile {
     potential_type m_potential;
 
 private:
-    //double gamma = 1.0e-300;
+    //double gamma = 5.0*2.0*omega;
     double gamma = 2.0*omega;
-    //double gamma = 0.8;
-    //double gamma(2.7);
 
     double m_avg_cart_pos;
     double m_L1_cart_pos;
@@ -181,7 +180,8 @@ struct vv : public parts::vv_base {
     inline double Ep() const { return m_Epot; }
     inline double Ek() const { return m_Ekin; }
     inline double temp_kT() const { return m_temp_kT; }
-    double avg_cart_pos() const { return m_avg_cart_pos; };
+    double avg_cart_pos() { calc_pos_stats(); return m_avg_cart_pos; };
+    //double avg_cart_pos() const { return m_avg_cart_pos; };
     double L1_cart_pos() const { return m_L1_cart_pos; };
     double L2_cart_pos() const { return m_L2_cart_pos; };
     double Linf_cart_pos() const { return m_Linf_cart_pos; };

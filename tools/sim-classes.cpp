@@ -104,15 +104,15 @@ void rpmd::calc_pos_stats(void)
     assert(m_ndofs == 1);
 
     m_avg_cart_pos = 0;
-    for(size_t i = 0; i < m_nbead; ++i)
-        m_avg_cart_pos += m_pos_cart[i*m_ndofs];
+    for(size_t n = 0; n < m_nbead; ++n)
+        m_avg_cart_pos += m_pos_cart(0,n);
     m_avg_cart_pos /= m_nbead;
 
     m_Linf_cart_pos = 0;
     m_L2_cart_pos = 0;
     m_L1_cart_pos = 0;
-    for(size_t i = 0; i < m_nbead; ++i){
-        double diff = m_pos_cart[i*m_ndofs] - m_avg_cart_pos;
+    for(size_t n = 0; n < m_nbead; ++n){
+        double diff = m_pos_cart(0,n) - m_avg_cart_pos;
         if(diff > m_Linf_cart_pos)
             m_Linf_cart_pos = diff;
         m_L1_cart_pos += std::abs(diff);

@@ -25,13 +25,8 @@ namespace {
 
 int my_rank(0), my_size(1);
 
-const double print_time = 0.05/0.0002; // au
-const double prod_time = 150.0/0.0002; // au
-//const double prod_time = 200;
-
-const double tcf_max_time = prod_time;
-//const double tcf_max_time = 30;
-const double simulation_time = prod_time; // au
+//const double print_time = 1.0/0.0002; // au
+//const double prod_time = 10000.0/0.0002; // au
 
 void check_parsing(std::istringstream& iss, size_t lineno)
 {
@@ -65,9 +60,10 @@ int main(int argc, char** argv)
     //srand(rand_seed[my_rank]);
     srand(time(NULL) + my_rank);
 
-    if (argc != 4) {
+    if (argc < 4) {
         if(my_rank == 0)
-            std::cerr << "usage: ensemble_tcf_rpmd input_file dt" << std::endl;
+            std::cerr << "usage: ensemble_tcf_rpmd input_file dt GammaEl time"
+                      << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -77,15 +73,27 @@ int main(int argc, char** argv)
     double dt = parts::parse_to_double(argv[2]);
     double GammaEl = parts::parse_to_double(argv[3]);
 
+
+    double prod_time;
+
+    if(argc == 5){
+        prod_time = parts::parse_to_double(argv[4]);
+    } else {
+        prod_time = 200.0/0.0002; // au
+    }
+
+    const double print_time = prod_time/5000; // au
+    const double tcf_max_time = prod_time;
+
+    size_t nsteps = int(prod_time / dt);
+    size_t nprint = int(print_time / dt);
+
     if(my_rank == 0){
         std::cout << "# w  = " << parts::omega << std::endl;
         std::cout << "# m  = " << parts::atm_mass << std::endl;
         std::cout << "# g  = " << parts::bb_x0 << std::endl;
         std::cout << "# dG = " << parts::dG << std::endl;
     }
-
-    const size_t nsteps = int(simulation_time / dt);
-    const size_t nprint = int(print_time / dt);
 
     // 2. iterate
     std::string filename(argv[1]);
@@ -237,7 +245,7 @@ int main(int argc, char** argv)
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
             if (n%nprint == 0) {
-                sim.calc_pos_stats();
+                //sim.calc_pos_stats();
                 traj_pos[count] = sim.avg_cart_pos();
                 traj_pos_L1[count] = sim.L1_cart_pos();
                 traj_pos_L2[count] = sim.L2_cart_pos();
@@ -246,12 +254,12 @@ int main(int argc, char** argv)
 
                 //of_cart_traj << time[count] << ' ' << traj_sum_state[count]
                 //    << ' ' << sim.m_potential.prev_rand() <<std::endl;
-                ++count;
 
                 //if(sim.m_potential.sum_active_state() == 0){
                     traj_temp[count] = sim.temp_kT(); // kT
                     traj_temp_count[count] += 1.0;
                 //}
+                ++count;
             }
         }
 
