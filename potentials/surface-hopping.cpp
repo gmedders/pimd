@@ -18,13 +18,16 @@ void surface_hopping::check_allocation(size_t n_elements, arma::ivec& myvec)
 
 //----------------------------------------------------------------------------//
 
-double surface_hopping::force(size_t ndof, size_t nbead,
+double surface_hopping::force(size_t ndim, size_t nparticles, size_t nbead,
                               const double* crd, double* f)
 {
-    assert(ndof == 1);
+    assert(ndim == 1);
+    assert(nparticles > 0);
     assert(nbead > 0);
     assert(init_pot == true);
     assert(init_hop == true);
+
+    size_t ndof = ndim*nparticles;
 
     //std::cerr << crd[0] << std::endl;
 
@@ -44,6 +47,12 @@ double surface_hopping::force(size_t ndof, size_t nbead,
             std::copy(fBB, fBB + ndof, f + ndof*n);
             Eactive += EBB;
         }
+
+        // CAREFUL!
+        // Note that we're adding the bath force and energy directly into the
+        // active diabatic force/energy
+        double EBath = bath_force(crd + ndof*n, f + ndof*n);
+        Eactive += EBath;
 
         // Determine if the active state of this bead should be changed
         double dE = EBB - EAA;
