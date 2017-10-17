@@ -91,10 +91,9 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 //----------------------------------------------------------------------------//
 
-double pimd::force(const size_t ndofs, const size_t nbead,
-                   const double* x, double* f)
+double pimd::force(const double* x, double* f)
 {
-    return m_potential.force(ndofs, nbead, x, f);
+    return m_potential.force(m_ndim, m_natom, m_nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -169,8 +168,7 @@ void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
 
     for(size_t i = 0; i < nbead*ndofs; ++i){
         const double sigma = std::sqrt(kT/atm_mass);
-        double v = sigma;
-        //double v = sigma*prg.random_gaussian();
+        double v = sigma*randn(0,1);
         all_bead_vel.push_back(v);
     }
     set_up(nbead, ndim, natom, beta, dt,
@@ -211,10 +209,9 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 //----------------------------------------------------------------------------//
 
-double rpmd::force(const size_t ndofs, const size_t nbead,
-                   const double* x, double* f)
+double rpmd::force(const double* x, double* f)
 {
-    return m_potential.force(ndofs, nbead, x, f);
+    return m_potential.force(m_ndim, m_natom, m_nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -261,8 +258,7 @@ void vv::set_up_new_init_cond(const size_t nbead, const size_t ndim,
 
     for(size_t i = 0; i < ndofs; ++i){
         const double sigma = std::sqrt(kT/atm_mass);
-        double v = sigma;
-        //double v = sigma*prg.random_gaussian();
+        double v = sigma*randn(0,1);
         all_vel.push_back(v);
     }
     set_up(nbead, ndim, natom, beta, dt,
@@ -302,10 +298,9 @@ void vv::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 //----------------------------------------------------------------------------//
 
-double vv::force(const size_t ndofs, const size_t nbead,
-                   const double* x, double* f)
+double vv::force(const double* x, double* f)
 {
-    return m_potential.force(ndofs, nbead, x, f);
+    return m_potential.force(m_ndim, m_natom, 1, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

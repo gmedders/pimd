@@ -86,7 +86,7 @@ struct pimd : public parts::pimd_base {
     ~pimd();
 
     void set_up(const size_t, const size_t, const size_t, const double);
-    double force(const size_t, const size_t, const double*, double*);
+    double force(const double*, double*);
 
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
@@ -131,7 +131,7 @@ struct rpmd : public parts::rpmd_pile {
     void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);
-    double force(const size_t, const size_t, const double*, double*);
+    double force(const double*, double*);
 
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
@@ -174,7 +174,7 @@ struct vv : public parts::vv_base {
     void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);
-    double force(const size_t, const size_t, const double*, double*);
+    double force(const double*, double*);
 
     inline double Espring() const { return 0.0; }
     inline double Ep() const { return m_Epot; }

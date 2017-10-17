@@ -7,8 +7,7 @@ namespace parts {
 
 struct rpmd_base : public rpmd_necklace {
 
-    virtual double force(const size_t, const size_t,
-                         const double*, double*) = 0;
+    virtual double force(const double*, double*) = 0;
 
     void init(size_t ndof, size_t nbead,
               const double& kT, const double& dt,
