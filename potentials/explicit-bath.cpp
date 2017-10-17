@@ -66,6 +66,7 @@ double explicit_bath::bath_force(const double* crd, double* frc)
         frc[0] -= dq;
         frc[i] -= dx;
     }
+    return energy;
 }
 
 //----------------------------------------------------------------------------//
