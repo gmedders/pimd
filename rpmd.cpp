@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     }
 
     size_t ndim = 1;
-    size_t natom = 1;
+    size_t natom = 2;
 
     int nbead = parts::parse_to_int(argv[1]);
     double beta = parts::parse_to_double(argv[2]);
@@ -89,6 +89,10 @@ int main(int argc, char** argv)
     sim.m_potential.set_all_bead_states(0, nbead);
     double hop_params[] = {GammaEl, dt, beta};
     sim.m_potential.set_hopping_params(hop_params);
+
+    sim.m_potential.set_bath_params(ndim, natom - 1,
+                                    sim.gamma, sim.m_potential.w,
+                                    sim.m_potential.m);
 
     try {
         //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);

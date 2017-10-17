@@ -64,7 +64,7 @@ void rpmd_base::pimd_force()
 void rpmd_base::spring_energy()
 {
     m_Espring = 0.0;
-    if(nbeads() == 0)
+    if(nbeads() == 1)
         return;
 
     for (size_t n = 0; n < nbeads(); ++n){

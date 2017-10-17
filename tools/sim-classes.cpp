@@ -98,10 +98,9 @@ double pimd::force(const double* x, double* f)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Do this only for the first atom and first dimension
 void rpmd::calc_pos_stats(void)
 {
-    assert(m_ndofs == 1);
-
     m_avg_cart_pos = 0;
     for(size_t n = 0; n < m_nbead; ++n)
         m_avg_cart_pos += m_pos_cart(0,n);

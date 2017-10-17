@@ -148,10 +148,10 @@ struct rpmd : public parts::rpmd_pile {
 
     potential_type m_potential;
 
-private:
     //double gamma = 5.0*2.0*omega;
     double gamma = 2.0*omega;
 
+private:
     double m_avg_cart_pos;
     double m_L1_cart_pos;
     double m_L2_cart_pos;
