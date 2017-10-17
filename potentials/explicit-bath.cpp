@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "explicit-bath.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -6,12 +8,14 @@ namespace pot {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void explicit_bath::init(size_t ndim, size_t nBathModes,
-                         double gamma, double cutoff, double thermo_mass)
+void explicit_bath::set_bath_params(size_t ndim, size_t nBathModes,
+                                    double gamma, double cutoff,
+                                    double thermo_mass)
 {
     assert(ndim == 1);
 
     m_nBathModes = nBathModes;    
+    m_mass = thermo_mass;
 
     if(m_nBathModes > 0){
         c_iMode = new double[m_nBathModes];
@@ -26,7 +30,7 @@ void explicit_bath::init(size_t ndim, size_t nBathModes,
             double J = gamma*omega*std::exp(-omega/cutoff);
 
             omega_iMode[i] = omega;
-            c_iMode[i] = std::sqrt(gamma*omega*omega*thermo_mass);
+            c_iMode[i] = std::sqrt(gamma*omega*omega*m_mass);
         }
     }
 };
@@ -44,7 +48,7 @@ double explicit_bath::bath_force(const double* crd, double* frc)
     for(size_t i = 1; i < m_nBathModes; ++i){
         double x = crd[i];
         double c = c_iMode[i];
-        double mw2 = mass*omega_iMode[i]*omega_iMode[i];
+        double mw2 = m_mass*omega_iMode[i]*omega_iMode[i];
         double c_over_mw2 = c / mw2;
 
         // [xi - q * ci/(m*omega^2)]^2
@@ -53,7 +57,7 @@ double explicit_bath::bath_force(const double* crd, double* frc)
         double poly_xq = - x*(c_over_mw2)*q;
         double poly_qq = c_over_mw2*c_over_mw2*q*q;
 
-        double e = 0.5*mw2*(poly_xx + 2*poly_2xq + poly_qq);
+        double e = 0.5*mw2*(poly_xx + 2*poly_xq + poly_qq);
 
         double dx = mw2*(poly_xx + poly_xq)/x;
         double dq = mw2*(poly_xq + poly_qq)/q;

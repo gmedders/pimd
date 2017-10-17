@@ -6,11 +6,13 @@
 #include <armadillo>
 
 #include "surface-hopping.h"
+#include "explicit-bath.h"
 
 namespace pot {
 
-struct double_well : public surface_hopping {
-
+struct double_well : public surface_hopping
+//struct double_well : public explicit_bath, public surface_hopping
+{
     double w;
     double m;
     double g;
@@ -22,7 +24,6 @@ struct double_well : public surface_hopping {
     double VBB(const double* x, double* f);
 
     void set_params(double*);
-
 };
 
 } // namespace pot
