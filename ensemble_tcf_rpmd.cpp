@@ -60,9 +60,9 @@ int main(int argc, char** argv)
     //srand(rand_seed[my_rank]);
     srand(time(NULL) + my_rank);
 
-    if (argc < 4) {
+    if (argc < 5) {
         if(my_rank == 0)
-            std::cerr << "usage: ensemble_tcf_rpmd input_file dt GammaEl time"
+            std::cerr << "usage: ensemble_tcf_rpmd input_file dt GammaEl voltage time"
                       << std::endl;
         return EXIT_FAILURE;
     }
@@ -77,10 +77,10 @@ int main(int argc, char** argv)
 
     double prod_time;
 
-    if(argc == 5){
-        prod_time = parts::parse_to_double(argv[4]);
+    if(argc == 6){
+        prod_time = parts::parse_to_double(argv[5]);
     } else {
-        prod_time = 200.0/0.0002; // au
+        prod_time = 60.0/0.0002; // au
     }
 
     const double print_time = prod_time/5000; // au
