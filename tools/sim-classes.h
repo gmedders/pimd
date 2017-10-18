@@ -120,8 +120,8 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//struct rpmd : public parts::rpmd_base {
-struct rpmd : public parts::rpmd_pile {
+struct rpmd : public parts::rpmd_base {
+//struct rpmd : public parts::rpmd_pile {
 //struct rpmd : public parts::rpmd_nhc {
 
     void set_up_new_init_cond(const size_t, const size_t, const size_t,

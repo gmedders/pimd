@@ -26,28 +26,12 @@
 
 namespace {
 
-const size_t print_time = 10000; // au
-//10000
+//const size_t print_time = 10000; // au
 //const size_t equil_time = 10000000;
-//const size_t prod_time = 100000000;
-//1000
-const size_t equil_time = 10000000;
+
 //test
-//const size_t equil_time = 0;
-////const size_t prod_time = 30000000;
-//const size_t prod_time = 20*0.0002;
-//
-//const size_t print_time = 100; // au
-//const size_t equil_time = 5000000;
-//const size_t prod_time = 10000000;
-
-//const size_t print_time = 10000000; // au
-//const size_t equil_time = 0;
-//const size_t prod_time = 20000;
-
-//const size_t print_time = 50; // au
-//const size_t equil_time = 0;
-//const size_t prod_time = 100000;
+const size_t print_time = 1; // au
+const size_t equil_time = 0;
 
 } // namespace
 
@@ -91,7 +75,7 @@ int main(int argc, char** argv)
     sim.m_potential.set_hopping_params(hop_params);
 
     sim.m_potential.set_bath_params(ndim, natom - 1,
-                                    sim.gamma, sim.m_potential.w,
+                                    sim.gamma, 2*0.9*sim.m_potential.w,
                                     sim.m_potential.m);
 
     try {
@@ -102,7 +86,7 @@ int main(int argc, char** argv)
         std::vector<double> all_crd;
         std::vector<double> all_vel;
         int count(0);
-        for(int i = 0; i < nbead; ++i){
+        for(int i = 0; i < nbead*ndim*natom; ++i){
             all_vel.push_back(0.0);
             if(count == nx)
                 count = 0;
