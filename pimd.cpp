@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "nhc.h"
-#include "mt19937.h"
+#include "helpers.h"
 
 #include "sim-classes.h"
 
@@ -53,32 +53,8 @@ int main(int argc, char** argv)
     size_t natom = 1;
 
     size_t nbead = strtod(argv[1], NULL);
-
-    double beta(1.0);
-    {
-        std::istringstream iss(argv[2]);
-        iss >> beta;
-        if (!iss || !iss.eof()) {
-            std::cerr << "could not convert '" << argv[2]
-                      << "' to real number" << std::endl;
-            return EXIT_FAILURE;
-        }
-
-        assert(beta > 0.0);
-    }
-
-    double dt(1.0);
-    {
-        std::istringstream iss(argv[3]);
-        iss >> dt;
-        if (!iss || !iss.eof()) {
-            std::cerr << "could not convert '" << argv[3]
-                      << "' to real number" << std::endl;
-            return EXIT_FAILURE;
-        }
-
-        assert(dt > 0.0);
-    }
+    double beta = parts::parse_to_double(argv[2]);
+    double dt = parts::parse_to_double(argv[3]);
 
     const size_t nsteps = int(simulation_time / dt);
     const size_t nsteps_equil = int(equil_time / dt);
@@ -88,7 +64,8 @@ int main(int argc, char** argv)
     parts::pimd sim;
     sim.m_potential.set_all_bead_states(0, nbead);
     double GammaEl(0.0);
-    double hop_params[] = {GammaEl, dt, beta};
+    double voltage(0.0);
+    double hop_params[] = {GammaEl, dt, beta, voltage};
     sim.m_potential.set_hopping_params(hop_params);
 
     try {

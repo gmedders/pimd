@@ -166,7 +166,7 @@ int main(int argc, char** argv)
         parts::rpmd sim;
         sim.m_potential.set_individual_bead_states(init_active_state);
         double GammaEl(1.0e-3);
-        double hop_params[] = {GammaEl, dt, beta};
+        double hop_params[] = {GammaEl, dt, beta, 0.0};
         sim.m_potential.set_hopping_params(hop_params);
 
         //std::ostringstream ss_filename;

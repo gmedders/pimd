@@ -11,8 +11,6 @@
 #include <iomanip>
 #include <iostream>
 
-#include "nhc.h"
-#include "mt19937.h"
 #include "helpers.h"
 
 #include "sim-classes.h"
@@ -60,8 +58,8 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
-    if (argc != 6) {
-        std::cerr << "usage: rpmd nbeads beta dt Gamma nsamples" << std::endl;
+    if (argc != 7) {
+        std::cerr << "usage: rpmd nbeads beta dt Gamma voltage nsamples" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -72,7 +70,8 @@ int main(int argc, char** argv)
     double beta = parts::parse_to_double(argv[2]);
     double dt = parts::parse_to_double(argv[3]);
     double GammaEl = parts::parse_to_double(argv[4]);
-    int nsamples = parts::parse_to_int(argv[5]);
+    double voltage = parts::parse_to_double(argv[5]);
+    int nsamples = parts::parse_to_int(argv[6]);
 
     if(nsamples <= 0)
         nsamples = 1000;
@@ -87,7 +86,7 @@ int main(int argc, char** argv)
     //rpmd sim;
     parts::rpmd sim;
     sim.m_potential.set_all_bead_states(0, nbead);
-    double hop_params[] = {GammaEl, dt, beta};
+    double hop_params[] = {GammaEl, dt, beta, voltage};
     sim.m_potential.set_hopping_params(hop_params);
 
     try {

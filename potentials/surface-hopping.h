@@ -14,6 +14,7 @@ struct surface_hopping {
     double Gamma;
     double dt;
     double beta;
+    double voltage;
 
     arma::ivec state_id;
 
@@ -26,7 +27,7 @@ struct surface_hopping {
 
     void check_allocation(size_t, arma::ivec&);
 
-    double fermi_function(const double);
+    double fermi_function(const double, const double);
     double hop_probability(const double, int);
     void hop();
 

@@ -72,6 +72,7 @@ int main(int argc, char** argv)
 
     double dt = parts::parse_to_double(argv[2]);
     double GammaEl = parts::parse_to_double(argv[3]);
+    double voltage = parts::parse_to_double(argv[4]);
 
 
     double prod_time;
@@ -89,10 +90,12 @@ int main(int argc, char** argv)
     size_t nprint = int(print_time / dt);
 
     if(my_rank == 0){
-        std::cout << "# w  = " << parts::omega << std::endl;
-        std::cout << "# m  = " << parts::atm_mass << std::endl;
-        std::cout << "# g  = " << parts::bb_x0 << std::endl;
-        std::cout << "# dG = " << parts::dG << std::endl;
+        std::cout << "# w     = " << parts::omega << std::endl;
+        std::cout << "# m     = " << parts::atm_mass << std::endl;
+        std::cout << "# g     = " << parts::bb_x0 << std::endl;
+        std::cout << "# dG    = " << parts::dG << std::endl;
+        std::cout << "# V     = " << voltage << std::endl;
+        std::cout << "# Gamma = " << GammaEl << std::endl;
     }
 
     // 2. iterate
@@ -216,7 +219,7 @@ int main(int argc, char** argv)
         //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_individual_bead_states(init_active_state);
-        double hop_params[] = {GammaEl, dt, beta};
+        double hop_params[] = {GammaEl, dt, beta, voltage};
         sim.m_potential.set_hopping_params(hop_params);
 
         try {
