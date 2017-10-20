@@ -125,8 +125,8 @@ int main(int argc, char** argv)
 
     std::cout << "# w  = " << parts::omega << std::endl;
     std::cout << "# m  = " << parts::atm_mass << std::endl;
-    std::cout << "# g  = " << parts::bb_x0 << std::endl;
-    std::cout << "# dG = " << parts::dG << std::endl;
+    std::cout << "# g  = " << parts::param_g << std::endl;
+    //std::cout << "# dG = " << parts::dG << std::endl;
 
     // 2. iterate
     std::ostringstream ss_filename;

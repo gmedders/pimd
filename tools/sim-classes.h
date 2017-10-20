@@ -32,38 +32,43 @@ static double params[] = {omega, atm_mass};
 
 #if 1
 // DOUBLE WELL
-typedef pot::double_well potential_type;
-//static double omega(2.0e-4); // omega
+//typedef pot::double_well potential_type;
+//static double omega(0.0009765625); // omega
 //static double atm_mass(2000); // au
-//static double bb_x0(20.6097);
-//static double dG(-0.0038);
-//
-//static double omega(0.001); // omega
-//static double atm_mass(2000); // au
-//static double bb_x0(3.1);
-//static double dG(-0.004);
-//
-static double omega(0.0009765625); // omega
-static double atm_mass(2000); // au
-static double bb_x0(3.9);
-static double dG(-0.003906252);
-//
-//static double omega(0.006132813); // omega
-//static double atm_mass(2000); // au
-//static double bb_x0(0.62);
+//static double param_g(3.9);
 //static double dG(-0.003906252);
+//static double params[] = {omega, atm_mass, param_g, dG};
 //
-static double params[] = {omega, atm_mass, bb_x0, dG};
+//////static double omega(2.0e-4); // omega
+//////static double atm_mass(2000); // au
+//////static double param_g(20.6097);
+//////static double dG(-0.0038);
+//////
+//////static double omega(0.001); // omega
+//////static double atm_mass(2000); // au
+//////static double param_g(3.1);
+//////static double dG(-0.004);
+//////
+//////
+//////static double omega(0.006132813); // omega
+//////static double atm_mass(2000); // au
+//////static double param_g(0.62);
+//////static double dG(-0.003906252);
+//////
 #endif
 
-#if 0
+#if 1
 // Anderson-Holstein
 typedef pot::ah potential_type;
-static double param_w(0.003);
+//static double omega(0.003);
+//static double atm_mass(2000);
+//static double param_g(0.02);
+//static double param_Ed_bar(0.0);
+static double omega(0.3);
 static double atm_mass(2000);
-static double param_g(0.02);
+static double param_g(0.75);
 static double param_Ed_bar(0.0);
-static double params[] = {param_w, atm_mass, param_g, param_Ed_bar};
+static double params[] = {omega, atm_mass, param_g, param_Ed_bar};
 #endif
 
 #if 0

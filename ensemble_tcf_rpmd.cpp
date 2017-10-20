@@ -92,8 +92,8 @@ int main(int argc, char** argv)
     if(my_rank == 0){
         std::cout << "# w     = " << parts::omega << std::endl;
         std::cout << "# m     = " << parts::atm_mass << std::endl;
-        std::cout << "# g     = " << parts::bb_x0 << std::endl;
-        std::cout << "# dG    = " << parts::dG << std::endl;
+        std::cout << "# g     = " << parts::param_g << std::endl;
+        //std::cout << "# dG    = " << parts::dG << std::endl;
         std::cout << "# V     = " << voltage << std::endl;
         std::cout << "# Gamma = " << GammaEl << std::endl;
     }
