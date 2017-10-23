@@ -14,11 +14,11 @@ namespace parts {
 void rpmd_pile::init(size_t ndof, size_t nbead,
                      const double& kT, const double& dt,
                      const double* mass, const double* cartpos,
-                     const double* cartvel, double tau)
+                     const double* cartvel, double gamma_centroid)
 {
     // Intialize the RPMD base class
     rpmd_base::init(ndof, nbead, kT, dt,
-                    mass, cartpos, cartvel, tau);
+                    mass, cartpos, cartvel, gamma_centroid);
 
     // Now do all the RPMD-NHC specific stuff
 
@@ -27,12 +27,10 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
 
     //rand_gaussian = arma::mat(ndof, nbead, arma::zeros);
 
-    m_tau0 = tau;
-
     for(size_t k = 0; k < nbead; ++k) {
         double gamma;
         if(k == 0)
-            gamma = 1.0 / m_tau0;
+            gamma = gamma_centroid;
         else
             gamma = 2.0 * m_omega_k(k);
 
@@ -40,7 +38,8 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
         c2(k) = std::sqrt(1.0 - c1(k)*c1(k));
     }
 
-    //std::cerr << "<<< Thermostatting ( tau = " << m_tau0 << " ) >>>"<<std::endl;
+    //std::cerr << "<<< Thermostatting ( tau = " << 1.0/gamma_centroid 
+    //          << " ) >>>"<<std::endl;
 }
 
 //----------------------------------------------------------------------------//
