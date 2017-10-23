@@ -45,7 +45,8 @@ typedef pot::double_well potential_type;
 //
 static double omega(0.0009765625); // omega
 static double atm_mass(2000); // au
-static double bb_x0(3.9);
+static double bb_x0(4.4);
+//static double bb_x0(3.9);
 static double dG(-0.003906252);
 //
 //static double omega(0.006132813); // omega
@@ -148,10 +149,12 @@ struct rpmd : public parts::rpmd_pile {
 
     potential_type m_potential;
 
-private:
     //double gamma = 5.0*2.0*omega;
-    double gamma = 2.0*omega;
+    //double gamma = 0.4*omega;
+    //double gamma = 2.0*omega;
+    double gamma = 0.0;
 
+private:
     double m_avg_cart_pos;
     double m_L1_cart_pos;
     double m_L2_cart_pos;

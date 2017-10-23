@@ -229,6 +229,9 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
+        if(iframe == 0)
+            std::cout << "# gamma = " << sim.gamma << std::endl;
+
         //std::fill(traj_temp_count.begin(), traj_temp_count.end(), 0.0);
 
         //std::ostringstream ss_filename;
