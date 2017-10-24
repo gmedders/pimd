@@ -74,6 +74,19 @@ void rpmd_pile::step(const double& dt)
                              + fac * c2(k) * rand_gaussian;
         }
     }
+
+    double m_Ekin_centroid = 0.0;
+    double m_Ekin_higherNM = 0.0;
+    for (size_t n = 0; n < nbeads(); ++n) {
+        for (size_t i = 0; i < ndofs(); ++i) {
+            double mass = m_mass(i);
+            if(n == 0)
+                m_Ekin_centroid += m_mom_nmode(i,n)*m_mom_nmode(i,n)/mass;
+            else
+                m_Ekin_higherNM += m_mom_nmode(i,n)*m_mom_nmode(i,n)/mass;
+        }
+    }
+
     mom_n2c();
 
     m_Ekin = 0.0;
@@ -87,6 +100,8 @@ void rpmd_pile::step(const double& dt)
 
     m_Ekin /= 2;
     m_temp_kT = m_Ekin*2.0/ndofs()/nbeads(); // not actual temperature, kT
+    m_temp_kT_centroid = m_Ekin_centroid*2.0/ndofs();
+    m_temp_kT_higherNM = m_Ekin_higherNM*2.0/ndofs()/(nbeads()-1);
 }
 
 //----------------------------------------------------------------------------//
