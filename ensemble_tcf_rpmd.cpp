@@ -19,6 +19,8 @@
 
 #include "sim-classes.h"
 
+//#define DUMP_TRAJ 1
+
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace {
@@ -212,7 +214,6 @@ int main(int argc, char** argv)
 
         // Now set up this simulation
         
-        //rpmd sim;
         //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_individual_bead_states(init_active_state);
@@ -234,27 +235,26 @@ int main(int argc, char** argv)
 
         //std::fill(traj_temp_count.begin(), traj_temp_count.end(), 0.0);
 
-        //std::ostringstream ss_filename;
-        //ss_filename << "traj_" << iframe << "_proc" << my_rank << ".dat";
-        //std::ofstream of_cart_traj;
-        //of_cart_traj.open(ss_filename.str());
-        //of_cart_traj << std::scientific;
-        //of_cart_traj.precision(15);
-
-        //of_cart_traj << "# " << all_bead_crd[0] << ' ' << all_bead_vel[0]
-        //             << std::endl;
+#ifdef DUMP_TRAJ
+        std::ostringstream ss_filename;
+        ss_filename << "traj_" << iframe << ".dat";
+        std::ofstream of_cart_traj;
+        of_cart_traj.open(ss_filename.str());
+        of_cart_traj << std::scientific;
+        of_cart_traj.precision(15);
+#endif
 
         size_t count(0);
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
             if (n%nprint == 0) {
-                //sim.calc_pos_stats();
                 traj_pos[count] = sim.avg_cart_pos();
                 traj_pos_L2[count] = sim.L2_cart_pos();
                 traj_sum_state[count] = sim.m_potential.sum_active_state();
 
-                //of_cart_traj << time[count] << ' ' << traj_sum_state[count]
-                //    << ' ' << sim.m_potential.prev_rand() <<std::endl;
+#ifdef DUMP_TRAJ
+                sim.dump_1D_frame(of_cart_traj);
+#endif
 
                 //if(sim.m_potential.sum_active_state() == 0){
                     traj_temp[count] = sim.temp_kT(); // kT
@@ -265,6 +265,9 @@ int main(int argc, char** argv)
                 ++count;
             }
         }
+#ifdef DUMP_TRAJ
+        of_cart_traj.close();
+#endif
 
 #if 0
         // Accumulate the TCF
