@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     //rpmd sim;
     parts::vv sim;
     sim.m_potential.set_all_bead_states(1, nbead);
-    double hop_params[] = {0.02, dt, beta};
+    double hop_params[] = {0.02, dt, beta, 0.0};
     sim.m_potential.set_hopping_params(hop_params);
 
     double crd[1] = {0.0};
