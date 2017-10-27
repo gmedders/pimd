@@ -5,6 +5,8 @@
 
 #include "rpmd-pile.h"
 
+//#define DECOMPOSE_KE yes
+
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace parts {
@@ -53,7 +55,9 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
         c2(k) = std::sqrt(1.0 - c1(k)*c1(k));
     }
 
+#ifdef DECOMPOSE_KE
     saved_mom = arma::mat(ndof, nbead);
+#endif
 
     //std::cerr << "<<< Thermostatting ( tau = " << 1.0/gamma_centroid 
     //          << " ) >>>"<<std::endl;
@@ -92,6 +96,7 @@ void rpmd_pile::step(const double& dt)
         }
     }
 
+#ifdef DECOMPOSE_KE
     // Store the correct nmode momenta
     saved_mom = m_mom_nmode;
 
@@ -116,8 +121,13 @@ void rpmd_pile::step(const double& dt)
 
     // Finally, restore m_mom_nmode and calculate full KE
     m_mom_nmode = saved_mom;
+#endif
     mom_n2c();
     m_Ekin = calc_KE();
+#ifndef DECOMPOSE_KE
+    double Ekin_centroid = m_Ekin;
+    double Ekin_higherNM = m_Ekin;
+#endif
 
     m_temp_kT = m_Ekin*2.0/ndofs()/nbeads(); // not actual temperature, kT
     m_temp_kT_centroid = Ekin_centroid*2.0/ndofs();
