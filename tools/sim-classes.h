@@ -153,8 +153,8 @@ struct rpmd : public parts::rpmd_pile {
 
     //double gamma = 5.0*2.0*omega;
     //double gamma = 0.4*omega;
-    //double gamma = 2.0*omega;
-    double gamma = 0.0;
+    double gamma = 2.0*omega;
+    //double gamma = 0.0;
 
 private:
     double m_avg_cart_pos;
