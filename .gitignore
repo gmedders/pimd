@@ -12,6 +12,7 @@ scan_potential
 test-initial-conditions
 test-randn
 rdf
+rdf-partial-traj
 *.dSYM
 *.dat*
 *.py

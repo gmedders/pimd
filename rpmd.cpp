@@ -128,6 +128,7 @@ int main(int argc, char** argv)
     std::cout << "# g  = " << parts::param_g << std::endl;
     //std::cout << "# dG = " << parts::dG << std::endl;
 
+
     // 2. iterate
     std::ostringstream ss_filename;
     ss_filename << "cart_traj-rpmd_" << nbead << '_' << int(beta) << ".dat";
@@ -153,6 +154,8 @@ int main(int argc, char** argv)
                       << sim.m_potential.avg_active_state() << ' '
                       << sim.Ep() << ' '
                       << sim.temp_kT() << ' '
+                      << sim.temp_kT_centroid() << ' '
+                      << sim.temp_kT_higherNM() << ' '
                       << sim.avg_cart_pos() << std::endl;
 
             sim.dump_1D_frame(of_cart_traj);

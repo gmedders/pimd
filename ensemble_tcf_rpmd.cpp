@@ -19,6 +19,8 @@
 
 #include "sim-classes.h"
 
+//#define DUMP_TRAJ 1
+
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace {
@@ -110,17 +112,17 @@ int main(int argc, char** argv)
     std::vector<double> time;
 
     std::vector<double> sum_pos;
-    std::vector<double> sum_pos_L1;
     std::vector<double> sum_pos_L2;
-    std::vector<double> sum_pos_Linf;
     std::vector<double> sum_temp;
+    std::vector<double> sum_temp_centroid;
+    std::vector<double> sum_temp_higherNM;
     std::vector<double> sum_state;
 
     std::vector<double> traj_pos;
-    std::vector<double> traj_pos_L1;
     std::vector<double> traj_pos_L2;
-    std::vector<double> traj_pos_Linf;
     std::vector<double> traj_temp;
+    std::vector<double> traj_temp_centroid;
+    std::vector<double> traj_temp_higherNM;
     std::vector<double> traj_temp_count;
     std::vector<double> traj_sum_state;
 
@@ -133,17 +135,17 @@ int main(int argc, char** argv)
             time.push_back(itime);
 
             sum_pos.push_back(0.0);
-            sum_pos_L1.push_back(0.0);
             sum_pos_L2.push_back(0.0);
-            sum_pos_Linf.push_back(0.0);
             sum_temp.push_back(0.0);
+            sum_temp_centroid.push_back(0.0);
+            sum_temp_higherNM.push_back(0.0);
             sum_state.push_back(0.0);
 
             traj_pos.push_back(0.0);
-            traj_pos_L1.push_back(0.0);
             traj_pos_L2.push_back(0.0);
-            traj_pos_Linf.push_back(0.0);
             traj_temp.push_back(0.0);
+            traj_temp_centroid.push_back(0.0);
+            traj_temp_higherNM.push_back(0.0);
             traj_temp_count.push_back(0.0);
             traj_sum_state.push_back(0.0);
         }
@@ -215,7 +217,6 @@ int main(int argc, char** argv)
 
         // Now set up this simulation
         
-        //rpmd sim;
         //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_individual_bead_states(init_active_state);
@@ -232,39 +233,44 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
+        if(iframe == 1)
+            std::cout << "# gamma = " << sim.gamma << std::endl;
+
         //std::fill(traj_temp_count.begin(), traj_temp_count.end(), 0.0);
 
-        //std::ostringstream ss_filename;
-        //ss_filename << "traj_" << iframe << "_proc" << my_rank << ".dat";
-        //std::ofstream of_cart_traj;
-        //of_cart_traj.open(ss_filename.str());
-        //of_cart_traj << std::scientific;
-        //of_cart_traj.precision(15);
-
-        //of_cart_traj << "# " << all_bead_crd[0] << ' ' << all_bead_vel[0]
-        //             << std::endl;
+#ifdef DUMP_TRAJ
+        std::ostringstream ss_filename;
+        ss_filename << "traj_" << iframe << ".dat";
+        std::ofstream of_cart_traj;
+        of_cart_traj.open(ss_filename.str());
+        of_cart_traj << std::scientific;
+        of_cart_traj.precision(15);
+#endif
 
         size_t count(0);
         for (size_t n = 0; n < nsteps; ++n) {
             sim.step(dt);
             if (n%nprint == 0) {
-                //sim.calc_pos_stats();
                 traj_pos[count] = sim.avg_cart_pos();
-                traj_pos_L1[count] = sim.L1_cart_pos();
                 traj_pos_L2[count] = sim.L2_cart_pos();
-                traj_pos_Linf[count] = sim.Linf_cart_pos();
                 traj_sum_state[count] = sim.m_potential.sum_active_state();
 
-                //of_cart_traj << time[count] << ' ' << traj_sum_state[count]
-                //    << ' ' << sim.m_potential.prev_rand() <<std::endl;
+#ifdef DUMP_TRAJ
+                sim.dump_1D_frame(of_cart_traj);
+#endif
 
                 //if(sim.m_potential.sum_active_state() == 0){
                     traj_temp[count] = sim.temp_kT(); // kT
+                    traj_temp_centroid[count] = sim.temp_kT_centroid();
+                    traj_temp_higherNM[count] = sim.temp_kT_higherNM();
                     traj_temp_count[count] += 1.0;
                 //}
                 ++count;
             }
         }
+#ifdef DUMP_TRAJ
+        of_cart_traj.close();
+#endif
 
 #if 0
         // Accumulate the TCF
@@ -283,10 +289,10 @@ int main(int argc, char** argv)
         // Accumulate the Average Temperature
         for (size_t i = 0; i < sum_temp.size(); ++i){
             sum_pos[i] += traj_pos[i];
-            sum_pos_L1[i] += traj_pos_L1[i];
             sum_pos_L2[i] += traj_pos_L2[i];
-            sum_pos_Linf[i] += traj_pos_Linf[i];
             sum_temp[i] += traj_temp[i];
+            sum_temp_centroid[i] += traj_temp_centroid[i];
+            sum_temp_higherNM[i] += traj_temp_higherNM[i];
             sum_state[i] += traj_sum_state[i]/nbead;
             //std::cerr << time[i] << ' ' << sum_state[i]/iframe << std::endl;
         }
@@ -295,17 +301,19 @@ int main(int argc, char** argv)
 #ifdef ENABLE_MPI
     MPI_Allreduce(MPI_IN_PLACE, &sum_state[0], sum_state.size(),
                   MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+
     MPI_Allreduce(MPI_IN_PLACE, &sum_temp[0], sum_temp.size(),
                   MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(MPI_IN_PLACE, &sum_pos[0], sum_pos.size(),
+    MPI_Allreduce(MPI_IN_PLACE, &sum_temp_centroid[0], sum_temp_centroid.size(),
                   MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(MPI_IN_PLACE, &sum_pos_L1[0], sum_pos_L1.size(),
-                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(MPI_IN_PLACE, &sum_pos_L2[0], sum_pos_L2.size(),
-                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
-    MPI_Allreduce(MPI_IN_PLACE, &sum_pos_Linf[0], sum_pos_Linf.size(),
+    MPI_Allreduce(MPI_IN_PLACE, &sum_temp_higherNM[0], sum_temp_higherNM.size(),
                   MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE, &traj_temp_count[0], traj_temp_count.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+
+    MPI_Allreduce(MPI_IN_PLACE, &sum_pos[0], sum_pos.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &sum_pos_L2[0], sum_pos_L2.size(),
                   MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
 #endif
 
@@ -318,10 +326,10 @@ int main(int argc, char** argv)
                 //                  << std::setw(20) << tcf[i]/nsamples[i]
                 << std::setw(20) << sum_state[i]/iframe
                 << std::setw(20) << sum_temp[i]/traj_temp_count[i]
+                << std::setw(20) << sum_temp_centroid[i]/traj_temp_count[i]
+                << std::setw(20) << sum_temp_higherNM[i]/traj_temp_count[i]
                 << std::setw(20) << sum_pos[i]/iframe
-                << std::setw(20) << sum_pos_L1[i]/iframe
                 << std::setw(20) << sum_pos_L2[i]/iframe
-                << std::setw(20) << sum_pos_Linf[i]/iframe
                 << std::endl;
         }
     }
