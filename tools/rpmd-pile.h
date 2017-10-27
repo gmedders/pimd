@@ -17,9 +17,13 @@ struct rpmd_pile : public rpmd_base {
     void step(const double&);
     double invariant() const;
 
+    double calc_KE();
+
     double m_tau0;
     arma::vec c1;
     arma::vec c2;
+
+    arma::mat saved_mom;
 
 };
 

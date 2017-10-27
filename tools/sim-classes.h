@@ -45,8 +45,8 @@ typedef pot::double_well potential_type;
 //
 static double omega(0.0009765625); // omega
 static double atm_mass(2000); // au
-static double bb_x0(4.4);
-//static double bb_x0(3.9);
+//static double bb_x0(4.4); // barrier = 3w
+static double bb_x0(3.9); // barrier = 2w
 static double dG(-0.003906252);
 //
 //static double omega(0.006132813); // omega
@@ -138,6 +138,8 @@ struct rpmd : public parts::rpmd_pile {
     inline double Ep() const { return m_Epot_sum; }
     inline double Ek() const { return m_Ekin; }
     inline double temp_kT() const { return m_temp_kT; }
+    inline double temp_kT_centroid() const { return m_temp_kT_centroid; }
+    inline double temp_kT_higherNM() const { return m_temp_kT_higherNM; }
     double avg_cart_pos() { calc_pos_stats(); return m_avg_cart_pos; };
     //double avg_cart_pos() const { return m_avg_cart_pos; };
     double L1_cart_pos() const { return m_L1_cart_pos; };
@@ -151,8 +153,8 @@ struct rpmd : public parts::rpmd_pile {
 
     //double gamma = 5.0*2.0*omega;
     //double gamma = 0.4*omega;
-    //double gamma = 2.0*omega;
-    double gamma = 0.0;
+    double gamma = 2.0*omega;
+    //double gamma = 0.0;
 
 private:
     double m_avg_cart_pos;

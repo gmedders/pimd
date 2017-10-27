@@ -5,9 +5,26 @@
 
 #include "rpmd-pile.h"
 
+//#define DECOMPOSE_KE yes
+
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace parts {
+
+//----------------------------------------------------------------------------//
+
+double rpmd_pile::calc_KE(void)
+{
+    double e(0);
+    for (size_t n = 0; n < nbeads(); ++n) {
+        for (size_t i = 0; i < ndofs(); ++i) {
+            double mass = m_mass(i);
+            const double Ekin2 = m_mom_cart(i,n)*m_mom_cart(i,n)/mass;
+            e += Ekin2;
+        }
+    }
+    return (e / 2.0);
+}
 
 //----------------------------------------------------------------------------//
 
@@ -28,7 +45,7 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
     //rand_gaussian = arma::mat(ndof, nbead, arma::zeros);
 
     for(size_t k = 0; k < nbead; ++k) {
-        double gamma;
+        double gamma(0);
         if(k == 0)
             gamma = gamma_centroid;
         else
@@ -37,6 +54,10 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
         c1(k) = std::exp(-0.5*dt * gamma);
         c2(k) = std::sqrt(1.0 - c1(k)*c1(k));
     }
+
+#ifdef DECOMPOSE_KE
+    saved_mom = arma::mat(ndof, nbead);
+#endif
 
     //std::cerr << "<<< Thermostatting ( tau = " << 1.0/gamma_centroid 
     //          << " ) >>>"<<std::endl;
@@ -74,19 +95,43 @@ void rpmd_pile::step(const double& dt)
                              + fac * c2(k) * rand_gaussian;
         }
     }
-    mom_n2c();
 
-    m_Ekin = 0.0;
-    for (size_t n = 0; n < nbeads(); ++n) {
+#ifdef DECOMPOSE_KE
+    // Store the correct nmode momenta
+    saved_mom = m_mom_nmode;
+
+    // Zero non-centroid normal mode momenta
+    for (size_t n = 1; n < nbeads(); ++n) {
         for (size_t i = 0; i < ndofs(); ++i) {
-            double mass = m_mass(i);
-            const double Ekin2 = m_mom_cart(i,n)*m_mom_cart(i,n)/mass;
-            m_Ekin += Ekin2;
+            m_mom_nmode(i,n) = 0.0;
         }
     }
+    mom_n2c();
+    double Ekin_centroid = calc_KE();
 
-    m_Ekin /= 2;
+    // Now restore m_mom_nmode and zero-out centoid momenta
+    m_mom_nmode = saved_mom;
+    for (size_t n = 0; n < 1; ++n) {
+        for (size_t i = 0; i < ndofs(); ++i) {
+            m_mom_nmode(i,n) = 0.0;
+        }
+    }
+    mom_n2c();
+    double Ekin_higherNM = calc_KE();
+
+    // Finally, restore m_mom_nmode and calculate full KE
+    m_mom_nmode = saved_mom;
+#endif
+    mom_n2c();
+    m_Ekin = calc_KE();
+#ifndef DECOMPOSE_KE
+    double Ekin_centroid = m_Ekin;
+    double Ekin_higherNM = m_Ekin;
+#endif
+
     m_temp_kT = m_Ekin*2.0/ndofs()/nbeads(); // not actual temperature, kT
+    m_temp_kT_centroid = Ekin_centroid*2.0/ndofs();
+    m_temp_kT_higherNM = Ekin_higherNM*2.0/ndofs()/(nbeads()-1);
 }
 
 //----------------------------------------------------------------------------//
