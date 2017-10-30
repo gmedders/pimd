@@ -5,7 +5,7 @@
 
 #include "rpmd-pile.h"
 
-//#define DECOMPOSE_KE yes
+#define DECOMPOSE_KE yes
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -131,7 +131,12 @@ void rpmd_pile::step(const double& dt)
 
     m_temp_kT = m_Ekin*2.0/ndofs()/nbeads(); // not actual temperature, kT
     m_temp_kT_centroid = Ekin_centroid*2.0/ndofs();
-    m_temp_kT_higherNM = Ekin_higherNM*2.0/ndofs()/(nbeads()-1);
+    if(nbeads() > 1){
+        m_temp_kT_higherNM = Ekin_higherNM*2.0/ndofs()/(nbeads()-1);
+    }else{
+        m_temp_kT_higherNM = m_temp_kT;
+    }
+
 }
 
 //----------------------------------------------------------------------------//
