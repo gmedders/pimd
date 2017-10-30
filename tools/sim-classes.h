@@ -61,14 +61,14 @@ static double params[] = {omega, atm_mass, param_g, dG};
 #if 1
 // Anderson-Holstein
 typedef pot::ah potential_type;
-//static double omega(0.003);
-//static double atm_mass(2000);
-//static double param_g(0.02);
-//static double param_Ed_bar(0.0);
-static double omega(0.3);
+static double omega(0.003);
 static double atm_mass(2000);
-static double param_g(0.75);
+static double param_g(0.02);
 static double param_Ed_bar(0.0);
+//static double omega(0.3);
+//static double atm_mass(2000);
+//static double param_g(0.75);
+//static double param_Ed_bar(0.0);
 static double params[] = {omega, atm_mass, param_g, param_Ed_bar};
 #endif
 
@@ -152,6 +152,8 @@ struct rpmd : public parts::rpmd_pile {
     double Linf_cart_pos() const { return m_Linf_cart_pos; };
     void calc_pos_stats(void);
 
+    void set_gammaTh(double);
+
     void dump_1D_frame(std::ofstream&);
 
     potential_type m_potential;
@@ -159,7 +161,7 @@ struct rpmd : public parts::rpmd_pile {
     //double gamma = 5.0*2.0*omega;
     //double gamma = 0.4*omega;
     //double gamma = 2.0*omega;
-    double gamma = 0.0;
+    double m_gamma = 0.0;
 
 private:
     double m_avg_cart_pos;

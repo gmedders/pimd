@@ -19,7 +19,7 @@
 
 #include "sim-classes.h"
 
-//#define DUMP_TRAJ 1
+#define DUMP_TRAJ 1
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -62,9 +62,9 @@ int main(int argc, char** argv)
     //srand(rand_seed[my_rank]);
     srand(time(NULL) + my_rank);
 
-    if (argc < 5) {
+    if (argc < 6) {
         if(my_rank == 0)
-            std::cerr << "usage: ensemble_tcf_rpmd input_file dt GammaEl voltage time"
+            std::cerr << "usage: ensemble_tcf_rpmd input_file dt GammaEl gammaTh_fac voltage time"
                       << std::endl;
         return EXIT_FAILURE;
     }
@@ -74,15 +74,16 @@ int main(int argc, char** argv)
 
     double dt = parts::parse_to_double(argv[2]);
     double GammaEl = parts::parse_to_double(argv[3]);
-    double voltage = parts::parse_to_double(argv[4]);
+    double gammaTh_fac = parts::parse_to_double(argv[4]);
+    double voltage = parts::parse_to_double(argv[5]);
 
 
     double prod_time;
 
-    if(argc == 6){
-        prod_time = parts::parse_to_double(argv[5]);
+    if(argc == 7){
+        prod_time = parts::parse_to_double(argv[6]);
     } else {
-        prod_time = 60.0/0.0002; // au
+        prod_time = 60.0/parts::omega; // au
     }
 
     const double print_time = prod_time/5000; // au
@@ -98,6 +99,7 @@ int main(int argc, char** argv)
         //std::cout << "# dG    = " << parts::dG << std::endl;
         std::cout << "# V     = " << voltage << std::endl;
         std::cout << "# Gamma = " << GammaEl << std::endl;
+        std::cout << "# gammaTh_fac = " << gammaTh_fac << std::endl;
     }
 
     // 2. iterate
@@ -220,8 +222,10 @@ int main(int argc, char** argv)
         //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_individual_bead_states(init_active_state);
-        double hop_params[] = {GammaEl, dt, beta, voltage};
+        //beta*=5;
+        double hop_params[] = {GammaEl, dt, beta/nbead, voltage};
         sim.m_potential.set_hopping_params(hop_params);
+        sim.set_gammaTh(gammaTh_fac);
 
         try {
             //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
@@ -234,7 +238,7 @@ int main(int argc, char** argv)
         }
 
         if(iframe == 1)
-            std::cout << "# gamma = " << sim.gamma << std::endl;
+            std::cout << "# gamma = " << sim.m_gamma << std::endl;
 
         //std::fill(traj_temp_count.begin(), traj_temp_count.end(), 0.0);
 
