@@ -42,18 +42,6 @@ double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
         double EBB = VBB(crd + ndof*n, fBB);
 
         double dE = EBB - EAA;
-#if 0
-        for(size_t i = 0; i < ndof; ++i)
-            dF[i] = fBB[i] - fAA[i];
-
-        // Normally EBB = EAA + dE
-        // Change this to EBB = EAA + nbead*dE
-        EBB = EAA + nbead * dE;
-        for(size_t i = 0; i < ndof; ++i)
-            fBB[i] = fAA[i] + nbead * dF[i];
-
-        dE *= nbead;
-#endif
 
         if(state_id[n] == 0) {
             std::copy(fAA, fAA + ndof, f + ndof*n);
@@ -63,11 +51,9 @@ double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
             Eactive += EBB;
         }
 
-        // CAREFUL!
-        // Note that we're adding the bath force and energy directly into the
-        // active diabatic force/energy
-        double EBath = bath_force(crd + ndof*n, f + ndof*n);
-        Eactive += EBath;
+        // FIXME Not implemented
+        //double EBath = bath_force(crd + ndof*n, f + ndof*n);
+        //Eactive += EBath;
 
         // Determine if the active state of this bead should be changed
         double random_number = ((double) rand() / (RAND_MAX));
