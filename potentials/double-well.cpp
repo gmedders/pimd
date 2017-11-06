@@ -50,6 +50,18 @@ void double_well::set_params(double* params)
 
 //----------------------------------------------------------------------------//
 
+void double_well::print_params()
+{
+    std::cout << "# pot::double_well" << std::endl;
+    std::cout << "# w     = " << w << std::endl;
+    std::cout << "# m     = " << m << std::endl;
+    std::cout << "# g     = " << g << std::endl;
+    std::cout << "# dG    = " << dG << std::endl;
+    print_state_params();
+}
+
+//----------------------------------------------------------------------------//
+
 } // namespace pot
 
 ////////////////////////////////////////////////////////////////////////////////
