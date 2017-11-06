@@ -13,6 +13,8 @@ struct single_state : public explicit_bath {
 
     arma::ivec state_id;
 
+    bool init_pot = false;
+
     double force(size_t, size_t, size_t, const double*, double*);
     virtual double VAA(const double* x, double* f) = 0;
     virtual void set_params(double*) = 0;
@@ -28,7 +30,6 @@ struct single_state : public explicit_bath {
     void print_state_params();
 
 private:
-    bool init_pot = false;
     int m_nbead;
 
     void check_allocation(size_t, arma::ivec&);
