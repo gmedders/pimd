@@ -39,6 +39,8 @@ void explicit_bath::set_bath_params(size_t ndim, size_t nBathModes,
 
 double explicit_bath::bath_force(const double* crd, double* frc)
 {
+    std::cerr << "Explicit bath force is not yet implemented!" << std::endl;
+    exit(1);
     if(m_nBathModes == 0)
         return 0.0;
 
