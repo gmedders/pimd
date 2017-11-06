@@ -19,7 +19,7 @@
 
 #include "sim-classes.h"
 
-#define DUMP_TRAJ 1
+//#define DUMP_TRAJ 1
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -126,6 +126,7 @@ int main(int argc, char** argv)
     std::vector<double> traj_temp_centroid;
     std::vector<double> traj_temp_higherNM;
     std::vector<double> traj_temp_count;
+    std::vector<double> traj_state_count;
     std::vector<double> traj_sum_state;
 
 
@@ -149,6 +150,7 @@ int main(int argc, char** argv)
             traj_temp_centroid.push_back(0.0);
             traj_temp_higherNM.push_back(0.0);
             traj_temp_count.push_back(0.0);
+            traj_state_count.push_back(0.0);
             traj_sum_state.push_back(0.0);
         }
     }
@@ -257,18 +259,26 @@ int main(int argc, char** argv)
             if (n%nprint == 0) {
                 traj_pos[count] = sim.avg_cart_pos();
                 traj_pos_L2[count] = sim.L2_cart_pos();
-                traj_sum_state[count] = sim.m_potential.sum_active_state();
 
 #ifdef DUMP_TRAJ
                 sim.dump_1D_frame(of_cart_traj);
 #endif
 
-                //if(sim.m_potential.sum_active_state() == 0){
-                    traj_temp[count] = sim.temp_kT(); // kT
-                    traj_temp_centroid[count] = sim.temp_kT_centroid();
-                    traj_temp_higherNM[count] = sim.temp_kT_higherNM();
-                    traj_temp_count[count] += 1.0;
-                //}
+                if (sim.m_potential.sum_active_state() == nbead) {
+                    traj_sum_state[count] = sim.m_potential.sum_active_state();
+                    traj_state_count[count] += nbead;
+                } else if (sim.m_potential.sum_active_state() == 0) {
+                    traj_sum_state[count] = 0;
+                    traj_state_count[count] += nbead;
+                } else {
+                    traj_sum_state[count] = 0;
+                }
+
+                traj_temp[count] = sim.temp_kT(); // kT
+                traj_temp_centroid[count] = sim.temp_kT_centroid();
+                traj_temp_higherNM[count] = sim.temp_kT_higherNM();
+                traj_temp_count[count] += 1.0;
+
                 ++count;
             }
         }
@@ -297,13 +307,15 @@ int main(int argc, char** argv)
             sum_temp[i] += traj_temp[i];
             sum_temp_centroid[i] += traj_temp_centroid[i];
             sum_temp_higherNM[i] += traj_temp_higherNM[i];
-            sum_state[i] += traj_sum_state[i]/nbead;
+            sum_state[i] += traj_sum_state[i];
             //std::cerr << time[i] << ' ' << sum_state[i]/iframe << std::endl;
         }
     }
 
 #ifdef ENABLE_MPI
     MPI_Allreduce(MPI_IN_PLACE, &sum_state[0], sum_state.size(),
+                  MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &traj_state_count[0], traj_state_count.size(),
                   MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
 
     MPI_Allreduce(MPI_IN_PLACE, &sum_temp[0], sum_temp.size(),
@@ -327,13 +339,14 @@ int main(int argc, char** argv)
         std::cout.precision(10);
         for (size_t i = 0; i < tcf.size(); ++i){
             std::cout << std::setw(20) << time[i]
-                //                  << std::setw(20) << tcf[i]/nsamples[i]
-                << std::setw(20) << sum_state[i]/iframe
+                << std::setw(20) << sum_state[i]/traj_state_count[i]
+                //<< std::setw(20) << sum_state[i]/iframe
                 << std::setw(20) << sum_temp[i]/traj_temp_count[i]
                 << std::setw(20) << sum_temp_centroid[i]/traj_temp_count[i]
                 << std::setw(20) << sum_temp_higherNM[i]/traj_temp_count[i]
                 << std::setw(20) << sum_pos[i]/iframe
                 << std::setw(20) << sum_pos_L2[i]/iframe
+                << std::setw(20) << traj_state_count[i]
                 << std::endl;
         }
     }
