@@ -8,28 +8,6 @@
 
 namespace pot {
 
-void anharmonic::set_all_bead_states(const int)
-{
-    active_state = -1;
-}
-void anharmonic::set_hopping_params(double*){};
-
-//----------------------------------------------------------------------------//
-
-double anharmonic::force(const size_t ndof, const size_t nbead,
-                         const double* crd, double* f)
-{
-  assert(ndof == 1);
-  assert(nbead > 0);
-  assert(init == true);
-
-  double energy(0);
-  for(size_t n = 0; n < nbead; ++n)
-      energy += VAA(crd + ndof*n, f + ndof*n);
-
-  return energy;
-}
-
 //----------------------------------------------------------------------------//
 
 double anharmonic::VAA(const double* crd, double* f)
@@ -55,7 +33,20 @@ void anharmonic::set_params(double* params)
     b = params[1];
     c = params[2];
 
+    m = params[2];
+
     init = true;
+}
+
+//----------------------------------------------------------------------------//
+
+void anharmonic::print_params()
+{
+    std::cout << "# pot::anharmonic" << std::endl;
+    std::cout << "# a = " << a << std::endl;
+    std::cout << "# b = " << b << std::endl;
+    std::cout << "# c = " << c << std::endl;
+    std::cout << "# m = " << m << std::endl;
 }
 
 //----------------------------------------------------------------------------//

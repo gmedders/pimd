@@ -82,7 +82,7 @@ static double param_c(0.25);
 //static double param_a(1.0/2.0);
 //static double param_b(1.0/10.0);
 //static double param_c(1.0/100.0);
-static double params[] = {param_a, param_b, param_c};
+static double params[] = {param_a, param_b, param_c, atm_mass};
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
