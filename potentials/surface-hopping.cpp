@@ -8,16 +8,6 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
-// Both determines whether the vector is the correct size
-// and reallocates if necessary
-void surface_hopping::check_allocation(size_t n_elements, arma::ivec& myvec)
-{
-    if(myvec.n_elem != n_elements)
-        myvec.set_size(n_elements);
-}
-
-//----------------------------------------------------------------------------//
-
 double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
                               const double* crd, double* f)
 {
@@ -101,36 +91,6 @@ double surface_hopping::hop_probability(const double dE, int active_state)
 
 //----------------------------------------------------------------------------//
 
-void surface_hopping::set_all_bead_states(int initial_state_id, int nbead)
-{
-    assert(initial_state_id == 0 || initial_state_id == 1);
-
-    m_nbead = nbead;
-    // Set for all beads
-    check_allocation(m_nbead, state_id);
-    for(int n = 0; n < m_nbead; ++n){
-        state_id[n] = initial_state_id;
-    }
-}
-
-//----------------------------------------------------------------------------//
-
-void surface_hopping::set_individual_bead_states(
-                                            std::vector<int>& initial_state_ids)
-{
-    m_nbead = initial_state_ids.size();
-
-    // Set for all beads
-    check_allocation(m_nbead, state_id);
-    for(int n = 0; n < m_nbead; ++n){
-        int id = initial_state_ids[n];
-        assert(id == 0 || id == 1);
-        state_id[n] = id;
-    }
-}
-
-//----------------------------------------------------------------------------//
-
 // These parameters define the hopping probability
 void surface_hopping::set_hopping_params(double* params)
 {
@@ -142,23 +102,6 @@ void surface_hopping::set_hopping_params(double* params)
     //prng.seed(19104);
 
     init_hop = true;
-}
-
-//----------------------------------------------------------------------------//
-
-double surface_hopping::avg_active_state()
-{
-    return sum_active_state()/((double)m_nbead);
-}
-
-//----------------------------------------------------------------------------//
-
-double surface_hopping::sum_active_state()
-{
-    double sum(0);
-    for(int i = 0; i < m_nbead; ++i)
-        sum += state_id[i];
-    return sum;
 }
 
 //----------------------------------------------------------------------------//

@@ -10,8 +10,10 @@
 
 namespace pot {
 
-struct double_well : public surface_hopping
+class double_well : public surface_hopping
 {
+
+public:
     double VAA(const double* x, double* f);
     double VBB(const double* x, double* f);
 

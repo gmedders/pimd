@@ -7,8 +7,10 @@
 
 namespace pot {
 
-struct sho : public single_state {
+class sho : public single_state
+{
 
+public:
     double VAA(const double* crd, double* f);
 
     void set_params(double*);

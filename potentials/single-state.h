@@ -6,13 +6,13 @@
 #include <armadillo>
 
 #include "explicit-bath.h"
+#include "bead-states.h"
 
 namespace pot {
 
-struct single_state : public explicit_bath {
+class single_state : public explicit_bath , public bead_states {
 
-    arma::ivec state_id;
-
+public:
     bool init_pot = false;
 
     double force(size_t, size_t, size_t, const double*, double*);
@@ -21,18 +21,7 @@ struct single_state : public explicit_bath {
 
     void set_hopping_params(double*){};
 
-    void set_all_bead_states(const int, int);
-    void set_individual_bead_states(std::vector<int>&);
-
-    double avg_active_state(){ return 0; };
-    double sum_active_state(){ return 0; };
-
     void print_state_params();
-
-private:
-    int m_nbead;
-
-    void check_allocation(size_t, arma::ivec&);
 
 };
 

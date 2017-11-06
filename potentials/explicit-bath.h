@@ -7,8 +7,10 @@
 
 namespace pot {
 
-struct explicit_bath {
+class explicit_bath
+{
 
+public:
     explicit_bath();
     ~explicit_bath();
 

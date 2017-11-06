@@ -8,16 +8,6 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
-// Both determines whether the vector is the correct size
-// and reallocates if necessary
-void single_state::check_allocation(size_t n_elements, arma::ivec& myvec)
-{
-    if(myvec.n_elem != n_elements)
-        myvec.set_size(n_elements);
-}
-
-//----------------------------------------------------------------------------//
-
 double single_state::force(size_t ndim, size_t natom, size_t nbead,
                            const double* crd, double* f)
 {
@@ -43,36 +33,6 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
     }
 
     return E;
-}
-
-//----------------------------------------------------------------------------//
-
-void single_state::set_all_bead_states(int initial_state_id, int nbead)
-{
-    assert(initial_state_id == 0 || initial_state_id == 1);
-
-    m_nbead = nbead;
-    // Set for all beads
-    check_allocation(m_nbead, state_id);
-    for(int n = 0; n < m_nbead; ++n){
-        state_id[n] = initial_state_id;
-    }
-}
-
-//----------------------------------------------------------------------------//
-
-void single_state::set_individual_bead_states(
-                                            std::vector<int>& initial_state_ids)
-{
-    m_nbead = initial_state_ids.size();
-
-    // Set for all beads
-    check_allocation(m_nbead, state_id);
-    for(int n = 0; n < m_nbead; ++n){
-        int id = initial_state_ids[n];
-        assert(id == 0 || id == 1);
-        state_id[n] = id;
-    }
 }
 
 //----------------------------------------------------------------------------//

@@ -6,19 +6,15 @@
 #include <armadillo>
 
 #include "explicit-bath.h"
+#include "bead-states.h"
 
 namespace pot {
 
-struct surface_hopping : public explicit_bath {
+class surface_hopping : public explicit_bath, public bead_states {
 
+public:
     bool init_pot = false;
     bool init_hop = false;
-    double Gamma;
-    double dt;
-    double beta;
-    double voltage;
-
-    arma::ivec state_id;
 
     int nhops;
 
@@ -28,23 +24,19 @@ struct surface_hopping : public explicit_bath {
 //    virtual double bath_force(const double* x, double* f) = 0;
     virtual void set_params(double*) = 0;
 
-    void check_allocation(size_t, arma::ivec&);
-
     double fermi_function(const double, const double);
     double hop_probability(const double, int);
     void hop();
 
-    void set_all_bead_states(const int, int);
-    void set_individual_bead_states(std::vector<int>&);
     void set_hopping_params(double*);
-
-    double avg_active_state();
-    double sum_active_state();
 
     void print_state_params();
 
 private:
-    int m_nbead;
+    double Gamma;
+    double dt;
+    double beta;
+    double voltage;
 
 };
 
