@@ -11,8 +11,6 @@
 #include <iomanip>
 #include <iostream>
 
-#include "nhc.h"
-#include "mt19937.h"
 #include "helpers.h"
 
 #include "sim-classes.h"
@@ -44,8 +42,8 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(9);
 
-    if (argc != 6) {
-        std::cerr << "usage: rpmd nbeads beta dt Gamma nsamples" << std::endl;
+    if (argc != 8) {
+        std::cerr << "usage: rpmd nbeads beta dt GammaEl gammaTh_factor voltage nsamples" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -56,7 +54,9 @@ int main(int argc, char** argv)
     double beta = parts::parse_to_double(argv[2]);
     double dt = parts::parse_to_double(argv[3]);
     double GammaEl = parts::parse_to_double(argv[4]);
-    int nsamples = parts::parse_to_int(argv[5]);
+    double gammaTh_fac = parts::parse_to_double(argv[5]);
+    double voltage = parts::parse_to_double(argv[6]);
+    int nsamples = parts::parse_to_int(argv[7]);
 
     if(nsamples <= 0)
         nsamples = 1000;
@@ -71,8 +71,9 @@ int main(int argc, char** argv)
     //rpmd sim;
     parts::rpmd sim;
     sim.m_potential.set_all_bead_states(0, nbead);
-    double hop_params[] = {GammaEl, dt, beta};
+    double hop_params[] = {GammaEl, dt, beta/nbead, voltage};
     sim.m_potential.set_hopping_params(hop_params);
+    sim.set_gammaTh(gammaTh_fac);
 
     sim.m_potential.set_bath_params(ndim, natom - 1,
                                     sim.gamma, 2*0.9*sim.m_potential.w,
@@ -114,8 +115,9 @@ int main(int argc, char** argv)
 
     std::cout << "# w  = " << parts::omega << std::endl;
     std::cout << "# m  = " << parts::atm_mass << std::endl;
-    std::cout << "# g  = " << parts::bb_x0 << std::endl;
-    std::cout << "# dG = " << parts::dG << std::endl;
+    std::cout << "# g  = " << parts::param_g << std::endl;
+    //std::cout << "# dG = " << parts::dG << std::endl;
+
 
     // 2. iterate
     std::ostringstream ss_filename;
@@ -142,6 +144,8 @@ int main(int argc, char** argv)
                       << sim.m_potential.avg_active_state() << ' '
                       << sim.Ep() << ' '
                       << sim.temp_kT() << ' '
+                      << sim.temp_kT_centroid() << ' '
+                      << sim.temp_kT_higherNM() << ' '
                       << sim.avg_cart_pos() << std::endl;
 
             sim.dump_1D_frame(of_cart_traj);

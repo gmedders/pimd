@@ -27,6 +27,8 @@ protected:
     double m_Epot_sum;
     double m_Ekin;
     double m_temp_kT;
+    double m_temp_kT_centroid;
+    double m_temp_kT_higherNM;
 
     void pimd_force();
 };

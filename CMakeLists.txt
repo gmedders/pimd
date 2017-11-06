@@ -31,6 +31,9 @@ target_link_libraries(scan_potential tools fftw3 ${ARMADILLO_LIBRARIES})
 add_executable(rdf rdf.cpp)
 target_link_libraries(rdf tools fftw3 ${ARMADILLO_LIBRARIES})
 
+add_executable(rdf-partial-traj rdf-partial-traj.cpp)
+target_link_libraries(rdf-partial-traj tools fftw3 ${ARMADILLO_LIBRARIES})
+
 add_executable(test-initial-conditions test-initial-conditions.cpp)
 target_link_libraries(test-initial-conditions tools fftw3 ${ARMADILLO_LIBRARIES})
 

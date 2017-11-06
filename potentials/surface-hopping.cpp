@@ -36,9 +36,24 @@ double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
     double Eactive(0);
     double fAA[ndof];
     double fBB[ndof];
+    double dF[ndof];
     for(size_t n = 0; n < nbead; ++n) {
         double EAA = VAA(crd + ndof*n, fAA);
         double EBB = VBB(crd + ndof*n, fBB);
+
+        double dE = EBB - EAA;
+#if 0
+        for(size_t i = 0; i < ndof; ++i)
+            dF[i] = fBB[i] - fAA[i];
+
+        // Normally EBB = EAA + dE
+        // Change this to EBB = EAA + nbead*dE
+        EBB = EAA + nbead * dE;
+        for(size_t i = 0; i < ndof; ++i)
+            fBB[i] = fAA[i] + nbead * dF[i];
+
+        dE *= nbead;
+#endif
 
         if(state_id[n] == 0) {
             std::copy(fAA, fAA + ndof, f + ndof*n);
@@ -55,7 +70,6 @@ double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
         Eactive += EBath;
 
         // Determine if the active state of this bead should be changed
-        double dE = EBB - EAA;
         double random_number = ((double) rand() / (RAND_MAX));
         assert(random_number >= 0.0 && random_number <= 1.0);
 
@@ -73,9 +87,9 @@ double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
 
 //----------------------------------------------------------------------------//
 
-double surface_hopping::fermi_function(const double dE)
+double surface_hopping::fermi_function(const double dE, const double mu)
 {
-    double exp_arg = beta * dE;
+    double exp_arg = beta * (dE - mu);
     if(exp_arg > 100.0)
         return 0.0;
     else
@@ -86,12 +100,18 @@ double surface_hopping::fermi_function(const double dE)
 
 double surface_hopping::hop_probability(const double dE, int active_state)
 {
-    double fE = fermi_function(dE);
+    double fE_L = fermi_function(dE,  voltage/2.0);
+    double fE_R = fermi_function(dE, -voltage/2.0);
+
+    double Gamma_L = Gamma/2.0;
+    double Gamma_R = Gamma/2.0;
+
+    double f_bar = (Gamma_L*fE_L + Gamma_R*fE_R)/Gamma;
 
     if(active_state == 0)
-        return Gamma * dt * fE;
+        return Gamma * dt * f_bar;
     else
-        return Gamma * dt * (1.0 - fE);
+        return Gamma * dt * (1.0 - f_bar);
 }
 
 //----------------------------------------------------------------------------//
@@ -132,6 +152,7 @@ void surface_hopping::set_hopping_params(double* params)
     Gamma = params[0];
     dt = params[1];
     beta = params[2];
+    voltage = params[3];
 
     //prng.seed(19104);
 
