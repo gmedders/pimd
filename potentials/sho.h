@@ -12,7 +12,6 @@ struct sho : public single_state {
     double VAA(const double* crd, double* f);
 
     void set_params(double*);
-    void set_hopping_params(double*);
 
     double get_w(){ return w; };
     double get_m(){ return m; };

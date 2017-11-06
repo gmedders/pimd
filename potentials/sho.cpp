@@ -6,8 +6,6 @@
 
 namespace pot {
 
-void sho::set_hopping_params(double*){};
-
 //----------------------------------------------------------------------------//
 
 double sho::VAA(const double* crd, double* f)

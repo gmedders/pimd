@@ -226,7 +226,7 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 void rpmd::set_gammaTh(double gam_fac)
 {
-    m_gamma = gam_fac*omega;
+    m_gamma = gam_fac*m_potential.get_w();
 }
 
 //----------------------------------------------------------------------------//

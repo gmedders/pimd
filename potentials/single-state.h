@@ -17,6 +17,8 @@ struct single_state : public explicit_bath {
     virtual double VAA(const double* x, double* f) = 0;
     virtual void set_params(double*) = 0;
 
+    void set_hopping_params(double*){};
+
     void set_all_bead_states(const int, int);
     void set_individual_bead_states(std::vector<int>&);
 
