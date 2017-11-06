@@ -2,6 +2,7 @@
 #define SINGLE_STATE_H
 
 #include <cstdlib>
+#include <functional>
 
 #include <armadillo>
 
