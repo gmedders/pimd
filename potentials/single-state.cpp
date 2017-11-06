@@ -21,12 +21,11 @@ void single_state::check_allocation(size_t n_elements, arma::ivec& myvec)
 double single_state::force(size_t ndim, size_t natom, size_t nbead,
                            const double* crd, double* f)
 {
-    assert(ndim == 1);
-    assert(natom > 0);
     assert(nbead > 0);
     assert(init_pot == true);
 
     size_t ndof = ndim*natom;
+    assert(ndof > 0);
 
     //std::cerr << crd[0] << std::endl;
 
