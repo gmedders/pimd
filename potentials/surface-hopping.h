@@ -41,6 +41,8 @@ struct surface_hopping : public explicit_bath {
     double avg_active_state();
     double sum_active_state();
 
+    void print_state_params();
+
 private:
     int m_nbead;
 

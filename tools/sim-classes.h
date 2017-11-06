@@ -22,7 +22,7 @@ namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if 0
+#if 1
 // SHO
 typedef pot::sho potential_type;
 static double omega(0.2); // omega
@@ -58,7 +58,7 @@ static double params[] = {omega, atm_mass, param_g, dG};
 //////
 #endif
 
-#if 1
+#if 0
 // Anderson-Holstein
 typedef pot::ah potential_type;
 static double omega(0.003);
@@ -105,6 +105,7 @@ struct pimd : public parts::pimd_base {
     void calc_pos_stats(void);
 
     void dump_1D_frame(std::ofstream&);
+    void print_params();
 
     potential_type m_potential;
 
@@ -155,12 +156,10 @@ struct rpmd : public parts::rpmd_base {
     void set_gammaTh(double);
 
     void dump_1D_frame(std::ofstream&);
+    void print_params();
 
     potential_type m_potential;
 
-    //double gamma = 5.0*2.0*omega;
-    //double gamma = 0.4*omega;
-    //double gamma = 2.0*omega;
     double m_gamma = 0.0;
 
 private:
@@ -198,6 +197,8 @@ struct vv : public parts::vv_base {
     double L2_cart_pos() const { return m_L2_cart_pos; };
     double Linf_cart_pos() const { return m_Linf_cart_pos; };
     void calc_pos_stats(void);
+
+    void print_params();
 
     potential_type m_potential;
 

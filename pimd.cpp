@@ -75,6 +75,8 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
+    sim.print_params();
+
     // 2. iterate
     std::ostringstream ss_filename;
     ss_filename << "cart_traj-pimd_" << nbead << '_' << int(beta) << ".dat";

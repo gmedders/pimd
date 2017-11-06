@@ -164,6 +164,15 @@ double surface_hopping::sum_active_state()
 
 //----------------------------------------------------------------------------//
 
+void surface_hopping::print_state_params()
+{
+    std::cout << "# surface_hopping_dynamics" << std::endl;
+    std::cout << "# GammaEl = " << Gamma << std::endl;
+    std::cout << "# V     = " << voltage << std::endl;
+}
+
+//----------------------------------------------------------------------------//
+
 } // namespace pot
 
 ////////////////////////////////////////////////////////////////////////////////

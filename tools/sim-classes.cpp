@@ -55,6 +55,14 @@ void pimd::dump_1D_frame(std::ofstream& of_traj)
 
 //----------------------------------------------------------------------------//
 
+void pimd::print_params()
+{
+    m_potential.print_params();
+    std::cout << "# gammaTh_fac = 0.0" << std::endl;
+}
+
+//----------------------------------------------------------------------------//
+
 void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
                   const double beta)
 {
@@ -133,6 +141,14 @@ void rpmd::dump_1D_frame(std::ofstream& of_traj)
         }
         of_traj << std::endl;
     }
+}
+
+//----------------------------------------------------------------------------//
+
+void rpmd::print_params()
+{
+    m_potential.print_params();
+    std::cout << "# gammaTh_fac = " << m_gamma << std::endl;
 }
 
 //----------------------------------------------------------------------------//
@@ -307,6 +323,14 @@ void vv::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 double vv::force(const double* x, double* f)
 {
     return m_potential.force(m_ndim, m_natom, 1, x, f);
+}
+
+//----------------------------------------------------------------------------//
+
+void vv::print_params()
+{
+    m_potential.print_params();
+    std::cout << "# gammaTh_fac = 0.0" << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

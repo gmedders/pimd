@@ -23,6 +23,8 @@ struct single_state : public explicit_bath {
     double avg_active_state(){ return 0; };
     double sum_active_state(){ return 0; };
 
+    void print_state_params();
+
 private:
     bool init_pot = false;
     int m_nbead;

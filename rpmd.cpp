@@ -76,8 +76,8 @@ int main(int argc, char** argv)
     sim.set_gammaTh(gammaTh_fac);
 
     sim.m_potential.set_bath_params(ndim, natom - 1,
-                                    sim.m_gamma, 2*0.9*sim.m_potential.w,
-                                    sim.m_potential.m);
+                                    sim.m_gamma, 2*0.9*sim.m_potential.get_w(),
+                                    sim.m_potential.get_m());
 
     try {
         //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
@@ -113,11 +113,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    std::cout << "# w  = " << parts::omega << std::endl;
-    std::cout << "# m  = " << parts::atm_mass << std::endl;
-    std::cout << "# g  = " << parts::param_g << std::endl;
-    //std::cout << "# dG = " << parts::dG << std::endl;
-
+    sim.print_params();
 
     // 2. iterate
     std::ostringstream ss_filename;

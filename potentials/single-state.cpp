@@ -39,11 +39,11 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
 
             // FIXME Not implemented
             //double EBath = bath_force(crd + ndof*n + m, f + ndof*n + m);
-            E += EBath;
+            //E += EBath;
         }
     }
 
-    return Eactive;
+    return E;
 }
 
 //----------------------------------------------------------------------------//
@@ -74,6 +74,13 @@ void single_state::set_individual_bead_states(
         assert(id == 0 || id == 1);
         state_id[n] = id;
     }
+}
+
+//----------------------------------------------------------------------------//
+
+void single_state::print_state_params()
+{
+    std::cout << "# single_state_dynamics" << std::endl;
 }
 
 //----------------------------------------------------------------------------//

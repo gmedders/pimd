@@ -1,0 +1,7 @@
+./run.sh: line 1: ./rpmd: No such file or directory
+./run.sh: line 2: ./ensemble_tcf_rpmd: No such file or directory
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  failed to parse line 1 of the input file:
+
+
+./run.sh: line 2: 813843 Aborted                 (core dumped) ./ensemble_tcf_rpmd cart_traj-rpmd_1_1.dat 0.05 1 0.0 30000 > ens.dat
