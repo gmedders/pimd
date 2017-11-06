@@ -32,7 +32,7 @@ static double params[] = {omega, atm_mass};
 
 #if 0
 // DOUBLE WELL
-//typedef pot::double_well potential_type;
+typedef pot::double_well potential_type;
 static double omega(0.0009765625); // omega
 static double atm_mass(2000); // au
 //static double param_g(4.4); // barrier = 3w
@@ -64,7 +64,7 @@ typedef pot::ah potential_type;
 static double omega(0.003);
 static double atm_mass(2000);
 static double param_g(0.02);
-static double param_Ed_bar(0.0);
+static double param_Ed_bar(0.1333333);
 //static double omega(0.3);
 //static double atm_mass(2000);
 //static double param_g(0.75);
