@@ -24,8 +24,6 @@ private:
     double c;
 
     double m;
-
-    bool init = false;
 };
 
 } // namespace pot

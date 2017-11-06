@@ -29,7 +29,7 @@ void sho::set_params(double* params)
     // a = 1/2 m w^2
     a = 0.5 * m * w * w;
 
-    init = true;
+    init_pot = true;
 }
 
 //----------------------------------------------------------------------------//

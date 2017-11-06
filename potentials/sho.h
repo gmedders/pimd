@@ -19,7 +19,6 @@ struct sho : public single_state {
     void print_params();
 
 private:
-    bool init = false;
     double w;
     double m;
     double a;
