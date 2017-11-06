@@ -25,7 +25,7 @@ namespace parts {
 #if 1
 // SHO
 typedef pot::sho potential_type;
-static double omega(0.2); // omega
+static double omega(0.001); // omega
 static double atm_mass(2000); // au
 static double params[] = {omega, atm_mass};
 #endif

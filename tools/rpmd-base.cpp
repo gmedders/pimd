@@ -166,7 +166,7 @@ double rpmd_base::invariant() const
     double accu(0);
 
     // Epot is in kcal/mol already
-    return (m_Ekin + m_Espring + m_kT*accu)/engunit + m_Epot_sum;
+    return m_Ekin + m_Espring + m_Epot_sum;
 }
 
 //----------------------------------------------------------------------------//

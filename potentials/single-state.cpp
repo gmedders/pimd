@@ -35,7 +35,7 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
     double E(0);
     for(size_t n = 0; n < nbead; ++n) {
         for(size_t m = 0; m < ndof; ++m) {
-            double E = VAA(crd + ndof*n + m, f + ndof*n + m);
+            E += VAA(crd + ndof*n + m, f + ndof*n + m);
 
             // FIXME Not implemented
             //double EBath = bath_force(crd + ndof*n + m, f + ndof*n + m);
