@@ -92,16 +92,6 @@ int main(int argc, char** argv)
     size_t nsteps = int(prod_time / dt);
     size_t nprint = int(print_time / dt);
 
-    if(my_rank == 0){
-        std::cout << "# w     = " << parts::omega << std::endl;
-        std::cout << "# m     = " << parts::atm_mass << std::endl;
-        std::cout << "# g     = " << parts::param_g << std::endl;
-        //std::cout << "# dG    = " << parts::dG << std::endl;
-        std::cout << "# V     = " << voltage << std::endl;
-        std::cout << "# Gamma = " << GammaEl << std::endl;
-        std::cout << "# gammaTh_fac = " << gammaTh_fac << std::endl;
-    }
-
     // 2. iterate
     std::string filename(argv[1]);
     std::ifstream ifs(filename.c_str());
@@ -239,8 +229,9 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
-        if(iframe == 1)
-            std::cout << "# gamma = " << sim.m_gamma << std::endl;
+        if(iframe == 1){
+            sim.print_params();
+        }
 
         //std::fill(traj_temp_count.begin(), traj_temp_count.end(), 0.0);
 

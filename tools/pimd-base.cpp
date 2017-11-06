@@ -128,7 +128,7 @@ void pimd_base::pimd_force()
     std::fill(m_frc_cart, m_frc_cart + n_total, 0.0);
 
     // compute forces for each bead
-    m_Epot_sum = force(ndofs(), nbeads(), m_pos_cart, m_frc_cart);
+    m_Epot_sum = force(m_pos_cart, m_frc_cart);
 
     // For PIMD, divide energy by number of beads
     m_Epot_sum /= nbeads();

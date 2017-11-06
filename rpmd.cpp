@@ -24,28 +24,12 @@
 
 namespace {
 
-const size_t print_time = 10000; // au
-//10000
+//const size_t print_time = 10000; // au
 //const size_t equil_time = 10000000;
-//const size_t prod_time = 100000000;
-//1000
-const size_t equil_time = 10000000;
+
 //test
-//const size_t equil_time = 0;
-////const size_t prod_time = 30000000;
-//const size_t prod_time = 20*0.0002;
-//
-//const size_t print_time = 100; // au
-//const size_t equil_time = 5000000;
-//const size_t prod_time = 10000000;
-
-//const size_t print_time = 10000000; // au
-//const size_t equil_time = 0;
-//const size_t prod_time = 20000;
-
-//const size_t print_time = 50; // au
-//const size_t equil_time = 0;
-//const size_t prod_time = 100000;
+const size_t print_time = 1; // au
+const size_t equil_time = 0;
 
 } // namespace
 
@@ -64,7 +48,7 @@ int main(int argc, char** argv)
     }
 
     size_t ndim = 1;
-    size_t natom = 1;
+    size_t natom = 2;
 
     int nbead = parts::parse_to_int(argv[1]);
     double beta = parts::parse_to_double(argv[2]);
@@ -91,6 +75,10 @@ int main(int argc, char** argv)
     sim.m_potential.set_hopping_params(hop_params);
     sim.set_gammaTh(gammaTh_fac);
 
+    sim.m_potential.set_bath_params(ndim, natom - 1,
+                                    sim.m_gamma, 2*0.9*sim.m_potential.get_w(),
+                                    sim.m_potential.get_m());
+
     try {
         //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
         // 64 bead example starting configuration. take slices from it to seed lower-number beads
@@ -99,7 +87,7 @@ int main(int argc, char** argv)
         std::vector<double> all_crd;
         std::vector<double> all_vel;
         int count(0);
-        for(int i = 0; i < nbead; ++i){
+        for(int i = 0; i < nbead*ndim*natom; ++i){
             all_vel.push_back(0.0);
             if(count == nx)
                 count = 0;
@@ -125,11 +113,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    std::cout << "# w  = " << parts::omega << std::endl;
-    std::cout << "# m  = " << parts::atm_mass << std::endl;
-    std::cout << "# g  = " << parts::param_g << std::endl;
-    //std::cout << "# dG = " << parts::dG << std::endl;
-
+    sim.print_params();
 
     // 2. iterate
     std::ostringstream ss_filename;

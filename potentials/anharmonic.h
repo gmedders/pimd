@@ -3,26 +3,27 @@
 
 #include <cstdlib>
 
+#include "single-state.h"
+
 namespace pot {
 
-struct anharmonic {
+struct anharmonic : public single_state {
 
-    double a;
-    double b;
-    double c;
-
-    double force(const size_t, const size_t,
-                 const double* x, double* f);
     double VAA(const double* crd, double* f);
 
     void set_params(double*);
 
-    bool init = false;
+    double get_w(){ return std::sqrt(2.0*a/m); };
+    double get_m(){ return m; };
 
-    int active_state;
-    void set_all_bead_states(const int);
-    void set_hopping_params(double*);
+    void print_params();
 
+private:
+    double a;
+    double b;
+    double c;
+
+    double m;
 };
 
 } // namespace pot

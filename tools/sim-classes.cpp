@@ -55,6 +55,14 @@ void pimd::dump_1D_frame(std::ofstream& of_traj)
 
 //----------------------------------------------------------------------------//
 
+void pimd::print_params()
+{
+    m_potential.print_params();
+    std::cout << "# gammaTh_fac = 0.0" << std::endl;
+}
+
+//----------------------------------------------------------------------------//
+
 void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
                   const double beta)
 {
@@ -91,18 +99,16 @@ void pimd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 //----------------------------------------------------------------------------//
 
-double pimd::force(const size_t ndofs, const size_t nbead,
-                   const double* x, double* f)
+double pimd::force(const double* x, double* f)
 {
-    return m_potential.force(ndofs, nbead, x, f);
+    return m_potential.force(m_ndim, m_natom, m_nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Do this only for the first atom and first dimension
 void rpmd::calc_pos_stats(void)
 {
-    assert(m_ndofs == 1);
-
     m_avg_cart_pos = 0;
     for(size_t n = 0; n < m_nbead; ++n)
         m_avg_cart_pos += m_pos_cart(0,n);
@@ -126,7 +132,7 @@ void rpmd::calc_pos_stats(void)
 
 void rpmd::dump_1D_frame(std::ofstream& of_traj)
 {
-    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
+    //of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
     for(size_t n = 0; n < m_nbead; ++n) {
         of_traj << m_potential.state_id[n] << ' ';
         for(size_t i = 0; i < m_ndofs; ++i) {
@@ -135,6 +141,14 @@ void rpmd::dump_1D_frame(std::ofstream& of_traj)
         }
         of_traj << std::endl;
     }
+}
+
+//----------------------------------------------------------------------------//
+
+void rpmd::print_params()
+{
+    m_potential.print_params();
+    std::cout << "# gammaTh_fac = " << m_gamma << std::endl;
 }
 
 //----------------------------------------------------------------------------//
@@ -169,8 +183,7 @@ void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
 
     for(size_t i = 0; i < nbead*ndofs; ++i){
         const double sigma = std::sqrt(kT/atm_mass);
-        double v = sigma;
-        //double v = sigma*prg.random_gaussian();
+        double v = sigma*randn(0,1);
         all_bead_vel.push_back(v);
     }
     set_up(nbead, ndim, natom, beta, dt,
@@ -213,15 +226,14 @@ void rpmd::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 void rpmd::set_gammaTh(double gam_fac)
 {
-    m_gamma = gam_fac*omega;
+    m_gamma = gam_fac*m_potential.get_w();
 }
 
 //----------------------------------------------------------------------------//
 
-double rpmd::force(const size_t ndofs, const size_t nbead,
-                   const double* x, double* f)
+double rpmd::force(const double* x, double* f)
 {
-    return m_potential.force(ndofs, nbead, x, f);
+    return m_potential.force(m_ndim, m_natom, m_nbead, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -268,8 +280,7 @@ void vv::set_up_new_init_cond(const size_t nbead, const size_t ndim,
 
     for(size_t i = 0; i < ndofs; ++i){
         const double sigma = std::sqrt(kT/atm_mass);
-        double v = sigma;
-        //double v = sigma*prg.random_gaussian();
+        double v = sigma*randn(0,1);
         all_vel.push_back(v);
     }
     set_up(nbead, ndim, natom, beta, dt,
@@ -309,10 +320,17 @@ void vv::set_up(const size_t nbead, const size_t ndim, const size_t natom,
 
 //----------------------------------------------------------------------------//
 
-double vv::force(const size_t ndofs, const size_t nbead,
-                   const double* x, double* f)
+double vv::force(const double* x, double* f)
 {
-    return m_potential.force(ndofs, nbead, x, f);
+    return m_potential.force(m_ndim, m_natom, 1, x, f);
+}
+
+//----------------------------------------------------------------------------//
+
+void vv::print_params()
+{
+    m_potential.print_params();
+    std::cout << "# gammaTh_fac = 0.0" << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,10 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 project (Tutorial)
 
-#SET(CMAKE_CXX_COMPILER /usr/local/bin/g++-7)
-
-SET(GCC_COVERAGE_COMPILE_FLAGS "-g -O3 --std=c++11")
-SET(GCC_COVERAGE_LINK_FLAGS    "-g -O3 --std=c++11")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-O3 --std=c++11")
+SET(GCC_COVERAGE_LINK_FLAGS    "-O3 --std=c++11")
 
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
@@ -23,6 +21,9 @@ target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
 
 add_executable(rpmd rpmd.cpp)
 target_link_libraries(rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
+
+add_executable(classical-md classical-md.cpp)
+target_link_libraries(classical-md tools fftw3 ${ARMADILLO_LIBRARIES})
 
 add_executable(ensemble_tcf_rpmd ensemble_tcf_rpmd.cpp)
 target_link_libraries(ensemble_tcf_rpmd tools fftw3 ${ARMADILLO_LIBRARIES})

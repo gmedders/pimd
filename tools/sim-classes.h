@@ -22,10 +22,10 @@ namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if 0
+#if 1
 // SHO
 typedef pot::sho potential_type;
-static double omega(0.2); // omega
+static double omega(0.001); // omega
 static double atm_mass(2000); // au
 static double params[] = {omega, atm_mass};
 #endif
@@ -58,7 +58,7 @@ static double params[] = {omega, atm_mass, param_g, dG};
 //////
 #endif
 
-#if 1
+#if 0
 // Anderson-Holstein
 typedef pot::ah potential_type;
 static double omega(0.003);
@@ -82,7 +82,7 @@ static double param_c(0.25);
 //static double param_a(1.0/2.0);
 //static double param_b(1.0/10.0);
 //static double param_c(1.0/100.0);
-static double params[] = {param_a, param_b, param_c};
+static double params[] = {param_a, param_b, param_c, atm_mass};
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ struct pimd : public parts::pimd_base {
     ~pimd();
 
     void set_up(const size_t, const size_t, const size_t, const double);
-    double force(const size_t, const size_t, const double*, double*);
+    double force(const double*, double*);
 
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
@@ -105,6 +105,7 @@ struct pimd : public parts::pimd_base {
     void calc_pos_stats(void);
 
     void dump_1D_frame(std::ofstream&);
+    void print_params();
 
     potential_type m_potential;
 
@@ -126,8 +127,8 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//struct rpmd : public parts::rpmd_base {
-struct rpmd : public parts::rpmd_pile {
+struct rpmd : public parts::rpmd_base {
+//struct rpmd : public parts::rpmd_pile {
 //struct rpmd : public parts::rpmd_nhc {
 
     void set_up_new_init_cond(const size_t, const size_t, const size_t,
@@ -137,7 +138,7 @@ struct rpmd : public parts::rpmd_pile {
     void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);
-    double force(const size_t, const size_t, const double*, double*);
+    double force(const double*, double*);
 
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
@@ -155,12 +156,10 @@ struct rpmd : public parts::rpmd_pile {
     void set_gammaTh(double);
 
     void dump_1D_frame(std::ofstream&);
+    void print_params();
 
     potential_type m_potential;
 
-    //double gamma = 5.0*2.0*omega;
-    //double gamma = 0.4*omega;
-    //double gamma = 2.0*omega;
     double m_gamma = 0.0;
 
 private:
@@ -186,7 +185,7 @@ struct vv : public parts::vv_base {
     void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);
-    double force(const size_t, const size_t, const double*, double*);
+    double force(const double*, double*);
 
     inline double Espring() const { return 0.0; }
     inline double Ep() const { return m_Epot; }
@@ -198,6 +197,8 @@ struct vv : public parts::vv_base {
     double L2_cart_pos() const { return m_L2_cart_pos; };
     double Linf_cart_pos() const { return m_Linf_cart_pos; };
     void calc_pos_stats(void);
+
+    void print_params();
 
     potential_type m_potential;
 

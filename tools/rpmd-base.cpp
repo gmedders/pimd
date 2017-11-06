@@ -56,8 +56,7 @@ void rpmd_base::init(size_t ndof, size_t nbead,
 
 void rpmd_base::pimd_force()
 {
-    m_Epot_sum = force(ndofs(), nbeads(),
-                       m_pos_cart.memptr(), m_frc_cart.memptr());
+    m_Epot_sum = force(m_pos_cart.memptr(), m_frc_cart.memptr());
 }
 
 //----------------------------------------------------------------------------//
@@ -65,7 +64,7 @@ void rpmd_base::pimd_force()
 void rpmd_base::spring_energy()
 {
     m_Espring = 0.0;
-    if(nbeads() == 0)
+    if(nbeads() == 1)
         return;
 
     for (size_t n = 0; n < nbeads(); ++n){
@@ -167,7 +166,7 @@ double rpmd_base::invariant() const
     double accu(0);
 
     // Epot is in kcal/mol already
-    return (m_Ekin + m_Espring + m_kT*accu)/engunit + m_Epot_sum;
+    return m_Ekin + m_Espring + m_Epot_sum;
 }
 
 //----------------------------------------------------------------------------//

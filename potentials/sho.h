@@ -3,27 +3,25 @@
 
 #include <cstdlib>
 
+#include "single-state.h"
+
 namespace pot {
 
-struct sho {
+struct sho : public single_state {
 
-    double w;
-    double m;
-
-    double a;
-
-    double force(const size_t, const size_t,
-                 const double* x, double* f);
     double VAA(const double* crd, double* f);
 
     void set_params(double*);
 
-    bool init = false;
+    double get_w(){ return w; };
+    double get_m(){ return m; };
 
-    int active_state;
-    void set_all_bead_states(const int);
-    void set_hopping_params(double*);
+    void print_params();
 
+private:
+    double w;
+    double m;
+    double a;
 };
 
 } // namespace pot

@@ -6,6 +6,7 @@ cmake_install.cmake
 libtools.a
 pimd
 rpmd
+classical-md
 ensemble_tcf_rpmd
 mpi_ensemble_tcf_rpmd
 scan_potential
