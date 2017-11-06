@@ -40,7 +40,7 @@ void ah::set_params(double* params)
     w = params[0];
     m = params[1];
     g = params[2];
-    double Ed_bar = params[3];
+    Ed_bar = params[3];
 
     // a = 1/2 m w^2
     a = 0.5 * m * w * w;
@@ -53,6 +53,18 @@ void ah::set_params(double* params)
     Ed = Ed_bar + Er;
 
     init_pot = true;
+}
+
+//----------------------------------------------------------------------------//
+
+void ah::print_params()
+{
+    std::cout << "# pot::ah" << std::endl;
+    std::cout << "# w     = " << w << std::endl;
+    std::cout << "# m     = " << m << std::endl;
+    std::cout << "# g     = " << g << std::endl;
+    std::cout << "# Ed_bar = " << Ed_bar << std::endl;
+    print_state_params();
 }
 
 //----------------------------------------------------------------------------//

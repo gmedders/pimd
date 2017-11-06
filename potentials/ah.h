@@ -3,14 +3,23 @@
 
 #include <cstdlib>
 
-#include <armadillo>
-
 #include "surface-hopping.h"
 
 namespace pot {
 
 struct ah : public surface_hopping {
 
+    double VAA(const double* x, double* f);
+    double VBB(const double* x, double* f);
+
+    void set_params(double*);
+
+    double get_w(){ return w; };
+    double get_m(){ return m; };
+
+    void print_params();
+
+private:
     double w;
     double m;
     double g;
@@ -18,12 +27,7 @@ struct ah : public surface_hopping {
     double a;
     double b;
     double Ed;
-
-    double VAA(const double* x, double* f);
-    double VBB(const double* x, double* f);
-
-    void set_params(double*);
-
+    double Ed_bar;
 };
 
 } // namespace pot
