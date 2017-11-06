@@ -76,7 +76,7 @@ int main(int argc, char** argv)
     sim.set_gammaTh(gammaTh_fac);
 
     sim.m_potential.set_bath_params(ndim, natom - 1,
-                                    sim.gamma, 2*0.9*sim.m_potential.w,
+                                    sim.m_gamma, 2*0.9*sim.m_potential.w,
                                     sim.m_potential.m);
 
     try {
