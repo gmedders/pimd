@@ -8,6 +8,13 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
+void anharmonic::assert_ndim(int ndim)
+{
+    assert(ndim == 1);
+}
+
+//----------------------------------------------------------------------------//
+
 double sho::VAA(const double* crd, double* f)
 {
     double x = crd[0];

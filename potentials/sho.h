@@ -13,6 +13,8 @@ class sho : public single_state
 public:
     double VAA(const double* crd, double* f);
 
+    void assert_ndim(int);
+    
     void set_params(double*);
 
     double get_w(){ return w; };

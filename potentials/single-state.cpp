@@ -14,6 +14,8 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
     assert(nbead > 0);
     assert(init_pot == true);
 
+    assert_ndim(ndim);
+
     size_t ndof = ndim*natom;
     assert(ndof > 0);
 

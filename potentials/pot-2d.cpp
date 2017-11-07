@@ -8,6 +8,13 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
+void pot_2d::assert_ndim(int ndim)
+{
+    assert(ndim == 2);
+}
+
+//----------------------------------------------------------------------------//
+
 double pot_2d::VAA(const double* crd, double* f)
 {
     double x = crd[0];
