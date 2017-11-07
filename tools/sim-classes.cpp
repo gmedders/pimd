@@ -1,7 +1,5 @@
 #include "sim-classes.h"
 
-#include "mt19937.h"
-
 namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -176,8 +174,6 @@ void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
 {
     std::vector<double> all_bead_vel;
 
-    parts::mt19937 prg(27606);
-
     size_t ndofs = ndim*natom;
     double kT = 1.0/beta;
 
@@ -272,8 +268,6 @@ void vv::set_up_new_init_cond(const size_t nbead, const size_t ndim,
                                 const double dt, double* pos)
 {
     std::vector<double> all_vel;
-
-    parts::mt19937 prg(27606);
 
     size_t ndofs = ndim*natom;
     double kT = 1.0/beta;
