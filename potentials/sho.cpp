@@ -8,7 +8,7 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
-void anharmonic::assert_ndim(int ndim)
+void sho::assert_ndim(int ndim)
 {
     assert(ndim == 1);
 }
