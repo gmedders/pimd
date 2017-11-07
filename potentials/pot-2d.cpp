@@ -34,8 +34,8 @@ double pot_2d::VAA(const double* crd, double* f)
     double dedx = 2.0 * a * xg;
     double dedz = 2.0*A0*C0 * exp_z * (exp_z - 1);
 
-    f[0] = -dedx;
-    f[1] = -dedz;
+    f[0] += -dedx;
+    f[1] += -dedz;
 
     return e;
 }
@@ -58,8 +58,8 @@ double pot_2d::VBB(const double* crd, double* f)
     double dedx = 2.0 * a * xg;
     double dedz = -1.0/(4*z*z) - 6.0/std::pow(z-C1, 7);
 
-    f[0] = -dedx;
-    f[1] = -dedz;
+    f[0] += -dedx;
+    f[1] += -dedz;
 
     return e;
 }

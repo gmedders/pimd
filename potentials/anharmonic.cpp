@@ -27,7 +27,7 @@ double anharmonic::VAA(const double* crd, double* f)
     double e    =       a * x2 +       b * x3 +       c * x4;
     double dedx = 2.0 * a * x  + 3.0 * b * x2 + 4.0 * c * x3;
 
-    f[0] = -dedx;
+    f[0] += -dedx;
 
     return e;
 }

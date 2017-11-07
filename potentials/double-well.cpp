@@ -14,7 +14,7 @@ double double_well::VAA(const double* crd, double* f)
 
     double e = a * x * x;
     double dedx = 2.0 * a * x;
-    f[0] = -dedx;
+    f[0] += -dedx;
 
     return e;
 }
@@ -27,7 +27,7 @@ double double_well::VBB(const double* crd, double* f)
 
     double e = a * xg * xg + dG;
     double dedx = 2.0 * a * xg;
-    f[0] = -dedx;
+    f[0] += -dedx;
 
     return e;
 }
