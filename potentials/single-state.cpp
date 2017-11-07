@@ -29,13 +29,14 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
 
     // Now calculate the energy and forces
     double E(0);
+    std::fill(f, f + ndof*nbead, 0.0);
     for(size_t n = 0; n < nbead; ++n) {
         const size_t ind_bead = n*ndof;
 
         // Evaluate the influence of the underlying potential on the particle
         // ... like a 1-body term
         for(size_t i = 0; i < natom; ++i) {
-            size_t ind_i = ind_bead + i*ndim;
+            const size_t ind_i = ind_bead + i*ndim;
 
             E += VAA(crd + ind_i, f + ind_i);
 
@@ -46,10 +47,10 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
 
         // Evaluate the inter-particle interation
         for(size_t i = 0; i < natom; ++i) {
-            size_t ind_i = ind_bead + i*ndim;
+            const size_t ind_i = ind_bead + i*ndim;
 
             for (size_t j = i + 1; j < natom; j++) {
-                size_t ind_j = ind_bead + j*ndim;
+                const size_t ind_j = ind_bead + j*ndim;
 
                 //E += V_2body(crd + ind_i, crd + ind_j, f + ind_i, f + ind_j);
             }

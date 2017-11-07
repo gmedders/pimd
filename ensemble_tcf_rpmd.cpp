@@ -83,7 +83,8 @@ int main(int argc, char** argv)
     if(argc == 7){
         prod_time = parts::parse_to_double(argv[6]);
     } else {
-        prod_time = 60.0/parts::omega; // au
+        prod_time = 60.0/0.002; // au
+        //prod_time = 60.0/parts::omega; // au
     }
 
     const double print_time = prod_time/5000; // au
