@@ -181,7 +181,7 @@ struct rpmd : public parts::rpmd_pile {
     double Linf_cart_pos() const { return m_Linf_cart_pos; };
     void calc_pos_stats(void);
 
-    void set_gammaTh(double);
+    void set_gammaTh(const double&, double);
 
     void dump_1D_frame(std::ofstream&);
     void print_params();

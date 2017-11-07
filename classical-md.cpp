@@ -77,30 +77,31 @@ int main(int argc, char** argv)
     //                                sim.m_potential.get_m());
 
     try {
-        //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
         int nx=4;
         double x[] = {1.75, -2.5, -1.75, -4.5};
+        double v[] = {0.001, 0.001, -0.001, 0.001};
 
         std::vector<double> all_crd;
         std::vector<double> all_vel;
         int count(0);
         for(int i = 0; i < nbead*ndim*natom; ++i){
-            all_vel.push_back(0.0);
+            //all_vel.push_back(0.0);
             if(count == nx)
                 count = 0;
 
             all_crd.push_back(x[count]);
+            all_vel.push_back(v[count]);
             ++count;
         }
 
-        sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt, &all_crd[0]);
-        //sim.set_up(nbead, ndim, natom, beta, dt, &all_crd[0], &all_vel[0]);
+        //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt, &all_crd[0]);
+        sim.set_up(nbead, ndim, natom, beta, dt, &all_crd[0], &all_vel[0]);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 
-    sim.set_gammaTh(gammaTh_fac);
+    sim.set_gammaTh(dt, gammaTh_fac);
     sim.print_params();
 
     // 2. iterate

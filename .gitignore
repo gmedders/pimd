@@ -14,6 +14,7 @@ test-initial-conditions
 test-randn
 rdf
 rdf-partial-traj
+test_*
 *.dSYM
 *.dat*
 *.py

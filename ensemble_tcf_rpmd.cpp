@@ -218,7 +218,6 @@ int main(int argc, char** argv)
         //beta*=5;
         double hop_params[] = {GammaEl, dt, beta/nbead, voltage};
         sim.m_potential.set_hopping_params(hop_params);
-        sim.set_gammaTh(gammaTh_fac);
 
         try {
             //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
@@ -229,6 +228,7 @@ int main(int argc, char** argv)
             std::cerr << " ** Error ** : " << e.what() << std::endl;
             return EXIT_FAILURE;
         }
+        sim.set_gammaTh(dt, gammaTh_fac);
 
         if(iframe == 1){
             sim.print_params();

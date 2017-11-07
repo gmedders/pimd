@@ -13,6 +13,7 @@ struct rpmd_pile : public rpmd_base {
               const double& kT, const double& dt,
               const double* mass, const double* cartpos, const double* cartvel,
               double tau);
+    void init_langevin(const double& dt, double gamma_centroid);
 
     void step(const double&);
     double invariant() const;

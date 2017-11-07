@@ -5,7 +5,7 @@
 
 #include "rpmd-pile.h"
 
-#define DECOMPOSE_KE yes
+//#define DECOMPOSE_KE yes
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -37,14 +37,21 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
     rpmd_base::init(ndof, nbead, kT, dt,
                     mass, cartpos, cartvel, gamma_centroid);
 
-    // Now do all the RPMD-NHC specific stuff
-
     c1 = arma::vec(nbead);
     c2 = arma::vec(nbead);
 
-    //rand_gaussian = arma::mat(ndof, nbead, arma::zeros);
+    init_langevin(dt, gamma_centroid);
 
-    for(size_t k = 0; k < nbead; ++k) {
+#ifdef DECOMPOSE_KE
+    saved_mom = arma::mat(ndof, nbead);
+#endif
+}
+
+//----------------------------------------------------------------------------//
+
+void rpmd_pile::init_langevin(const double& dt, double gamma_centroid)
+{
+    for(size_t k = 0; k < nbeads(); ++k) {
         double gamma(0);
         if(k == 0)
             gamma = gamma_centroid;
@@ -54,13 +61,6 @@ void rpmd_pile::init(size_t ndof, size_t nbead,
         c1(k) = std::exp(-0.5*dt * gamma);
         c2(k) = std::sqrt(1.0 - c1(k)*c1(k));
     }
-
-#ifdef DECOMPOSE_KE
-    saved_mom = arma::mat(ndof, nbead);
-#endif
-
-    //std::cerr << "<<< Thermostatting ( tau = " << 1.0/gamma_centroid 
-    //          << " ) >>>"<<std::endl;
 }
 
 //----------------------------------------------------------------------------//
