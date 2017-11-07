@@ -13,6 +13,7 @@
 #include "anharmonic.h"
 #include "double-well.h"
 #include "ah.h"
+#include "pot-2d.h"
 
 //
 // units are au
@@ -22,12 +23,39 @@ namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if 1
+#if 0
 // SHO
 typedef pot::sho potential_type;
 static double omega(0.001); // omega
 static double atm_mass(2000); // au
 static double params[] = {omega, atm_mass};
+#endif
+
+#if 1
+// pot_2d
+typedef pot::pot_2d potential_type;
+static double A0 = 0.011;
+static double B1 = 0.2;
+static double x0 = 0.0;
+static double x1 = 0.18899;
+static double C0 = 0.64;
+static double C1 = 0.67;
+static double w  = 8.0E-3;
+static double mx = 14000;
+static double z0 = -3.5;
+
+static double atm_mass = 55000;
+
+static double params[] = {
+A0,
+B1,
+x0,
+x1,
+C0,
+C1,
+w ,
+mx,
+z0};
 #endif
 
 #if 0
