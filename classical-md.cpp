@@ -15,6 +15,8 @@
 
 #include "sim-classes.h"
 
+#define DUMP_TRAJ yes
+
 //
 // constant temperature PIMD
 // units are au
@@ -69,7 +71,6 @@ int main(int argc, char** argv)
     //rpmd sim;
     parts::rpmd sim;
     sim.m_potential.set_all_bead_states(0, nbead);
-    sim.set_gammaTh(gammaTh_fac);
 
     //sim.m_potential.set_bath_params(ndim, natom - 1,
     //                               sim.m_gamma, 2*0.9*sim.m_potential.get_w(),
@@ -99,6 +100,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
+    sim.set_gammaTh(gammaTh_fac);
     sim.print_params();
 
     // 2. iterate
