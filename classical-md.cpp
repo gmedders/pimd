@@ -47,8 +47,8 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    size_t ndim = 1;
-    size_t natom = 2;
+    size_t ndim = 2;
+    size_t natom = 1;
     size_t nbead = 1;
 
     double beta = parts::parse_to_double(argv[1]);
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
     try {
         //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
         int nx=4;
-        double x[] = {1.0, 2.0, 3.0, 4.0};
+        double x[] = {0.0, -3.5, 0.2, -3.5};
 
         std::vector<double> all_crd;
         std::vector<double> all_vel;
@@ -92,7 +92,8 @@ int main(int argc, char** argv)
             ++count;
         }
 
-        sim.set_up(nbead, ndim, natom, beta, dt, &all_crd[0], &all_vel[0]);
+        sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt, &all_crd[0]);
+        //sim.set_up(nbead, ndim, natom, beta, dt, &all_crd[0], &all_vel[0]);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;
         return EXIT_FAILURE;
@@ -101,6 +102,7 @@ int main(int argc, char** argv)
     sim.print_params();
 
     // 2. iterate
+#ifdef DUMP_TRAJ
     std::ostringstream ss_filename;
     ss_filename << "cart_traj-class_" << int(beta) << ".dat";
 
@@ -108,6 +110,7 @@ int main(int argc, char** argv)
     of_cart_traj.open(ss_filename.str().c_str());
     of_cart_traj << std::scientific;
     of_cart_traj.precision(15);
+#endif
 
     int count(0);
     double sum_Espring(0);
@@ -124,12 +127,16 @@ int main(int argc, char** argv)
                       << sim.temp_kT() << ' '
                       << sim.avg_cart_pos() << std::endl;
 
+#ifdef DUMP_TRAJ
             sim.dump_1D_frame(of_cart_traj);
+#endif
         }
 
     }
 
+#ifdef DUMP_TRAJ
     of_cart_traj.close();
+#endif
 
     return EXIT_SUCCESS;
 }
