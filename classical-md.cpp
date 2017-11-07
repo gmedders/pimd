@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     }
 
     size_t ndim = 2;
-    size_t natom = 1;
+    size_t natom = 2;
     size_t nbead = 1;
 
     double beta = parts::parse_to_double(argv[1]);
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
     try {
         //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
         int nx=4;
-        double x[] = {0.0, -3.5, 0.2, -3.5};
+        double x[] = {1.75, -2.5, -1.75, -4.5};
 
         std::vector<double> all_crd;
         std::vector<double> all_vel;

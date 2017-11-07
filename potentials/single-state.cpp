@@ -40,7 +40,7 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
         for(size_t i = 0; i < natom; ++i) {
             const size_t ind_i = ind_bead + i*ndim;
 
-            E += VAA(crd + ind_i, f + ind_i);
+            // E += VAA(crd + ind_i, f + ind_i);
 
             // FIXME Not implemented
             //double EBath = bath_force(crd + ndof*n + m, f + ndof*n + m);
@@ -54,7 +54,8 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
             for (size_t j = i + 1; j < natom; j++) {
                 const size_t ind_j = ind_bead + j*ndim;
 
-                //E += V_2body(crd + ind_i, crd + ind_j, f + ind_i, f + ind_j);
+                E += m_pot_2B.V2B(ndim, crd + ind_i, crd + ind_j,
+                                  f + ind_i, f + ind_j);
             }
         }
     }
@@ -66,6 +67,7 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
 
 void single_state::print_state_params()
 {
+    m_pot_2B.print_params();
     std::cout << "# single_state_dynamics" << std::endl;
 }
 
