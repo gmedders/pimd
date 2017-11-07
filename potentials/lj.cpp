@@ -30,7 +30,7 @@ double lj::V2B(const size_t ndim, const double* crd_a, const double* crd_b,
     double R12 = R6*R6;
 
     double e = A/R12 - B/R6;
-    double dedr = -12*A/(R12*R) + 6*B/(R6/R);
+    double dedr = -12*A/(R12*R) + 6*B/(R6*R);
 
     for (size_t i = 0; i < ndim; i++) {
         f_a[i] -= -dR[i]/R * dedr;

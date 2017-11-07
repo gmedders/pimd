@@ -40,7 +40,7 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
         for(size_t i = 0; i < natom; ++i) {
             const size_t ind_i = ind_bead + i*ndim;
 
-            // E += VAA(crd + ind_i, f + ind_i);
+            E += VAA(crd + ind_i, f + ind_i);
 
             // FIXME Not implemented
             //double EBath = bath_force(crd + ndof*n + m, f + ndof*n + m);

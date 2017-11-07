@@ -17,10 +17,10 @@ public:
     void print_params();
 
 private:
-    // sig = 0.3345 nm = 6.323 au
+    // sig = 0.2782 nm = 5.25 au
     // eps = 125.7 K = 0.000398066 au
-    static constexpr double sig = 6.323;
-    static constexpr double eps = 0.000398066;
+    static constexpr double sig = 5.25;
+    static constexpr double eps = 0.0001180938915;
 };
 
 } // namespace pot
