@@ -115,46 +115,6 @@ static double params[] = {param_a, param_b, param_c, atm_mass};
 
 ////////////////////////////////////////////////////////////////////////////////
 
-struct pimd : public parts::pimd_base {
-
-    ~pimd();
-
-    void set_up(const size_t, const size_t, const size_t, const double);
-    double force(const double*, double*);
-
-    inline double Espring() const { return m_Espring; }
-    inline double Ep() const { return m_Epot_sum; }
-    inline double Ek() const { return m_Ekin_fict; }
-    inline double temp_kT() const { return m_temp_kT; }
-    double avg_cart_pos() { calc_pos_stats(); return m_avg_cart_pos; };
-    double L1_cart_pos() const { return m_L1_cart_pos; };
-    double L2_cart_pos() const { return m_L2_cart_pos; };
-    double Linf_cart_pos() const { return m_Linf_cart_pos; };
-    void calc_pos_stats(void);
-
-    void dump_1D_frame(std::ofstream&);
-    void print_params();
-
-    potential_type m_potential;
-
-private:
-    size_t m_natom;
-    size_t m_ndim;
-    size_t m_ndofs;
-    size_t m_nbead;
-
-    double m_beta;
-
-    double m_avg_cart_pos;
-    double m_L1_cart_pos;
-    double m_L2_cart_pos;
-    double m_Linf_cart_pos;
-
-    double* pos;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
 //struct rpmd : public parts::rpmd_base {
 struct rpmd : public parts::rpmd_pile {
 //struct rpmd : public parts::rpmd_nhc {
@@ -166,7 +126,7 @@ struct rpmd : public parts::rpmd_pile {
     void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);
-    double force(const double*, double*);
+    double force(size_t, size_t, size_t, const double*, double*);
 
     inline double Espring() const { return m_Espring; }
     inline double Ep() const { return m_Epot_sum; }
@@ -195,11 +155,6 @@ private:
     double m_L1_cart_pos;
     double m_L2_cart_pos;
     double m_Linf_cart_pos;
-
-    size_t m_natom;
-    size_t m_ndim;
-    size_t m_ndofs;
-    size_t m_nbead;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,17 +168,17 @@ struct vv : public parts::vv_base {
     void set_up(const size_t, const size_t, const size_t,
                 const double, const double,
                 double*, double*);
-    double force(const double*, double*);
+    double force(size_t, size_t, size_t, const double*, double*);
 
     inline double Espring() const { return 0.0; }
     inline double Ep() const { return m_Epot; }
     inline double Ek() const { return m_Ekin; }
     inline double temp_kT() const { return m_temp_kT; }
+
     double avg_cart_pos() { calc_pos_stats(); return m_avg_cart_pos; };
-    //double avg_cart_pos() const { return m_avg_cart_pos; };
-    double L1_cart_pos() const { return m_L1_cart_pos; };
-    double L2_cart_pos() const { return m_L2_cart_pos; };
-    double Linf_cart_pos() const { return m_Linf_cart_pos; };
+    double L1_cart_pos() const { return 0.0; };
+    double L2_cart_pos() const { return 0.0; };
+    double Linf_cart_pos() const { return 0.0; };
     void calc_pos_stats(void);
 
     void print_params();
@@ -232,13 +187,6 @@ struct vv : public parts::vv_base {
 
 private:
     double m_avg_cart_pos;
-    double m_L1_cart_pos;
-    double m_L2_cart_pos;
-    double m_Linf_cart_pos;
-
-    size_t m_natom;
-    size_t m_ndim;
-    size_t m_ndofs;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

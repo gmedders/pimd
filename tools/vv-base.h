@@ -7,10 +7,11 @@ namespace parts {
 
 struct vv_base {
 
-    inline size_t ndim() const;
-    inline size_t natoms() const;
-    inline size_t ndofs() const;
-    inline size_t nbeads() const;
+    inline size_t ndim() const {return m_ndim;};
+    inline size_t natoms() const {return m_natoms;};
+    inline size_t ndofs() const {return m_ndof;};
+    inline size_t nbeads() const {return m_nbeads;};
+    // inline size_t beta() const {return m_beta;};
 
     inline double* cart_ptr(){return m_pos.memptr();};
 
@@ -41,26 +42,6 @@ protected:
     double m_temp_kT;
 
 };
-
-inline size_t vv_base::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t vv_base::natoms() const
-{
-    return m_natoms;
-}
-
-inline size_t vv_base::ndofs() const
-{
-    return m_ndof;
-}
-
-inline size_t vv_base::nbeads() const
-{
-    return m_nbeads;
-}
 
 } // namespace parts
 

@@ -51,9 +51,9 @@ int main(int argc, char** argv)
         sim.cart_ptr()[0] = x;
         std::cout << x << ' ';
         sim.m_potential.set_all_bead_states(0, nbead);
-        std::cout << sim.force(sim.cart_ptr(), frc) << ' ';
+        std::cout << sim.force(ndim, natom, nbead, sim.cart_ptr(), frc) << ' ';
         sim.m_potential.set_all_bead_states(1, nbead);
-        std::cout << sim.force(sim.cart_ptr(), frc) << ' ';
+        std::cout << sim.force(ndim, natom, nbead, sim.cart_ptr(), frc) << ' ';
         std::cout << std::endl;
         //sim.m_pos(0) = x;
         //sim.force(1, 1, sim.m_pos.memptr(), frc);

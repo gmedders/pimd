@@ -17,10 +17,11 @@ struct rpmd_necklace {
 
     rpmd_necklace();
 
-    inline size_t ndim() const;
-    inline size_t natoms() const;
-    inline size_t ndofs() const;
-    inline size_t nbeads() const;
+    inline size_t ndim() const {return m_ndim;};
+    inline size_t natoms() const {return m_natoms;};
+    inline size_t ndofs() const {return m_ndofs;};
+    inline size_t nbeads() const {return m_nbeads;};
+    inline size_t beta() const {return m_beta;};
 
 //    inline const double& lambda(size_t) const;
 
@@ -77,26 +78,6 @@ protected:
     constexpr static double hbar = 1.0;
 
 };
-
-inline size_t rpmd_necklace::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t rpmd_necklace::natoms() const
-{
-    return m_natoms;
-}
-
-inline size_t rpmd_necklace::ndofs() const
-{
-    return m_ndofs;
-}
-
-inline size_t rpmd_necklace::nbeads() const
-{
-    return m_nbeads;
-}
 
 //inline const double& rpmd_necklace::lambda(size_t b) const
 //{
