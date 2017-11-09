@@ -18,6 +18,8 @@ struct necklace {
     necklace();
     ~necklace();
 
+    inline size_t ndim() const;
+    inline size_t natoms() const;
     inline size_t ndofs() const;
     inline size_t nbeads() const;
 
@@ -28,6 +30,8 @@ private:
     necklace(const necklace&);
     necklace& operator=(const necklace&);
 
+    size_t m_ndim;
+    size_t m_natom;
     size_t m_ndofs;
     size_t m_nbeads;
 
@@ -36,7 +40,7 @@ private:
 
 protected:
 
-    void setup(size_t ndof, size_t nbead);
+    void setup(size_t ndim, size_t natom, size_t nbead);
 
     void pos_c2n();
     void pos_n2c();
@@ -60,6 +64,17 @@ protected:
 
     double* m_lambda;
 };
+
+
+inline size_t necklace::ndim() const
+{
+    return m_ndim;
+}
+
+inline size_t necklace::natoms() const
+{
+    return m_natom;
+}
 
 inline size_t necklace::ndofs() const
 {

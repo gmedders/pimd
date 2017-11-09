@@ -14,13 +14,16 @@ rpmd_necklace::rpmd_necklace()
 
 //----------------------------------------------------------------------------//
 
-void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta,
+void rpmd_necklace::setup(size_t ndim, size_t natom, size_t nbead, double beta,
                           double dt, double mass)
 {
     //assert(ndof == 1);
     assert(nbead > 0);
     assert(nbead%2 == 0 || nbead == 1);
 
+    m_ndim = ndim;
+    m_natoms = natom;
+    size_t ndof = ndim*natom;
     m_ndofs = ndof;
     m_nbeads = nbead;
 
@@ -63,7 +66,7 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta,
 
         } else if(k <= nbead/2 - 1) { // 1 <= k <= nbead/2 - 1
             for(size_t j = 0; j < nbead; ++j)
-                m_cart_to_nm(j, k) 
+                m_cart_to_nm(j, k)
                     = std::sqrt(2.0/nbead) * std::cos(2.0*M_PI*j*k/nbead);
 
         } else if(k == nbead/2) {
@@ -73,7 +76,7 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta,
 
         } else { // nbead/2 + 1 <= k <= nbead - 1
             for(size_t j = 0; j < nbead; ++j)
-                m_cart_to_nm(j, k) 
+                m_cart_to_nm(j, k)
                     = std::sqrt(2.0/nbead) * std::sin(2.0*M_PI*j*k/nbead);
 
         }

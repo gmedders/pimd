@@ -28,13 +28,13 @@ double rpmd_pile::calc_KE(void)
 
 //----------------------------------------------------------------------------//
 
-void rpmd_pile::init(size_t ndof, size_t nbead,
+void rpmd_pile::init(size_t ndim, size_t natom, size_t nbead,
                      const double& kT, const double& dt,
                      const double* mass, const double* cartpos,
                      const double* cartvel, double gamma_centroid)
 {
     // Intialize the RPMD base class
-    rpmd_base::init(ndof, nbead, kT, dt,
+    rpmd_base::init(ndim, natom, nbead, kT, dt,
                     mass, cartpos, cartvel, gamma_centroid);
 
     c1 = arma::vec(nbead);

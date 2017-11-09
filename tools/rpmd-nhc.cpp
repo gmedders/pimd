@@ -28,15 +28,16 @@ rpmd_nhc::~rpmd_nhc()
 
 //----------------------------------------------------------------------------//
 
-void rpmd_nhc::init(size_t ndof, size_t nbead,
+void rpmd_nhc::init(size_t ndim, size_t natom, size_t nbead,
                      const double& kT, const double& dt,
                      const double* mass, const double* cartpos,
                      const double* cartvel, double dummy)
 {
 
     // Intialize the RPMD base class
-    rpmd_base::init(ndof, nbead, kT, dt,
+    rpmd_base::init(ndim, natom, nbead, kT, dt,
                     mass, cartpos, cartvel, dummy);
+    size_t ndof = ndim*natom;
 
     // Now do all the RPMD-NHC specific stuff
 

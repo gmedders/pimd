@@ -11,17 +11,18 @@ namespace parts {
 
 //----------------------------------------------------------------------------//
 
-void rpmd_base::init(size_t ndof, size_t nbead,
+void rpmd_base::init(size_t ndim, size_t natom, size_t nbead,
                      const double& kT, const double& dt,
                      const double* mass, const double* cartpos,
                      const double* cartvel, double dummy)
 {
+    size_t ndof = ndim*natom;
     assert(ndof > 0 && nbead > 0);
     assert(nbead%2 == 0 || nbead == 1);
     assert(kT > 0.0 && mass != 0 && cartpos != 0 && cartvel != 0);
 
     m_kT = kT;
-    rpmd_necklace::setup(ndof, nbead, 1.0/kT, dt, mass[0]);
+    rpmd_necklace::setup(ndim, natom, nbead, 1.0/kT, dt, mass[0]);
 
     // initialize cartesian positions and momenta
     for(size_t n = 0; n < nbeads(); ++n){
@@ -56,7 +57,8 @@ void rpmd_base::init(size_t ndof, size_t nbead,
 
 void rpmd_base::pimd_force()
 {
-    m_Epot_sum = force(m_pos_cart.memptr(), m_frc_cart.memptr());
+    m_Epot_sum = force(ndim(), natoms(), nbeads(),
+                       m_pos_cart.memptr(), m_frc_cart.memptr());
 }
 
 //----------------------------------------------------------------------------//

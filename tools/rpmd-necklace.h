@@ -17,6 +17,8 @@ struct rpmd_necklace {
 
     rpmd_necklace();
 
+    inline size_t ndim() const;
+    inline size_t natoms() const;
     inline size_t ndofs() const;
     inline size_t nbeads() const;
 
@@ -27,8 +29,11 @@ private:
     rpmd_necklace(const rpmd_necklace&);
     rpmd_necklace& operator=(const rpmd_necklace&);
 
+    size_t m_ndim;
+    size_t m_natoms;
     size_t m_ndofs;
     size_t m_nbeads;
+
 
 protected:
 
@@ -38,7 +43,7 @@ protected:
     double m_beta_n;
     double m_omega_n;
 
-    void setup(size_t ndof, size_t nbead, double, double, double);
+    void setup(size_t ndim, size_t natom, size_t nbead, double, double, double);
 
     void pos_c2n();
     void pos_n2c();
@@ -66,12 +71,22 @@ protected:
 
     arma::vec m_mass;
     arma::vec m_sqrt_mass;
-    
+
     constexpr static double engunit = 1.0; // conversion from internal units to kcal/mol
     constexpr static double kB = 1.0; // Boltzmann constant in internal units
     constexpr static double hbar = 1.0;
 
 };
+
+inline size_t rpmd_necklace::ndim() const
+{
+    return m_ndim;
+}
+
+inline size_t rpmd_necklace::natoms() const
+{
+    return m_natoms;
+}
 
 inline size_t rpmd_necklace::ndofs() const
 {

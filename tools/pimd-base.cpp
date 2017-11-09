@@ -36,14 +36,16 @@ pimd_base::~pimd_base()
 
 //----------------------------------------------------------------------------//
 
-void pimd_base::init(size_t ndof, size_t nbead, const double& kT,
+void pimd_base::init(size_t ndim, size_t natom, size_t nbead, const double& kT,
                      const double* mass, const double* cartpos)
 {
-    assert(ndof > 0 && nbead > 0);
+    assert(ndim*natom > 0 && nbead > 0);
     assert(nbead%2 == 0 || nbead == 1);
     assert(kT > 0.0 && mass != 0 && cartpos != 0);
 
-    necklace::setup(ndof, nbead);
+    size_t ndof = ndim*natom;
+
+    necklace::setup(ndim, natom, nbead);
 
     delete[] m_fict_mass;
 #ifdef DO_NHC
@@ -128,7 +130,7 @@ void pimd_base::pimd_force()
     std::fill(m_frc_cart, m_frc_cart + n_total, 0.0);
 
     // compute forces for each bead
-    m_Epot_sum = force(m_pos_cart, m_frc_cart);
+    m_Epot_sum = force(ndim(), natoms(), nbeads(), m_pos_cart, m_frc_cart);
 
     // For PIMD, divide energy by number of beads
     m_Epot_sum /= nbeads();

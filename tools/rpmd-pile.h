@@ -9,10 +9,10 @@ namespace parts {
 
 struct rpmd_pile : public rpmd_base {
 
-    void init(size_t ndof, size_t nbead,
-              const double& kT, const double& dt,
-              const double* mass, const double* cartpos, const double* cartvel,
-              double tau);
+    void init(size_t, size_t, size_t,
+              const double&, const double&,
+              const double*, const double*, const double*,
+              double);
     void init_langevin(const double& dt, double gamma_centroid);
 
     void step(const double&);
