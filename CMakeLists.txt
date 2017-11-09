@@ -16,8 +16,8 @@ add_library( tools ${tools})
 find_package(Armadillo REQUIRED)
 #include_directories(${ARMADILLO_INCLUDE_DIRS})
 
-add_executable(pimd pimd.cpp)
-target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
+#add_executable(pimd pimd.cpp)
+#target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
 
 add_executable(rpmd rpmd.cpp)
 target_link_libraries(rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
