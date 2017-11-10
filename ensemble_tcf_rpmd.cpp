@@ -211,7 +211,7 @@ int main(int argc, char** argv)
 #endif
 
         // Now set up this simulation
-        
+
         //parts::vv sim;
         parts::rpmd sim;
         sim.m_potential.set_individual_bead_states(init_active_state);
@@ -220,9 +220,7 @@ int main(int argc, char** argv)
         sim.m_potential.set_hopping_params(hop_params);
 
         try {
-            //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
-            //                         &all_bead_crd[0]);
-            sim.set_up(nbead, ndim, natom, beta, dt,
+            sim.set_up(ndim, natom, nbead, beta, dt,
                        &all_bead_crd[0], &all_bead_vel[0]);
         } catch (const std::exception& e) {
             std::cerr << " ** Error ** : " << e.what() << std::endl;

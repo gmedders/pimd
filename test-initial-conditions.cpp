@@ -160,7 +160,7 @@ int main(int argc, char** argv)
         //std::cerr << ntemp << ' ' << std::endl;
 
         // Now set up this simulation
-        
+
         //rpmd sim;
         //parts::vv sim;
         parts::rpmd sim;
@@ -177,9 +177,7 @@ int main(int argc, char** argv)
         //of_cart_traj.precision(15);
 
         try {
-            //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt,
-            //                         &all_bead_crd[0]);
-            sim.set_up(nbead, ndim, natom, beta, dt,
+            sim.set_up(ndim, natom, nbead, beta, dt,
                        &all_bead_crd[0], &all_bead_vel[0]);
         } catch (const std::exception& e) {
             std::cerr << " ** Error ** : " << e.what() << std::endl;

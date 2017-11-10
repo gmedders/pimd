@@ -29,13 +29,9 @@ namespace parts {
 struct rpmd : public parts::rpmd_pile {
 //struct rpmd : public parts::rpmd_nhc {
 
-    void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                              const double, const double);
-    void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                              const double, const double, double*);
-    void set_up(const size_t, const size_t, const size_t,
-                const double, const double,
-                double*, double*);
+    void set_up(const size_t ndim, const size_t natoms, const size_t nbeads,
+                const double beta, const double dt,
+                double* crd = nullptr, double* vel = nullptr);
     double force(size_t, size_t, size_t, const double*, double*);
 
     inline double Espring() const { return m_Espring; }
@@ -71,13 +67,9 @@ private:
 
 struct vv : public parts::vv_base {
 
-    void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                              const double, const double);
-    void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                              const double, const double, double*);
-    void set_up(const size_t, const size_t, const size_t,
-                const double, const double,
-                double*, double*);
+    void set_up(const size_t ndim, const size_t natoms, const size_t nbead,
+                const double beta, const double dt,
+                double* crd = nullptr, double* vel = nullptr);
     double force(size_t, size_t, size_t, const double*, double*);
 
     inline double Espring() const { return 0.0; }

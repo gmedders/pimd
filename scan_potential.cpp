@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     double frc[1] = {0.0};
 
     try {
-        sim.set_up(nbead, ndim, natom, beta, dt,
+        sim.set_up(ndim, natom, nbead, beta, dt,
                    crd, frc);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;

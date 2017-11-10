@@ -94,8 +94,7 @@ int main(int argc, char** argv)
             ++count;
         }
 
-        //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt, &all_crd[0]);
-        sim.set_up(nbead, ndim, natom, beta, dt, &all_crd[0], &all_vel[0]);
+        sim.set_up(ndim, natom, nbead, beta, dt, &all_crd[0], &all_vel[0]);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;
         return EXIT_FAILURE;

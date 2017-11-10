@@ -69,7 +69,7 @@ int main(int argc, char** argv)
     sim.m_potential.set_hopping_params(hop_params);
 
     try {
-        sim.set_up(nbead, ndim, natom, beta);
+        sim.set_up(ndim, natom, nbead, beta);
     } catch (const std::exception& e) {
         std::cerr << " ** Error ** : " << e.what() << std::endl;
         return EXIT_FAILURE;
