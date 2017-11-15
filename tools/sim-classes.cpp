@@ -28,7 +28,7 @@ void rpmd::calc_pos_stats(void)
 
 //----------------------------------------------------------------------------//
 
-void rpmd::dump_1D_frame(std::ofstream& of_traj)
+void rpmd::dump_1D_frame(std::ostream& of_traj)
 {
     //of_traj << nbeads() << ' ' << ndofs() << ' ' << beta() << std::endl;
     for(size_t n = 0; n < nbeads(); ++n) {

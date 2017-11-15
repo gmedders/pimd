@@ -40,6 +40,9 @@ target_link_libraries(rdf-partial-traj tools fftw3 ${ARMADILLO_LIBRARIES})
 add_executable(test-initial-conditions test-initial-conditions.cpp)
 target_link_libraries(test-initial-conditions tools fftw3 ${ARMADILLO_LIBRARIES})
 
+add_executable(test-gcmc-allocation test-gcmc-allocation.cpp)
+target_link_libraries(test-gcmc-allocation tools fftw3 ${ARMADILLO_LIBRARIES})
+
 add_executable(test-randn test-randn.cpp)
 target_link_libraries(test-randn tools)
 

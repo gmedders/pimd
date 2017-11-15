@@ -47,6 +47,7 @@ void gcmc::step(double dt, double beta)
     bool insert = calc_insertion_probability();
 
     if(insert) {
+        std::cerr << "Inserting new particle" << std::endl;
         size_t curr_ndim = m_md_ensemble->ndim();
         size_t curr_natoms = m_md_ensemble->natoms();
         size_t curr_nbeads = m_md_ensemble->nbeads();
@@ -74,6 +75,16 @@ void gcmc::step(double dt, double beta)
     }
 
     m_md_ensemble->step(dt);
+}
+
+//----------------------------------------------------------------------------//
+
+void gcmc::dump(std::ostream& os)
+{
+    os << m_md_ensemble->ndim() << ' '
+       << m_md_ensemble->natoms() << ' '
+       << m_md_ensemble->nbeads() << std::endl;
+    m_md_ensemble->dump_1D_frame(os);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -15,6 +15,7 @@ namespace parts {
 
 class gcmc {
 
+public:
     void set_chemical_potential(double);
     // void set_md_ensemble(std::string&);
     bool calc_insertion_probability();
@@ -24,6 +25,7 @@ class gcmc {
                 double*, double*);
 
     void step(double, double);
+    void dump(std::ostream&);
 
     // typedef ensemble_type m_md_ensemble;
     std::unique_ptr<rpmd> m_md_ensemble;

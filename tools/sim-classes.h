@@ -54,7 +54,7 @@ public:
 
     void set_gammaTh(const double&, double);
 
-    void dump_1D_frame(std::ofstream&);
+    void dump_1D_frame(std::ostream&);
     void print_params();
 
     potential_type m_potential;

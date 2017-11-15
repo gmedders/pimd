@@ -11,6 +11,7 @@ ensemble_tcf_rpmd
 mpi_ensemble_tcf_rpmd
 scan_potential
 test-initial-conditions
+test-gcmc-allocation
 test-randn
 rdf
 rdf-partial-traj
