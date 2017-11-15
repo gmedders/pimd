@@ -52,6 +52,8 @@ protected:
     void mom_c2n();
     void mom_n2c();
 
+    void mom2vel();
+
     void frc_c2n();
 
     // layout is bead1, bead2, ..., beadN, where
@@ -62,6 +64,7 @@ protected:
 
     arma::mat m_mom_cart;
     arma::mat m_mom_nmode;
+    arma::mat m_vel_cart;
 
     arma::mat m_frc_cart;
 

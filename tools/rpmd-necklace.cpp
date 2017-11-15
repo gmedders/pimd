@@ -29,24 +29,13 @@ void rpmd_necklace::setup(size_t ndim, size_t natom, size_t nbead, double beta,
 
     m_dt = dt;
 
-    //m_pos_cart = arma::mat(nbead, ndof);
-    //m_pos_nmode = arma::mat(nbead, ndof);
-
-    //m_mom_cart = arma::mat(nbead, ndof);
-    //m_mom_nmode = arma::mat(nbead, ndof);
-
-    //m_frc_cart = arma::mat(nbead, ndof);
-
-    //m_cart_to_nm = arma::mat(nbead, nbead);
-    //m_freerp_propagator = arma::cube(2, 2, nbead);
-
-    //m_omega_k = arma::vec(nbead);
-
     m_pos_cart = arma::mat(ndof, nbead);
     m_pos_nmode = arma::mat(ndof, nbead);
 
     m_mom_cart = arma::mat(ndof, nbead);
     m_mom_nmode = arma::mat(ndof, nbead);
+
+    m_vel_cart = arma::mat(ndof, nbead);
 
     m_frc_cart = arma::mat(ndof, nbead);
 
@@ -140,6 +129,17 @@ void rpmd_necklace::mom_c2n()
 void rpmd_necklace::mom_n2c()
 {
     m_mom_cart = m_mom_nmode * m_cart_to_nm.t();
+}
+
+//----------------------------------------------------------------------------//
+
+void rpmd_necklace::mom2vel()
+{
+    for(size_t n = 0; n < m_nbeads; ++n) {
+        for (size_t i = 0; i < ndofs(); ++i) {
+            m_vel_cart(i,n) = m_mom_cart(i,n) / m_mass(i);
+        }
+    }
 }
 
 //----------------------------------------------------------------------------//
