@@ -26,8 +26,10 @@ namespace parts {
 ////////////////////////////////////////////////////////////////////////////////
 
 //struct rpmd : public parts::rpmd_base {
-struct rpmd : public parts::rpmd_pile {
+class rpmd : public parts::rpmd_pile {
 //struct rpmd : public parts::rpmd_nhc {
+
+public:
 
     void set_up(const size_t ndim, const size_t natoms, const size_t nbeads,
                 const double beta, const double dt,
