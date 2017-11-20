@@ -10,6 +10,8 @@ namespace pot {
 class bead_states {
 
 public:
+    //bead_states() {std::cerr << "bead_states::bead_states()" << std::endl; };
+    //~bead_states() {std::cerr << "bead_states::~bead_states()" << std::endl; };
     arma::ivec state_id;
 
     void set_all_bead_states(const int, int);

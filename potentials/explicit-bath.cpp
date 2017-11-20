@@ -75,6 +75,7 @@ double explicit_bath::bath_force(const double* crd, double* frc)
 
 explicit_bath::explicit_bath()
 {
+    //std::cerr << "explicit_bath::explicit_bath()" << std::endl;
     m_nBathModes = 0;
 
     c_iMode = nullptr;
@@ -85,6 +86,7 @@ explicit_bath::explicit_bath()
 
 explicit_bath::~explicit_bath()
 {
+    //std::cerr << "explicit_bath::~explicit_bath()" << std::endl;
     if(c_iMode)
         delete[] c_iMode;
 

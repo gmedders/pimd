@@ -11,6 +11,8 @@ class pot_2d : public single_state
 {
 
 public:
+    //pot_2d() {std::cerr << "pot_2d::pot_2d()" << std::endl; };
+    //~pot_2d() {std::cerr << "pot_2d::~pot_2d()" << std::endl; };
     double VAA(const double* crd, double* f);
     double VBB(const double* crd, double* f);
 

@@ -2,6 +2,7 @@
 #define LJ_H
 
 #include <cstdlib>
+#include <iostream>
 
 namespace pot {
 
@@ -9,6 +10,8 @@ class lj
 {
 
 public:
+    //lj() {std::cerr << "lj::lj()" << std::endl; };
+    //~lj() {std::cerr << "lj::~lj()" << std::endl; };
     double V2B(const size_t ndim, const double* crd_a, const double* crd_b,
                double* f_a, double* f_b);
 
