@@ -214,10 +214,10 @@ int main(int argc, char** argv)
 
         //parts::vv sim;
         parts::rpmd sim;
-        sim.m_potential.set_individual_bead_states(init_active_state);
+        sim.m_potential->set_individual_bead_states(init_active_state);
         //beta*=5;
         double hop_params[] = {GammaEl, dt, beta/nbead, voltage};
-        sim.m_potential.set_hopping_params(hop_params);
+        sim.m_potential->set_hopping_params(hop_params);
 
         try {
             sim.set_up(ndim, natom, nbead, beta, dt,
@@ -254,10 +254,10 @@ int main(int argc, char** argv)
                 sim.dump_1D_frame(of_cart_traj);
 #endif
 
-                if (sim.m_potential.sum_active_state() == nbead) {
-                    traj_sum_state[count] = sim.m_potential.sum_active_state();
+                if (sim.m_potential->sum_active_state() == nbead) {
+                    traj_sum_state[count] = sim.m_potential->sum_active_state();
                     traj_state_count[count] += nbead;
-                } else if (sim.m_potential.sum_active_state() == 0) {
+                } else if (sim.m_potential->sum_active_state() == 0) {
                     traj_sum_state[count] = 0;
                     traj_state_count[count] += nbead;
                 } else {

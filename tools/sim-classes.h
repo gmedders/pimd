@@ -1,6 +1,8 @@
 #ifndef SIM_CLASSES_H
 #define SIM_CLASSES_H
 
+#include <memory>
+
 #include "pimd-base.h"
 
 #include "rpmd-base.h"
@@ -8,12 +10,6 @@
 #include "rpmd-pile.h"
 
 #include "vv-base.h"
-
-#include "sho.h"
-#include "anharmonic.h"
-#include "double-well.h"
-#include "ah.h"
-#include "pot-2d.h"
 
 #include "pot-definition.h"
 
@@ -30,6 +26,14 @@ class rpmd : public parts::rpmd_pile {
 //struct rpmd : public parts::rpmd_nhc {
 
 public:
+    rpmd() : m_potential(new potential_type())
+    {
+        //std::cerr << "rpmd::rpmd()" << std::endl;
+    };
+    ~rpmd()
+    {
+        //std::cerr << "rpmd::~rpmd()" << std::endl;
+    };
 
     void set_up(const size_t ndim, const size_t natoms, const size_t nbeads,
                 const double beta, const double dt,
@@ -57,7 +61,7 @@ public:
     void dump_1D_frame(std::ostream&);
     void print_params();
 
-    potential_type m_potential;
+    std::unique_ptr<potential_type> m_potential;
 
     double m_gamma = 0.0;
 
@@ -71,6 +75,11 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 
 struct vv : public parts::vv_base {
+
+    vv() : m_potential(new potential_type())
+    {
+        std::cerr << "vv::vv()" << std::endl;
+    };
 
     void set_up(const size_t ndim, const size_t natoms, const size_t nbead,
                 const double beta, const double dt,
@@ -90,7 +99,7 @@ struct vv : public parts::vv_base {
 
     void print_params();
 
-    potential_type m_potential;
+    std::unique_ptr<potential_type> m_potential;
 
 private:
     double m_avg_cart_pos;

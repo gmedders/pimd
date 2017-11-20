@@ -26,18 +26,18 @@ int main(int argc, char** argv)
     double beta = 20.0;
 
     int nbead(1);
-    int ndim(1);
+    int ndim(2);
     int natom(1);
 
 
     //rpmd sim;
     parts::vv sim;
-    sim.m_potential.set_all_bead_states(1, nbead);
+    sim.m_potential->set_all_bead_states(1, nbead);
     double hop_params[] = {0.02, dt, beta, 0.0};
-    sim.m_potential.set_hopping_params(hop_params);
+    sim.m_potential->set_hopping_params(hop_params);
 
-    double crd[1] = {0.0};
-    double frc[1] = {0.0};
+    double crd[] = {0.0, 0.0};
+    double frc[] = {0.0, 0.0};
 
     try {
         sim.set_up(ndim, natom, nbead, beta, dt,
@@ -50,9 +50,9 @@ int main(int argc, char** argv)
     for(double x = -100.0; x < 100.0; x += 0.1){
         sim.cart_ptr()[0] = x;
         std::cout << x << ' ';
-        sim.m_potential.set_all_bead_states(0, nbead);
+        sim.m_potential->set_all_bead_states(0, nbead);
         std::cout << sim.force(ndim, natom, nbead, sim.cart_ptr(), frc) << ' ';
-        sim.m_potential.set_all_bead_states(1, nbead);
+        sim.m_potential->set_all_bead_states(1, nbead);
         std::cout << sim.force(ndim, natom, nbead, sim.cart_ptr(), frc) << ' ';
         std::cout << std::endl;
         //sim.m_pos(0) = x;

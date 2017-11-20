@@ -16,6 +16,8 @@ namespace parts {
 class gcmc {
 
 public:
+    gcmc() : m_md_ensemble(new rpmd) {};
+
     void set_chemical_potential(double);
     // void set_md_ensemble(std::string&);
     bool calc_insertion_probability();

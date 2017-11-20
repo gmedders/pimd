@@ -29,7 +29,7 @@ void gcmc::set_chemical_potential(double mu)
 void gcmc::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
                   const double beta, const double dt, double* pos, double* vel)
 {
-    m_md_ensemble = std::unique_ptr<rpmd>();
+    //m_md_ensemble = std::unique_ptr<rpmd>();
     m_md_ensemble->set_up(ndim, natoms, nbead, beta, dt, pos, vel);
 }
 
@@ -47,31 +47,58 @@ void gcmc::step(double dt, double beta)
     bool insert = calc_insertion_probability();
 
     if(insert) {
-        std::cerr << "Inserting new particle" << std::endl;
-        size_t curr_ndim = m_md_ensemble->ndim();
-        size_t curr_natoms = m_md_ensemble->natoms();
-        size_t curr_nbeads = m_md_ensemble->nbeads();
+        size_t ndim = m_md_ensemble->ndim();
+        size_t old_natoms = m_md_ensemble->natoms();
+        size_t nbeads = m_md_ensemble->nbeads();
 
-        size_t new_natoms = curr_natoms + 1;
+        size_t new_natoms = old_natoms + 1;
 
-        size_t new_total_ndof = curr_ndim * new_natoms * curr_nbeads;
-        double new_crd[curr_ndim * new_natoms * curr_nbeads];
-        double new_vel[curr_ndim * new_natoms * curr_nbeads];
+        size_t new_total_ndof = ndim * new_natoms * nbeads;
+        double new_crd[ndim * new_natoms * nbeads];
+        double new_vel[ndim * new_natoms * nbeads];
 
-        const double* curr_crd = m_md_ensemble->get_crd();
-        const double* curr_vel = m_md_ensemble->get_vel();
+        const double* old_crd = m_md_ensemble->get_crd();
+        const double* old_vel = m_md_ensemble->get_vel();
 
-        // FIXME
-        // Set the initial conditions for the inserted particle
+        std::fill(new_crd, new_crd + new_total_ndof, 0.0);
+        std::fill(new_vel, new_vel + new_total_ndof, 0.0);
 
-        std::copy(curr_crd, curr_crd + new_total_ndof, new_crd);
-        std::copy(curr_vel, curr_vel + new_total_ndof, new_vel);
+        // Copy the old coordinate and velocity
+        // Leave a space for the new atom when incrementing the bead offset
+        for(size_t n = 0; n < nbeads; ++n){
+            size_t old_offset_bead = n * old_natoms * ndim;
+            size_t new_offset_bead = n * new_natoms * ndim;
+            for(size_t i = 0; i < old_natoms; ++i){
+                size_t offset_atom = i * ndim;
+                for(size_t j = 0; j < ndim; ++j){
+                    size_t old_offset = old_offset_bead + offset_atom + j;
+                    size_t new_offset = new_offset_bead + offset_atom + j;
+                    new_crd[new_offset] = old_crd[old_offset];
+                    new_vel[new_offset] = old_vel[old_offset];
+                }
+            }
+            // Avoid setting the new crd/vel by hand by initializing array to 0
+            //for(size_t i = old_natoms; i < new_natoms; ++i){
+            //    size_t offset_atom = i * ndim;
+            //    for(size_t j = 0; j < ndim; ++j){
+            //        size_t old_offset = old_offset_bead + offset_atom + j;
+            //        size_t new_offset = new_offset_bead + offset_atom + j;
+            //        new_crd[new_offset] = 0.0;
+            //        new_vel[new_offset] = 0.0;
+            //    }
+            //}
+        }
 
-        //delete m_md_ensemble;
-        m_md_ensemble = std::unique_ptr<rpmd>();
+        std::vector<int> states;
+        for(size_t i = 0; i < nbeads; ++i)
+            states.push_back(m_md_ensemble->m_potential->state_id[i]);
 
-        m_md_ensemble->set_up(curr_ndim, new_natoms, curr_nbeads, beta, dt,
+        std::unique_ptr<rpmd> new_ensemble(new rpmd);
+        m_md_ensemble = std::move(new_ensemble);
+
+        m_md_ensemble->set_up(ndim, new_natoms, nbeads, beta, dt,
                               new_crd, new_vel);
+        m_md_ensemble->m_potential->set_individual_bead_states(states);
     }
 
     m_md_ensemble->step(dt);

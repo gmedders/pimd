@@ -70,11 +70,11 @@ int main(int argc, char** argv)
 
     //rpmd sim;
     parts::rpmd sim;
-    sim.m_potential.set_all_bead_states(0, nbead);
+    sim.m_potential->set_all_bead_states(0, nbead);
 
-    //sim.m_potential.set_bath_params(ndim, natom - 1,
-    //                               sim.m_gamma, 2*0.9*sim.m_potential.get_w(),
-    //                                sim.m_potential.get_m());
+    //sim.m_potential->set_bath_params(ndim, natom - 1,
+    //                               sim.m_gamma, 2*0.9*sim.m_potential->get_w(),
+    //                                sim.m_potential->get_m());
 
     try {
         int nx=4;
@@ -124,7 +124,7 @@ int main(int argc, char** argv)
             sum_Espring += sim.Espring();
             std::cout << n*dt << ' '
                       << sim.invariant() << ' '
-                      << sim.m_potential.avg_active_state() << ' '
+                      << sim.m_potential->avg_active_state() << ' '
                       << sim.Ep() << ' '
                       << sim.temp_kT() << ' '
                       << sim.avg_cart_pos() << std::endl;

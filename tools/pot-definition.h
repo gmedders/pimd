@@ -1,6 +1,12 @@
 #ifndef POT_DEFINITION_H
 #define POT_DEFINITION_H
 
+#include "sho.h"
+#include "anharmonic.h"
+#include "double-well.h"
+#include "ah.h"
+#include "pot-2d.h"
+
 namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////

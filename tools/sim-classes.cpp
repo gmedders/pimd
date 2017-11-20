@@ -32,7 +32,7 @@ void rpmd::dump_1D_frame(std::ostream& of_traj)
 {
     //of_traj << nbeads() << ' ' << ndofs() << ' ' << beta() << std::endl;
     for(size_t n = 0; n < nbeads(); ++n) {
-        of_traj << m_potential.state_id[n] << ' ';
+        of_traj << m_potential->state_id[n] << ' ';
         for(size_t i = 0; i < ndofs(); ++i) {
             of_traj << ' ' << m_pos_cart(i,n)
                     << ' ' << m_mom_cart(i,n)/m_mass(i);
@@ -45,7 +45,7 @@ void rpmd::dump_1D_frame(std::ostream& of_traj)
 
 void rpmd::print_params()
 {
-    m_potential.print_params();
+    m_potential->print_params();
     std::cout << "# gammaTh_fac = " << m_gamma << std::endl;
 }
 //----------------------------------------------------------------------------//
@@ -87,7 +87,7 @@ void rpmd::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
     }
 
     // setup the simulation
-    m_potential.set_params(params);
+    m_potential->set_params(params);
 
     init(ndim, natoms, nbead, 1.0/beta, dt, mass, pos, vel, m_gamma);
 }
@@ -96,7 +96,7 @@ void rpmd::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
 
 void rpmd::set_gammaTh(const double& dt, double gam_fac)
 {
-    m_gamma = gam_fac*m_potential.get_w();
+    m_gamma = gam_fac*m_potential->get_w();
     init_langevin(dt, m_gamma);
 }
 
@@ -105,7 +105,7 @@ void rpmd::set_gammaTh(const double& dt, double gam_fac)
 double rpmd::force(size_t ndim, size_t natoms, size_t nbeads,
                    const double* x, double* f)
 {
-    return m_potential.force(ndim, natoms, nbeads, x, f);
+    return m_potential->force(ndim, natoms, nbeads, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ void vv::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
 
     // setup the simulation
 
-    m_potential.set_params(params);
+    m_potential->set_params(params);
 
     init(ndim, natoms, dt, mass, pos, vel);
 
@@ -172,14 +172,14 @@ void vv::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
 double vv::force(size_t ndim, size_t natoms, size_t nbeads,
                  const double* x, double* f)
 {
-    return m_potential.force(ndim, natoms, nbeads, x, f);
+    return m_potential->force(ndim, natoms, nbeads, x, f);
 }
 
 //----------------------------------------------------------------------------//
 
 void vv::print_params()
 {
-    m_potential.print_params();
+    m_potential->print_params();
     std::cout << "# gammaTh_fac = 0.0" << std::endl;
 }
 

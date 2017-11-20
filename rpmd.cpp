@@ -70,13 +70,13 @@ int main(int argc, char** argv)
 
     //rpmd sim;
     parts::rpmd sim;
-    sim.m_potential.set_all_bead_states(0, nbead);
+    sim.m_potential->set_all_bead_states(0, nbead);
     double hop_params[] = {GammaEl, dt, beta/nbead, voltage};
-    sim.m_potential.set_hopping_params(hop_params);
+    sim.m_potential->set_hopping_params(hop_params);
 
-    sim.m_potential.set_bath_params(ndim, natom - 1,
-                                    sim.m_gamma, 2*0.9*sim.m_potential.get_w(),
-                                    sim.m_potential.get_m());
+    sim.m_potential->set_bath_params(ndim, natom - 1,
+                                    sim.m_gamma, 2*0.9*sim.m_potential->get_w(),
+                                    sim.m_potential->get_m());
 
     try {
         // 64 bead example starting configuration. take slices from it to seed lower-number beads
@@ -136,7 +136,7 @@ int main(int argc, char** argv)
                       << sim.Espring() << ' '
                       << sum_Espring / count << ' '
                       //<< sim.Ek() << ' '
-                      << sim.m_potential.avg_active_state() << ' '
+                      << sim.m_potential->avg_active_state() << ' '
                       << sim.Ep() << ' '
                       << sim.temp_kT() << ' '
                       << sim.temp_kT_centroid() << ' '

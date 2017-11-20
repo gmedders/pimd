@@ -62,11 +62,11 @@ int main(int argc, char** argv)
 
     //pimd sim;
     parts::pimd sim;
-    sim.m_potential.set_all_bead_states(0, nbead);
+    sim.m_potential->set_all_bead_states(0, nbead);
     double GammaEl(0.0);
     double voltage(0.0);
     double hop_params[] = {GammaEl, dt, beta, voltage};
-    sim.m_potential.set_hopping_params(hop_params);
+    sim.m_potential->set_hopping_params(hop_params);
 
     try {
         sim.set_up(ndim, natom, nbead, beta);

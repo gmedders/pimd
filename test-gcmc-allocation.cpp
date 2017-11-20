@@ -22,15 +22,15 @@ int main(int argc, char** argv)
     std::cout.setf(std::ios_base::showpoint);
     std::cout.precision(4);
 
-    size_t ndim(2);
-    size_t natom(2);
-    size_t nbead(1);
+    const size_t ndim(2);
+    const size_t natom(2);
+    const size_t nbead(1);
 
     double beta(1024);
-    double dt(1.0);
+    double dt(1.0e-12);
 
-    double all_bead_crd[] = {0.0, 0.1,
-                             1.0, 1.1};
+    double all_bead_crd[] = {1.0, 1.1,
+                             2.0, 2.1};
     double all_bead_vel[] = {0.5, 0.6,
                              0.7, 0.8};
 
@@ -45,10 +45,10 @@ int main(int argc, char** argv)
     sim.set_up(ndim, natom, nbead, beta, dt,
                all_bead_crd, all_bead_vel);
 
-    //sim.m_md_ensemble->m_potential.set_individual_bead_states(active_state);
+    sim.m_md_ensemble->m_potential->set_all_bead_states(0, nbead);
     //double GammaEl(1.0e-3);
     //double hop_params[] = {GammaEl, dt, beta, 0.0};
-    //sim.m_md_ensemble->m_potential.set_hopping_params(hop_params);
+    //sim.m_md_ensemble->m_potential->set_hopping_params(hop_params);
 
     sim.dump(std::cout);
 
