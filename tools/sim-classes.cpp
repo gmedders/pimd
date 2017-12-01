@@ -132,7 +132,7 @@ void rpmd::calc_pos_stats(void)
 
 void rpmd::dump_1D_frame(std::ofstream& of_traj)
 {
-    //of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
+    of_traj << m_nbead << ' ' << m_ndofs << ' ' << m_beta << std::endl;
     for(size_t n = 0; n < m_nbead; ++n) {
         of_traj << m_potential.state_id[n] << ' ';
         for(size_t i = 0; i < m_ndofs; ++i) {

@@ -22,7 +22,7 @@ namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if 1
+#if 0
 // SHO
 typedef pot::sho potential_type;
 static double omega(0.001); // omega
@@ -30,7 +30,7 @@ static double atm_mass(2000); // au
 static double params[] = {omega, atm_mass};
 #endif
 
-#if 0
+#if 1
 // DOUBLE WELL
 typedef pot::double_well potential_type;
 static double omega(0.0009765625); // omega
@@ -127,8 +127,8 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-struct rpmd : public parts::rpmd_base {
-//struct rpmd : public parts::rpmd_pile {
+//struct rpmd : public parts::rpmd_base {
+struct rpmd : public parts::rpmd_pile {
 //struct rpmd : public parts::rpmd_nhc {
 
     void set_up_new_init_cond(const size_t, const size_t, const size_t,

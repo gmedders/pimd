@@ -24,12 +24,12 @@
 
 namespace {
 
-//const size_t print_time = 10000; // au
-//const size_t equil_time = 10000000;
+const size_t print_time = 10000; // au
+const size_t equil_time = 10000000;
 
 //test
-const size_t print_time = 1; // au
-const size_t equil_time = 0;
+//const size_t print_time = 1; // au
+//const size_t equil_time = 0;
 
 } // namespace
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     }
 
     size_t ndim = 1;
-    size_t natom = 2;
+    size_t natom = 1;
 
     int nbead = parts::parse_to_int(argv[1]);
     double beta = parts::parse_to_double(argv[2]);
