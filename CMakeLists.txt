@@ -33,7 +33,7 @@ file(GLOB MAIN_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 foreach(_main_file ${MAIN_SRC_FILES})
     get_filename_component(_main_name ${_main_file} NAME_WE)
     add_executable(${_main_name} ${_main_file})
-    target_link_libraries(${_main_name}  fftw3 ${ARMADILLO_LIBRARIES} lib)
+    target_link_libraries(${_main_name} fftw3 ${ARMADILLO_LIBRARIES} lib)
 endforeach()
 
 #-------------------
