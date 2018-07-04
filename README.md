@@ -16,12 +16,15 @@ To override your default C and C++ compilers, you can use the following instead 
 cmake -DCMAKE_C_COMPILER=/usr/local/bin/gcc-8 -DCMAKE_CXX_COMPILER=/usr/local/bin/g++-8 ..
 ```
 
-# Usage
-To compile, run:
+# Dependencies
+
+These implementations depend on the FFTW3 and armadillo libraries. On MacOS, you can get these with
 ```
-cmake CMakeLists.txt
-make
+brew install armadillo fftw
 ```
+
+Usage:
+======
 
 The workflow involves generating a set of initial conditions (positions, velocities, and electronic state IDs) consistent with a given temperature. This is done, for example, by `rpmd.cpp`
 
