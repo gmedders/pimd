@@ -1,5 +1,11 @@
 [![Build Status](https://travis-ci.org/gmedders/pimd.svg?branch=master)](https://travis-ci.org/gmedders/pimd)
 
+This repository contains codes to do classical and quantum (i.e., RPMD) molecular dynamics simulations. Either of these MD schemes can be combined with a surface hopping-based classical master equation to model the nonadiabatic dynamics of a molecule interacting with a manifold of electronic states.
+
+Note, this work was intended to test some ideas about how nonadiabatic effects (i.e., when the electronic character of the system is strongly coupled with the nuclear motion) might be impacted by an (approximate) quantum treatment of the nuclei themselves. Ultimately, we decided to invest energy in other projects, so these codes are provided with the hope that they might be helpful others but with no guarantee of their accuracy. (And, more importantly, we are not suggesting that combining the CME with RPMD is even a good idea!).
+
+Finally, as the codes were exploratory, they were not optimized for performance considerations.
+
 How to build:
 =============
 
@@ -49,7 +55,4 @@ The time-dependent ensemble average is performed using `ensemble_tcf_rpmd.cpp`. 
 ./ensemble_tcf_rpmd cart_traj-rpmd_1_1024.dat 1.0 1.0E-3 2.0 0.0 50000 > ens.dat
 ```
 
-Several example potentials are available and can be selected in `tools/sim-classes.h`
-
-Finally, as the codes were exploratory, they were not optimized for performance considerations.
-
+Several example potentials are available and can be selected in `include/sim-classes.h`
