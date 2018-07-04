@@ -6,7 +6,6 @@
 #include <armadillo>
 
 #include "surface-hopping.h"
-#include "explicit-bath.h"
 
 namespace pot {
 

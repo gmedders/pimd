@@ -71,10 +71,6 @@ int main(int argc, char** argv)
     sim.m_potential.set_all_bead_states(0, nbead);
     sim.set_gammaTh(gammaTh_fac);
 
-    //sim.m_potential.set_bath_params(ndim, natom - 1,
-    //                               sim.m_gamma, 2*0.9*sim.m_potential.get_w(),
-    //                                sim.m_potential.get_m());
-
     try {
         //sim.set_up_new_init_cond(nbead, ndim, natom, beta, dt);
         int nx=4;

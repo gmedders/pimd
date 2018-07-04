@@ -5,11 +5,9 @@
 
 #include <armadillo>
 
-#include "explicit-bath.h"
-
 namespace pot {
 
-struct single_state : public explicit_bath {
+struct single_state {
 
     arma::ivec state_id;
 

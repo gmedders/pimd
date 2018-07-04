@@ -5,11 +5,9 @@
 
 #include <armadillo>
 
-#include "explicit-bath.h"
-
 namespace pot {
 
-struct surface_hopping : public explicit_bath {
+struct surface_hopping {
 
     bool init_pot = false;
     bool init_hop = false;
@@ -25,7 +23,6 @@ struct surface_hopping : public explicit_bath {
     double force(size_t, size_t, size_t, const double*, double*);
     virtual double VAA(const double* x, double* f) = 0;
     virtual double VBB(const double* x, double* f) = 0;
-//    virtual double bath_force(const double* x, double* f) = 0;
     virtual void set_params(double*) = 0;
 
     void check_allocation(size_t, arma::ivec&);

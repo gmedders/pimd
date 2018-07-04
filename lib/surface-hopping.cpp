@@ -50,10 +50,6 @@ double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
             Eactive += EBB;
         }
 
-        // FIXME Not implemented
-        //double EBath = bath_force(crd + ndof*n, f + ndof*n);
-        //Eactive += EBath;
-
         // Determine if the active state of this bead should be changed
         double random_number = ((double) rand() / (RAND_MAX));
         assert(random_number >= 0.0 && random_number <= 1.0);
