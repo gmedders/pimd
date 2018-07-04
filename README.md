@@ -1,12 +1,5 @@
 [![Build Status](https://travis-ci.org/gmedders/pimd.svg?branch=master)](https://travis-ci.org/gmedders/pimd)
 
-Ising model
-===========
-
- - This project contains a brute-force Monte Carlo approach to obtaining thermodynamic
- properties of the Ising model, as well as the
- [cluster Monte Carlo algorithm by Wolff](http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.62.361).
-
 How to build:
 =============
 
