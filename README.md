@@ -1,8 +1,27 @@
-This repository contains codes to do classical and quantum (i.e., RPMD) molecular dynamics simulations. Either of these MD schemes can be combined with a surface hopping-based classical master equation to model the nonadiabatic dynamics of a molecule interacting with a manifold of electronic states.
+[![Build Status](https://travis-ci.org/gmedders/pimd.svg?branch=master)](https://travis-ci.org/gmedders/pimd)
 
-Note, this work was intended to test some ideas about how nonadiabatic effects (i.e., when the electronic character of the system is strongly coupled with the nuclear motion) might be impacted by an (approximate) quantum treatment of the nuclei themselves. Ultimately, we decided to invest energy in other projects, so these codes are provided with the hope that they might be helpful others but with no guarantee of their accuracy. (And, more importantly, we are not suggesting that combining the CME with RPMD is even a good idea!).
+Ising model
+===========
 
-Finally, as the codes were exploratory, they were not optimized for performance considerations.
+ - This project contains a brute-force Monte Carlo approach to obtaining thermodynamic
+ properties of the Ising model, as well as the
+ [cluster Monte Carlo algorithm by Wolff](http://journals.aps.org/prl/abstract/10.1103/PhysRevLett.62.361).
+
+How to build:
+=============
+
+ - git clone https://github.com/gmedders/pimd.git
+ - cd pimd
+ - mkdir build
+ - cd build
+ - cmake ..
+ - cmake --build .
+ - ctest -VV
+
+To override your default C and C++ compilers, you can use the following instead (for example):
+```
+cmake -DCMAKE_C_COMPILER=/usr/local/bin/gcc-8 -DCMAKE_CXX_COMPILER=/usr/local/bin/g++-8 ..
+```
 
 # Usage
 To compile, run:
@@ -35,3 +54,6 @@ The time-dependent ensemble average is performed using `ensemble_tcf_rpmd.cpp`. 
 ```
 
 Several example potentials are available and can be selected in `tools/sim-classes.h`
+
+Finally, as the codes were exploratory, they were not optimized for performance considerations.
+
