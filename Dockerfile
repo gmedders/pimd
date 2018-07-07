@@ -23,53 +23,54 @@ RUN \
 
 RUN apt-get install git -y
 RUN apt-get install cmake -y
+RUN apt-get install libarmadillo-dev libfftw3-dev -y
 
-# Set environment variables.
-ENV HOME /root
-
-# Define working directory.
-WORKDIR /root
+# # Set environment variables.
+# ENV HOME /root
+#
+# # Define working directory.
+# WORKDIR /root
 
 # Define default command.
 CMD ["bash"]
 
 ## Update CMake to v3.5.1
-RUN git clone --depth 1 -b v3.5.1 https://github.com/Kitware/CMake.git
-RUN \
-  cd CMake && \
-  mkdir build && \
-  cd build && \
-  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && \
-  make -j4 && \
-  make install && \
-  ldconfig && \
-  cd ../.. && \
-  cmake --version
+# RUN git clone --depth 1 -b v3.5.1 https://github.com/Kitware/CMake.git
+# RUN \
+#   cd CMake && \
+#   mkdir build && \
+#   cd build && \
+#   cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && \
+#   make -j4 && \
+#   make install && \
+#   ldconfig && \
+#   cd ../.. && \
+#   cmake --version
 
 # Install armadillo dependencies
-RUN apt-get install gfortran-8 -y
-RUN apt-get install liblapack-dev -y
-
-RUN git clone -q --branch=v0.2.20 --depth=1 https://github.com/xianyi/OpenBLAS.git
-RUN cd OpenBLAS && \
-    make -j4 && \
-    make install
-RUN ldconfig
-
-# Install armadillo
-RUN git clone --depth 1 -b 8.400.x https://gitlab.com/conradsnicta/armadillo-code.git && cd armadillo-code \
-    && cmake . \
-    && make -j4 \
-    && make install
-
-# Install fftw3
-RUN apt-get install wget
-RUN wget http://www.fftw.org/fftw-3.3.8.tar.gz \
-    && tar -xf fftw-3.3.8.tar.gz \
-    && cd fftw-3.3.8 \
-    && ./configure --prefix=/usr --enable-shared=yes \
-    && make -j4 \
-    && make install
+# RUN apt-get install gfortran-8 -y
+# RUN apt-get install liblapack-dev -y
+#
+# RUN git clone -q --branch=v0.2.20 --depth=1 https://github.com/xianyi/OpenBLAS.git
+# RUN cd OpenBLAS && \
+#     make -j4 && \
+#     make install
+# RUN ldconfig
+#
+# # Install armadillo
+# RUN git clone --depth 1 -b 8.400.x https://gitlab.com/conradsnicta/armadillo-code.git && cd armadillo-code \
+#     && cmake . \
+#     && make -j4 \
+#     && make install
+#
+# # Install fftw3
+# RUN apt-get install wget
+# RUN wget http://www.fftw.org/fftw-3.3.8.tar.gz \
+#     && tar -xf fftw-3.3.8.tar.gz \
+#     && cd fftw-3.3.8 \
+#     && ./configure --prefix=/usr --enable-shared=yes \
+#     && make -j4 \
+#     && make install
 
 
 ## Clean working directory
@@ -89,4 +90,7 @@ RUN echo "------------------------"
 WORKDIR /app
 ADD . /app
 
-RUN mkdir build && cd build && cmake .. && cmake --build . && ctest -VV
+RUN mkdir build && cd build && cmake .. && cmake --build .
+
+WORKDIR /app/build
+ENTRYPOINT ["ctest", "-VV"]
