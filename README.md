@@ -1,15 +1,36 @@
+[![Build Status](https://travis-ci.org/gmedders/pimd.svg?branch=master)](https://travis-ci.org/gmedders/pimd)
+
 This repository contains codes to do classical and quantum (i.e., RPMD) molecular dynamics simulations. Either of these MD schemes can be combined with a surface hopping-based classical master equation to model the nonadiabatic dynamics of a molecule interacting with a manifold of electronic states.
 
 Note, this work was intended to test some ideas about how nonadiabatic effects (i.e., when the electronic character of the system is strongly coupled with the nuclear motion) might be impacted by an (approximate) quantum treatment of the nuclei themselves. Ultimately, we decided to invest energy in other projects, so these codes are provided with the hope that they might be helpful others but with no guarantee of their accuracy. (And, more importantly, we are not suggesting that combining the CME with RPMD is even a good idea!).
 
 Finally, as the codes were exploratory, they were not optimized for performance considerations.
 
-# Usage
-To compile, run:
+How to build:
+=============
+
+ - git clone https://github.com/gmedders/pimd.git
+ - cd pimd
+ - mkdir build
+ - cd build
+ - cmake ..
+ - cmake --build .
+ - ctest -VV
+
+To override your default C and C++ compilers, you can use the following instead (for example):
 ```
-cmake CMakeLists.txt
-make
+cmake -DCMAKE_C_COMPILER=/usr/local/bin/gcc-8 -DCMAKE_CXX_COMPILER=/usr/local/bin/g++-8 ..
 ```
+
+# Dependencies
+
+These implementations depend on the FFTW3 and armadillo libraries. On MacOS, you can get these with
+```
+brew install armadillo fftw
+```
+
+Usage:
+======
 
 The workflow involves generating a set of initial conditions (positions, velocities, and electronic state IDs) consistent with a given temperature. This is done, for example, by `rpmd.cpp`
 
@@ -34,4 +55,4 @@ The time-dependent ensemble average is performed using `ensemble_tcf_rpmd.cpp`. 
 ./ensemble_tcf_rpmd cart_traj-rpmd_1_1024.dat 1.0 1.0E-3 2.0 0.0 50000 > ens.dat
 ```
 
-Several example potentials are available and can be selected in `tools/sim-classes.h`
+Several example potentials are available and can be selected in `include/sim-classes.h`

@@ -1,0 +1,10 @@
+sudo: required
+
+language: cpp
+
+services:
+  - docker
+
+script:
+  - docker build -t gmedders/pimd .
+  - docker run gmedders/pimd
