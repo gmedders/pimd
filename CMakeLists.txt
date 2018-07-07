@@ -1,54 +1,74 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.8)
 set(PROJECT_NAME_STR pimd)
 project(${PROJECT_NAME_STR})
 
-SET(GCC_COVERAGE_COMPILE_FLAGS "-O3 --std=c++11")
-SET(GCC_COVERAGE_LINK_FLAGS    "-O3 --std=c++11")
+set( CMAKE_VERBOSE_MAKEFILE on )
 
-SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
-SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 --std=c++11")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 --std=c++11")
+endif()
 
+#-------------------
+# set common include folder for module
+#-------------------
 set(COMMON_INCLUDES ${PROJECT_SOURCE_DIR}/include)
 include_directories(${COMMON_INCLUDES})
+#set(TCLAP_INCLUDES ${PROJECT_SOURCE_DIR}/include/tclap)
+#include_directories(${TCLAP_INCLUDES})
 
-file(GLOB tools_sources ./lib/*.cpp)
-#file(GLOB tools_sources ./*.cpp ./*/*.cpp)
-set( tools ${tools_sources})
-
-add_library( tools ${tools})
+file(GLOB lib_sources ./lib/*.cpp)
+set( lib ${lib_sources})
+add_library( lib ${lib})
 
 find_package(Armadillo REQUIRED)
-#include_directories(${ARMADILLO_INCLUDE_DIRS})
 
-add_executable(pimd ./src/pimd.cpp)
-target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
+#-------------------
+# Main source files
+#-------------------
 
-add_executable(rpmd ./src/rpmd.cpp)
-target_link_libraries(rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
+file(GLOB MAIN_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
-add_executable(classical-md ./src/classical-md.cpp)
-target_link_libraries(classical-md tools fftw3 ${ARMADILLO_LIBRARIES})
+# Set up each executable target in the src directory
+foreach(_main_file ${MAIN_SRC_FILES})
+    get_filename_component(_main_name ${_main_file} NAME_WE)
+    add_executable(${_main_name} ${_main_file})
+    target_link_libraries(${_main_name} fftw3 ${ARMADILLO_LIBRARIES} lib)
+endforeach()
 
-add_executable(ensemble_tcf_rpmd ./src/ensemble_tcf_rpmd.cpp)
-target_link_libraries(ensemble_tcf_rpmd tools fftw3 ${ARMADILLO_LIBRARIES})
-
-add_executable(scan_potential ./src/scan_potential.cpp)
-target_link_libraries(scan_potential tools fftw3 ${ARMADILLO_LIBRARIES})
-
-add_executable(rdf ./src/rdf.cpp)
-target_link_libraries(rdf tools fftw3 ${ARMADILLO_LIBRARIES})
-
-add_executable(rdf-partial-traj ./src/rdf-partial-traj.cpp)
-target_link_libraries(rdf-partial-traj tools fftw3 ${ARMADILLO_LIBRARIES})
-
-add_executable(test-initial-conditions ./src/test-initial-conditions.cpp)
-target_link_libraries(test-initial-conditions tools fftw3 ${ARMADILLO_LIBRARIES})
-
-add_executable(test-randn ./src/test-randn.cpp)
-target_link_libraries(test-randn tools)
-
-# include_directories("./tools" "./potentials" ${ARMADILLO_INCLUDE_DIRS})
-#add_subdirectory(tools)
+##-------------------
+## Download and build the googletest external dependency
+##-------------------
 #
-#target_link_libraries(pimd tools)
+#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+#get_filename_component(DEPS_ROOT "${PROJECT_BINARY_DIR}/deps" ABSOLUTE)
 #
+#include(ExtProjectUtils)
+#
+#find_package(Threads REQUIRED)
+#
+## Will download external CMakeable project from git repo, branch "master" and install it in $DEPS_ROOT
+## This also will create "googletest.git" target, which we'll use as dependency for our test project
+#ExtProjectGit("https://github.com/google/googletest.git" "master" ${DEPS_ROOT} CMAKE_ARGS "${_OPT_CMAKE_ARGS}")
+#
+#include_directories("${DEPS_ROOT}/include")
+#link_directories("${DEPS_ROOT}/lib")
+## link_directories("${DEPS_ROOT}/lib64")
+#
+##-------------------
+## Test
+##-------------------
+#
+#enable_testing()
+#
+#file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/test/*.cpp)
+#
+## from list of files we'll create tests test_name.cpp -> test_name
+#foreach(_test_file ${TEST_SRC_FILES})
+#    get_filename_component(_test_name ${_test_file} NAME_WE)
+#    add_executable(${_test_name} ${_test_file})
+#    add_dependencies(${_test_name} "googletest.git")
+#    target_link_libraries(${_test_name} lib gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+#    add_test(${_test_name} ${_test_name})
+#    set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
+#endforeach()
