@@ -29,6 +29,8 @@ ADD . /app
 # Build the packaged
 RUN mkdir build && cd build && cmake .. && cmake --build .
 
-# When the image is run, perform the tests
+# When the image is run, go directly to the executables
 WORKDIR /app/build
-ENTRYPOINT ["ctest", "-VV"]
+
+# Define default command.
+CMD ["bash"]
