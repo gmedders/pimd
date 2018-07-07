@@ -9,22 +9,20 @@ namespace parts {
 
 struct rpmd_pile : public rpmd_base {
 
-    void init(size_t ndof, size_t nbead,
-              const double& kT, const double& dt,
-              const double* mass, const double* cartpos, const double* cartvel,
-              double tau);
+  void init(size_t ndof, size_t nbead, const double &kT, const double &dt,
+            const double *mass, const double *cartpos, const double *cartvel,
+            double tau);
 
-    void step(const double&);
-    double invariant() const;
+  void step(const double &);
+  double invariant() const;
 
-    double calc_KE();
+  double calc_KE();
 
-    double m_tau0;
-    arma::vec c1;
-    arma::vec c2;
+  double m_tau0;
+  arma::vec c1;
+  arma::vec c2;
 
-    arma::mat saved_mom;
-
+  arma::mat saved_mom;
 };
 
 } // namespace parts

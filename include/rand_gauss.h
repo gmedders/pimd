@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 namespace parts {
- 
-    double randn (double, double);
+
+double randn(double, double);
 
 } // namespace parts

@@ -3,10 +3,10 @@
 
 #include <cstdlib>
 
-namespace parts{
+namespace parts {
 
-    int parse_to_int(char*);
-    double parse_to_double(char*);
+int parse_to_int(char *);
+double parse_to_double(char *);
 
 } // namespace parts
 

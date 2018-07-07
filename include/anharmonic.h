@@ -9,21 +9,21 @@ namespace pot {
 
 struct anharmonic : public single_state {
 
-    double VAA(const double* crd, double* f);
+  double VAA(const double *crd, double *f);
 
-    void set_params(double*);
+  void set_params(double *);
 
-    double get_w(){ return std::sqrt(2.0*a/m); };
-    double get_m(){ return m; };
+  double get_w() { return std::sqrt(2.0 * a / m); };
+  double get_m() { return m; };
 
-    void print_params();
+  void print_params();
 
 private:
-    double a;
-    double b;
-    double c;
+  double a;
+  double b;
+  double c;
 
-    double m;
+  double m;
 };
 
 } // namespace pot
