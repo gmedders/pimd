@@ -7,25 +7,24 @@
 
 namespace pot {
 
-class sho : public single_state
-{
+class sho : public single_state {
 
 public:
-    double VAA(const double* crd, double* f);
+  double VAA(const double *crd, double *f);
 
-    void assert_ndim(int);
-    
-    void set_params(double*);
+  void assert_ndim(int);
 
-    double get_w(){ return w; };
-    double get_m(){ return m; };
+  void set_params(double *);
 
-    void print_params();
+  double get_w() { return w; };
+  double get_m() { return m; };
+
+  void print_params();
 
 private:
-    double w;
-    double m;
-    double a;
+  double w;
+  double m;
+  double a;
 };
 
 } // namespace pot

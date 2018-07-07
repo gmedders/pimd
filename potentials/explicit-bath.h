@@ -7,24 +7,22 @@
 
 namespace pot {
 
-class explicit_bath
-{
+class explicit_bath {
 
 public:
-    explicit_bath();
-    ~explicit_bath();
+  explicit_bath();
+  ~explicit_bath();
 
-    void set_bath_params(size_t ndim, size_t nBathModes,
-                         double gamma, double cutoff, double thermo_mass);
-    double bath_force(const double*, double*);
+  void set_bath_params(size_t ndim, size_t nBathModes, double gamma,
+                       double cutoff, double thermo_mass);
+  double bath_force(const double *, double *);
 
 private:
-    int m_nBathModes;
-    double m_mass;
+  int m_nBathModes;
+  double m_mass;
 
-    double* c_iMode;
-    double* omega_iMode; 
-
+  double *c_iMode;
+  double *omega_iMode;
 };
 
 } // namespace pot

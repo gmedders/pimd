@@ -7,27 +7,26 @@
 
 namespace pot {
 
-class anharmonic : public single_state
-{
+class anharmonic : public single_state {
 
 public:
-    double VAA(const double* crd, double* f);
+  double VAA(const double *crd, double *f);
 
-    void assert_ndim(int);
-    
-    void set_params(double*);
+  void assert_ndim(int);
 
-    double get_w(){ return std::sqrt(2.0*a/m); };
-    double get_m(){ return m; };
+  void set_params(double *);
 
-    void print_params();
+  double get_w() { return std::sqrt(2.0 * a / m); };
+  double get_m() { return m; };
+
+  void print_params();
 
 private:
-    double a;
-    double b;
-    double c;
+  double a;
+  double b;
+  double c;
 
-    double m;
+  double m;
 };
 
 } // namespace pot

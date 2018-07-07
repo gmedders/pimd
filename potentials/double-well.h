@@ -5,32 +5,31 @@
 
 #include <armadillo>
 
-#include "surface-hopping.h"
 #include "explicit-bath.h"
+#include "surface-hopping.h"
 
 namespace pot {
 
-class double_well : public surface_hopping
-{
+class double_well : public surface_hopping {
 
 public:
-    double VAA(const double* x, double* f);
-    double VBB(const double* x, double* f);
+  double VAA(const double *x, double *f);
+  double VBB(const double *x, double *f);
 
-    void set_params(double*);
+  void set_params(double *);
 
-    double get_w(){ return w; };
-    double get_m(){ return m; };
+  double get_w() { return w; };
+  double get_m() { return m; };
 
-    void print_params();
+  void print_params();
 
 private:
-    double w;
-    double m;
-    double g;
-    double dG;
+  double w;
+  double m;
+  double g;
+  double dG;
 
-    double a;
+  double a;
 };
 
 } // namespace pot

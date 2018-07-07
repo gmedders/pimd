@@ -1,8 +1,8 @@
 #ifndef MT19937_H
 #define MT19937_H
 
-#include <string>
 #include <stdint.h>
+#include <string>
 
 namespace parts {
 
@@ -21,9 +21,9 @@ struct mt19937 {
 
   data_type operator()() throw();
   data_type operator()(data_type, data_type) throw();
-  double operator()(const double&, const double&) throw();
+  double operator()(const double &, const double &) throw();
 
-  double random_double() throw(); // (0.0, 1.0]
+  double random_double() throw();   // (0.0, 1.0]
   double random_gaussian() throw(); // FIXTHIS
 
 private:
@@ -34,4 +34,3 @@ private:
 } // namespace parts
 
 #endif // MT19937_H
-

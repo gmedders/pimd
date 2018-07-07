@@ -1,11 +1,11 @@
 #ifndef POT_DEFINITION_H
 #define POT_DEFINITION_H
 
-#include "sho.h"
+#include "ah.h"
 #include "anharmonic.h"
 #include "double-well.h"
-#include "ah.h"
 #include "pot-2d.h"
+#include "sho.h"
 
 namespace parts {
 
@@ -28,22 +28,13 @@ static double x0 = 0.0;
 static double x1 = 0.18899;
 static double C0 = 0.64;
 static double C1 = 0.67;
-static double w  = 8.0E-3;
+static double w = 8.0E-3;
 static double mx = 14000;
 static double z0 = -3.5;
 
 static double atm_mass = 55000;
 
-static double params[] = {
-A0,
-B1,
-x0,
-x1,
-C0,
-C1,
-w ,
-mx,
-z0};
+static double params[] = {A0, B1, x0, x1, C0, C1, w, mx, z0};
 #endif
 
 #if 0
@@ -101,6 +92,6 @@ static double param_c(0.25);
 static double params[] = {param_a, param_b, param_c, atm_mass};
 #endif
 
-} // namespace
+} // namespace parts
 
 #endif // POT_DEFINITION_H

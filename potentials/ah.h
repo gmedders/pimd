@@ -7,29 +7,28 @@
 
 namespace pot {
 
-class ah : public surface_hopping
-{
+class ah : public surface_hopping {
 
 public:
-    double VAA(const double* x, double* f);
-    double VBB(const double* x, double* f);
+  double VAA(const double *x, double *f);
+  double VBB(const double *x, double *f);
 
-    void set_params(double*);
+  void set_params(double *);
 
-    double get_w(){ return w; };
-    double get_m(){ return m; };
+  double get_w() { return w; };
+  double get_m() { return m; };
 
-    void print_params();
+  void print_params();
 
 private:
-    double w;
-    double m;
-    double g;
+  double w;
+  double m;
+  double g;
 
-    double a;
-    double b;
-    double Ed;
-    double Ed_bar;
+  double a;
+  double b;
+  double Ed;
+  double Ed_bar;
 };
 
 } // namespace pot
