@@ -8,16 +8,12 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
-void sho::assert_ndim(int ndim) { assert(ndim == 1); }
-
-//----------------------------------------------------------------------------//
-
 double sho::VAA(const double *crd, double *f) {
   double x = crd[0];
 
   double e = a * x * x;
   double dedx = 2.0 * a * x;
-  f[0] += -dedx;
+  f[0] = -dedx;
 
   return e;
 }

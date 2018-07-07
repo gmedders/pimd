@@ -15,8 +15,6 @@
 
 #include "sim-classes.h"
 
-#define DUMP_TRAJ yes
-
 //
 // constant temperature PIMD
 // units are au

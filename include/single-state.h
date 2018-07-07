@@ -20,7 +20,7 @@ class single_state : public explicit_bath, public bead_states {
 public:
   // single_state() {std::cerr << "single_state::single_state()" << std::endl;
   // }; ~single_state() {std::cerr << "single_state::~single_state()" <<
-  //std::endl; };
+  // std::endl; };
   bool init_pot = false;
 
   double force(size_t, size_t, size_t, const double *, double *);
