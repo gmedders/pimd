@@ -23,21 +23,21 @@ add_library( tools ${tools})
 
 find_package(Armadillo REQUIRED)
 
-add_executable(pimd ./src/pimd.cpp)
-target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
+#add_executable(pimd ./src/pimd.cpp)
+#target_link_libraries(pimd tools fftw3 ${ARMADILLO_LIBRARIES})
 
 #-------------------
 # Main source files
 #-------------------
 
-#file(GLOB MAIN_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-#
-## Set up each executable target in the src directory
-#foreach(_main_file ${MAIN_SRC_FILES})
-#    get_filename_component(_main_name ${_main_file} NAME_WE)
-#    add_executable(${_main_name} ${_main_file})
-#    target_link_libraries(${_main_name} tools fftw3 ${ARMADILLO_LIBRARIES})
-#endforeach()
+file(GLOB MAIN_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+
+# Set up each executable target in the src directory
+foreach(_main_file ${MAIN_SRC_FILES})
+    get_filename_component(_main_name ${_main_file} NAME_WE)
+    add_executable(${_main_name} ${_main_file})
+    target_link_libraries(${_main_name} tools fftw3 ${ARMADILLO_LIBRARIES})
+endforeach()
 
 ##-------------------
 ## Download and build the googletest external dependency
