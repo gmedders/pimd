@@ -5,8 +5,8 @@ project(${PROJECT_NAME_STR})
 set( CMAKE_VERBOSE_MAKEFILE on )
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 --std=c++14")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 --std=c++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 --std=c++11")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 --std=c++11")
 endif()
 
 #-------------------
@@ -17,12 +17,11 @@ include_directories(${COMMON_INCLUDES})
 set(TCLAP_INCLUDES ${PROJECT_SOURCE_DIR}/include/tclap)
 include_directories(${TCLAP_INCLUDES})
 
-file(GLOB lib_sources ./lib/*.cpp)
-set( lib ${lib_sources})
-add_library( lib ${lib})
+file(GLOB tools_sources ./lib/*.cpp)
+set( tools ${tools_sources})
+add_library( tools ${tools})
 
 find_package(Armadillo REQUIRED)
-find_package(BLAS REQUIRED)
 
 #-------------------
 # Main source files
@@ -34,7 +33,7 @@ file(GLOB MAIN_SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 foreach(_main_file ${MAIN_SRC_FILES})
     get_filename_component(_main_name ${_main_file} NAME_WE)
     add_executable(${_main_name} ${_main_file})
-    target_link_libraries(${_main_name} fftw3 ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARIES} lib)
+    target_link_libraries(${_main_name} tools fftw3 ${ARMADILLO_LIBRARIES})
 endforeach()
 
 #-------------------
@@ -54,7 +53,6 @@ ExtProjectGit("https://github.com/google/googletest.git" "master" ${DEPS_ROOT} C
 
 include_directories("${DEPS_ROOT}/include")
 link_directories("${DEPS_ROOT}/lib")
-# link_directories("${DEPS_ROOT}/lib64")
 
 #-------------------
 # Test
@@ -69,7 +67,7 @@ foreach(_test_file ${TEST_SRC_FILES})
     get_filename_component(_test_name ${_test_file} NAME_WE)
     add_executable(${_test_name} ${_test_file})
     add_dependencies(${_test_name} "googletest.git")
-    target_link_libraries(${_test_name} lib gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
+    target_link_libraries(${_test_name} tools gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
     add_test(${_test_name} ${_test_name})
     set_tests_properties(${_test_name} PROPERTIES TIMEOUT 5)
 endforeach()
