@@ -7,10 +7,6 @@
 #include "sho.h"
 #include "gtest/gtest.h"
 
-// single_state is an abstract class, so there are only a few things to test
-// in it. We'll create an instance of the "sho" class, which is the simplest
-// child of single_state, to test.
-
 double omega(0.001);   // omega
 double atm_mass(2000); // au
 double params[] = {omega, atm_mass};
