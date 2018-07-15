@@ -17,6 +17,10 @@ struct double_well : public surface_hopping {
 
   double get_w() { return w; };
   double get_m() { return m; };
+  double get_g() { return g; };
+  double get_dG() { return dG; };
+
+  double get_a() { return a; };
 
   void print_params();
 
