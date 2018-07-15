@@ -14,7 +14,7 @@
 #include "helpers.h"
 #include "nhc.h"
 
-#include "sim-classes.h"
+#include "sim_classes.h"
 
 //
 // constant temperature PIMD

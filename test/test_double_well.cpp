@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "double-well.h"
-#include "finite-difference.h"
+#include "double_well.h"
+#include "finite_difference.h"
 #include "gtest/gtest.h"
 
 typedef pot::double_well potential;

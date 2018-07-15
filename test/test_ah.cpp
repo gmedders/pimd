@@ -4,7 +4,7 @@
 #include <string>
 
 #include "ah.h"
-#include "finite-difference.h"
+#include "finite_difference.h"
 #include "gtest/gtest.h"
 
 typedef pot::ah potential;

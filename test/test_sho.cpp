@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "finite-difference.h"
+#include "finite_difference.h"
 #include "sho.h"
 #include "gtest/gtest.h"
 

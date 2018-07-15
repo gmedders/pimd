@@ -4,7 +4,7 @@
 #include <string>
 
 #include "anharmonic.h"
-#include "finite-difference.h"
+#include "finite_difference.h"
 #include "gtest/gtest.h"
 
 typedef pot::anharmonic potential;

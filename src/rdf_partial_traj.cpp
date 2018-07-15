@@ -14,7 +14,7 @@
 #include <armadillo>
 
 #include "helpers.h"
-#include "sim-classes.h"
+#include "sim_classes.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 

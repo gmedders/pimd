@@ -3,7 +3,7 @@
 
 #include <cstdlib>
 
-#include "single-state.h"
+#include "single_state.h"
 
 namespace pot {
 

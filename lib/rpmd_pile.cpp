@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include "rpmd-pile.h"
+#include "rpmd_pile.h"
 
 #define DECOMPOSE_KE yes
 

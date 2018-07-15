@@ -1,4 +1,4 @@
-#include "single-state.h"
+#include "single_state.h"
 
 #include <cassert>
 

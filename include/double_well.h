@@ -5,7 +5,7 @@
 
 #include <armadillo>
 
-#include "surface-hopping.h"
+#include "surface_hopping.h"
 
 namespace pot {
 

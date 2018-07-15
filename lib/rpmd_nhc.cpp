@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include "rpmd-nhc.h"
+#include "rpmd_nhc.h"
 
 #include "nhc.h"
 

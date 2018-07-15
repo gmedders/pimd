@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "double-well.h"
+#include "double_well.h"
 #include "gtest/gtest.h"
 
 // surface_hopping is an abstract class, so there are only a few things to test
