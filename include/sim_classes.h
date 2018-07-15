@@ -1,17 +1,17 @@
 #ifndef SIM_CLASSES_H
 #define SIM_CLASSES_H
 
-#include "pimd-base.h"
+#include "pimd_base.h"
 
-#include "rpmd-base.h"
-#include "rpmd-nhc.h"
-#include "rpmd-pile.h"
+#include "rpmd_base.h"
+#include "rpmd_nhc.h"
+#include "rpmd_pile.h"
 
-#include "vv-base.h"
+#include "vv_base.h"
 
 #include "ah.h"
 #include "anharmonic.h"
-#include "double-well.h"
+#include "double_well.h"
 #include "sho.h"
 
 //

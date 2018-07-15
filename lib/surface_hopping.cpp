@@ -1,4 +1,4 @@
-#include "surface-hopping.h"
+#include "surface_hopping.h"
 
 #include <cassert>
 

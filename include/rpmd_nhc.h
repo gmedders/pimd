@@ -1,7 +1,7 @@
 #ifndef RPMD_NHC_H
 #define RPMD_NHC_H
 
-#include "rpmd-base.h"
+#include "rpmd_base.h"
 
 namespace parts {
 

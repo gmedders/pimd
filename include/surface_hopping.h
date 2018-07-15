@@ -18,8 +18,6 @@ struct surface_hopping {
 
   arma::ivec state_id;
 
-  int nhops;
-
   double force(size_t, size_t, size_t, const double *, double *);
   virtual double VAA(const double *x, double *f) = 0;
   virtual double VBB(const double *x, double *f) = 0;
@@ -29,7 +27,6 @@ struct surface_hopping {
 
   double fermi_function(const double, const double);
   double hop_probability(const double, int);
-  void hop();
 
   void set_all_bead_states(const int, int);
   void set_individual_bead_states(std::vector<int> &);

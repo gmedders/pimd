@@ -1,7 +1,7 @@
 #ifndef RPMD_PILE_H
 #define RPMD_PILE_H
 
-#include "rpmd-base.h"
+#include "rpmd_base.h"
 
 #include "rand_gauss.h"
 

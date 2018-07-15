@@ -1,4 +1,4 @@
-#include "double-well.h"
+#include "double_well.h"
 
 #include <cassert>
 

@@ -3,7 +3,7 @@
 
 #include "mt19937.h"
 
-#include "pimd-base.h"
+#include "pimd_base.h"
 
 #define DO_NHC yes
 

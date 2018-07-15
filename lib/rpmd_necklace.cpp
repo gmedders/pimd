@@ -1,7 +1,7 @@
 #include <cassert>
 #include <cmath>
 
-#include "rpmd-necklace.h"
+#include "rpmd_necklace.h"
 
 namespace parts {
 

@@ -17,7 +17,7 @@
 
 #include "helpers.h"
 
-#include "sim-classes.h"
+#include "sim_classes.h"
 
 //#define DUMP_TRAJ 1
 
