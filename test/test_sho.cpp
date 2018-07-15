@@ -7,13 +7,14 @@
 #include "sho.h"
 #include "gtest/gtest.h"
 
+typedef pot::sho potential;
 double omega(0.001);   // omega
 double atm_mass(2000); // au
 double params[] = {omega, atm_mass};
 
 TEST(sho, set_params) {
 
-  pot::sho my_pot;
+  potential my_pot;
   my_pot.set_params(params);
 
   EXPECT_DOUBLE_EQ(my_pot.get_w(), omega);
@@ -22,7 +23,7 @@ TEST(sho, set_params) {
 
 TEST(sho, VAA_energy) {
 
-  pot::sho my_pot;
+  potential my_pot;
   my_pot.set_params(params);
 
   std::vector<double> crd = {0.5};
@@ -33,13 +34,14 @@ TEST(sho, VAA_energy) {
 
 TEST(sho, VAA_grad) {
 
-  pot::sho my_pot;
+  potential my_pot;
   my_pot.set_params(params);
 
   std::vector<double> crd = {0.5};
   std::vector<double> fd_f = {0.0};
 
-  run_finite_differences(my_pot, crd, fd_f);
+  auto fp = std::bind(&potential::VAA, my_pot, _1, _2);
+  run_finite_differences(fp, crd, fd_f);
 
   double f[] = {0.0};
   my_pot.VAA(&crd[0], f);

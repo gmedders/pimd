@@ -7,6 +7,7 @@
 #include "finite-difference.h"
 #include "gtest/gtest.h"
 
+typedef pot::anharmonic potential;
 double atm_mass(1); // au
 double param_a(1.0 / 2.0);
 double param_b(1.0 / 10.0);
@@ -15,7 +16,7 @@ double params[] = {param_a, param_b, param_c, atm_mass};
 
 TEST(anharmonic, set_params) {
 
-  pot::anharmonic my_pot;
+  potential my_pot;
   my_pot.set_params(params);
 
   EXPECT_DOUBLE_EQ(my_pot.get_w(), std::sqrt(2.0 * param_a / atm_mass));
@@ -27,7 +28,7 @@ TEST(anharmonic, set_params) {
 
 TEST(anharmonic, VAA_energy) {
 
-  pot::anharmonic my_pot;
+  potential my_pot;
   my_pot.set_params(params);
 
   std::vector<double> crd = {0.5};
@@ -38,13 +39,14 @@ TEST(anharmonic, VAA_energy) {
 
 TEST(anharmonic, VAA_grad) {
 
-  pot::anharmonic my_pot;
+  potential my_pot;
   my_pot.set_params(params);
 
   std::vector<double> crd = {0.5};
   std::vector<double> fd_f = {0.0};
 
-  run_finite_differences(my_pot, crd, fd_f);
+  auto fp = std::bind(&potential::VAA, my_pot, _1, _2);
+  run_finite_differences(fp, crd, fd_f);
 
   double f[] = {0.0};
   my_pot.VAA(&crd[0], f);
