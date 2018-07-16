@@ -1,6 +1,7 @@
 #include "sim_classes.h"
 
 #include "mt19937.h"
+#include "rand_gauss.h"
 
 namespace parts {
 

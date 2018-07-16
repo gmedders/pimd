@@ -1,20 +1,26 @@
 #ifndef RPMD_PILE_H
 #define RPMD_PILE_H
 
-#include "rpmd_base.h"
+#include <random>
 
-#include "rand_gauss.h"
+#include "rpmd_base.h"
 
 namespace parts {
 
 struct rpmd_pile : public rpmd_base {
 
+  rpmd_pile() : rand_01(0, 1){};
+
   void init(size_t ndof, size_t nbead, const double &kT, const double &dt,
             const double *mass, const double *cartpos, const double *cartvel,
             double tau);
+  void seed_pile_prng(int);
 
   void step(const double &);
   double invariant() const;
+
+  std::mt19937 pile_prng; // Fixed seed of 0
+  std::normal_distribution<> rand_01;
 
   double calc_KE();
 
