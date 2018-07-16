@@ -1,7 +1,6 @@
 #include <cassert>
 #include <cmath>
-
-#include "mt19937.h"
+#include <random>
 
 #include "pimd_base.h"
 
@@ -66,7 +65,8 @@ void pimd_base::init(size_t ndof, size_t nbead, const double &kT,
   m_thermostats = new double[ndof * nbead * th_size];
 #endif
 
-  mt19937 prg(27606);
+  std::mt19937 prng;
+  prng.seed(19107);
 
   m_tau = 2 * M_PI / m_omega_M;
 
@@ -74,7 +74,7 @@ void pimd_base::init(size_t ndof, size_t nbead, const double &kT,
   for (size_t b = 0; b < nbead; ++b)
     for (size_t i = 0; i < ndof; ++i) {
       const size_t j = i + b * ndof;
-      nhc::initialize(nchain, m_thermostats + th_size * j, m_tau, prg);
+      nhc::initialize(nchain, m_thermostats + th_size * j, m_tau, prng);
     }
 #endif
 
@@ -87,13 +87,14 @@ void pimd_base::init(size_t ndof, size_t nbead, const double &kT,
   pos_c2n(); // cart -> nmode
 
   // initialize normal mode velocities
+  std::normal_distribution<> rand_01{0, 1};
 
   m_Ekin_fict = 0.0;
   for (size_t b = 0; b < nbead; ++b)
     for (size_t i = 0; i < ndof; ++i) {
       const size_t j = i + b * ndof;
       const double sigma = std::sqrt(kT / m_fict_mass[j]);
-      m_vel_nmode[j] = sigma * prg.random_gaussian();
+      m_vel_nmode[j] = sigma * rand_01(prng);
       m_Ekin_fict += m_fict_mass[j] * m_vel_nmode[j] * m_vel_nmode[j];
     }
 

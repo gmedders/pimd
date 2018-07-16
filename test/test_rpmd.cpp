@@ -6,6 +6,10 @@
 #include "sim_classes.h"
 #include "gtest/gtest.h"
 
+// FIXME The current design allows only one rpmd class to be defined at a time.
+// So, the below is the rpmd_base test, which can't be run when testing
+// rpmd_pile, etc.
+
 // TEST(rpmd_base, make_one_step) {
 //   double pos[] = {0.1, 0.13};
 //   double vel[] = {-0.01, -0.015};

@@ -12,7 +12,8 @@ namespace nhc {
 
 size_t size(size_t M) { return 3 * M; }
 
-void initialize(size_t M, double *thermo, const double &tau, mt19937 &prg) {
+void initialize(size_t M, double *thermo, const double &tau,
+                std::mt19937 &prng) {
   assert(M > 1);
   assert(thermo != 0);
   assert(tau > 0.0);
@@ -23,9 +24,11 @@ void initialize(size_t M, double *thermo, const double &tau, mt19937 &prg) {
 
   const double tau1 = 1.0 / tau; // == sqrt(kT/Q), Q = kT*tau*tau
 
+  std::normal_distribution<> rand_01{0, 1};
+
   for (size_t i = 0; i < M; ++i) {
     eta[i] = 0.0;
-    vel[i] = tau1 * prg.random_gaussian();
+    vel[i] = tau1 * rand_01(prng);
     if (i > 0)
       acc[i] = vel[i - 1] * vel[i - 1] - tau1 * tau1;
     // acc[0] is computed in advance()
