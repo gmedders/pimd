@@ -43,10 +43,11 @@ void rpmd_pile::init(size_t ndof, size_t nbead, const double &kT,
 
   for (size_t k = 0; k < nbead; ++k) {
     double gamma(0);
-    if (k == 0)
+    if (k == 0) {
       gamma = gamma_centroid;
-    else
+    } else {
       gamma = 2.0 * m_omega_k(k);
+    }
 
     c1(k) = std::exp(-0.5 * dt * gamma);
     c2(k) = std::sqrt(1.0 - c1(k) * c1(k));
