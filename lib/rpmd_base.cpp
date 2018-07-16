@@ -46,6 +46,9 @@ void rpmd_base::init(size_t ndof, size_t nbead, const double &kT,
     }
 
   m_Ekin /= 2;
+  m_temp_kT = m_Ekin * 2.0 / ndofs() / nbeads(); // not actual temperature, kT
+  m_temp_kT_centroid = m_temp_kT;                // these are placeholders
+  m_temp_kT_higherNM = m_temp_kT;                // these are placeholders
 
   pimd_force();
   spring_energy();
