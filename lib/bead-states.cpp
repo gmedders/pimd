@@ -1,4 +1,4 @@
-#include "bead-states.h"
+#include "bead_states.h"
 
 #include <cassert>
 

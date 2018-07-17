@@ -35,7 +35,7 @@ void anharmonic::set_params(double *params) {
   b = params[1];
   c = params[2];
 
-  m = params[2];
+  m = params[3];
 
   init_pot = true;
 }

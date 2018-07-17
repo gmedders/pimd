@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "sim-classes.h"
+#include "sim_classes.h"
 
 //
 // units are au
