@@ -47,6 +47,8 @@ public:
   void mom_c2n();
   void mom_n2c();
 
+  void mom2vel();
+
   // layout is bead1, bead2, ..., beadN, where
   // each bead consists of ndofs elements
 

@@ -30,7 +30,6 @@ void rpmd::calc_pos_stats(void) {
 //----------------------------------------------------------------------------//
 
 void rpmd::dump_1D_frame(std::ostream &of_traj) {
-  // of_traj << nbeads() << ' ' << ndofs() << ' ' << beta() << std::endl;
   for (size_t n = 0; n < nbeads(); ++n) {
     of_traj << m_potential->state_id[n] << ' ';
     for (size_t i = 0; i < ndofs(); ++i) {
@@ -48,10 +47,10 @@ void rpmd::print_params() {
 }
 //----------------------------------------------------------------------------//
 
-void rpmd::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
+void rpmd::set_up(const size_t ndim, const size_t natom, const size_t nbead,
                   const double beta, const double dt, double *pos,
                   double *vel) {
-  size_t ndof = ndim * natoms;
+  size_t ndof = ndim * natom;
 
   // Generate initial positions, if needed
   std::vector<double> all_bead_crd;
@@ -67,14 +66,11 @@ void rpmd::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
   if (vel == nullptr) {
     double kT = 1.0 / beta;
 
-    size_t ndofs = ndim * natom;
-    double kT = 1.0 / beta;
-
     std::random_device rd{};
     std::mt19937 prng(rd());
     std::normal_distribution<> rand_01{0, 1};
 
-    for (size_t i = 0; i < nbead * ndofs; ++i) {
+    for (size_t i = 0; i < nbead * ndof; ++i) {
       const double sigma = std::sqrt(kT / atm_mass);
       double v = sigma * rand_01(prng);
       all_bead_vel.push_back(v);
@@ -84,7 +80,7 @@ void rpmd::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
 
   // Now populate the mass array
   double mass[ndof];
-  for (size_t i = 0; i < natoms; ++i) {
+  for (size_t i = 0; i < natom; ++i) {
     const double Mi = atm_mass;
     for (size_t k = 0; k < ndim; ++k)
       mass[k + ndim * i] = Mi;
@@ -93,7 +89,7 @@ void rpmd::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
   // setup the simulation
   m_potential->set_params(params);
 
-  init(ndim, natoms, nbead, 1.0 / beta, dt, mass, pos, vel, m_gamma);
+  init(ndim, natom, nbead, 1.0 / beta, dt, mass, pos, vel, m_gamma);
 }
 
 //----------------------------------------------------------------------------//
@@ -105,9 +101,9 @@ void rpmd::set_gammaTh(const double &dt, double gam_fac) {
 
 //----------------------------------------------------------------------------//
 
-double rpmd::force(size_t ndim, size_t natoms, size_t nbeads, const double *x,
+double rpmd::force(size_t ndim, size_t natom, size_t nbeads, const double *x,
                    double *f) {
-  return m_potential->force(ndim, natoms, nbeads, x, f);
+  return m_potential->force(ndim, natom, nbeads, x, f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,11 +116,11 @@ void vv::calc_pos_stats(void) {
 
 //----------------------------------------------------------------------------//
 
-void vv::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
+void vv::set_up(const size_t ndim, const size_t natom, const size_t nbead,
                 double beta, const double dt, double *pos, double *vel) {
   assert(nbead == 1);
 
-  size_t ndof = ndim * natoms;
+  size_t ndof = ndim * natom;
 
   // Generate initial positions, if needed
   std::vector<double> all_bead_crd;
@@ -146,15 +142,15 @@ void vv::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
 
     for (size_t i = 0; i < nbead * ndof; ++i) {
       const double sigma = std::sqrt(kT / atm_mass);
-      double v = sigma * randn(0, 1);
+      double v = sigma * rand_01(prng);
       all_bead_vel.push_back(v);
     }
     vel = &all_bead_vel[0];
   }
 
   // prepare masses
-  double *mass = new double[ndim * natoms]; // for every degree of freedom
-  for (size_t i = 0; i < natoms; ++i) {
+  double *mass = new double[ndim * natom]; // for every degree of freedom
+  for (size_t i = 0; i < natom; ++i) {
     const double Mi = atm_mass;
     for (size_t k = 0; k < ndim; ++k)
       mass[k + ndim * i] = Mi;
@@ -164,7 +160,7 @@ void vv::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
 
   m_potential->set_params(params);
 
-  init(ndim, natoms, dt, mass, pos, vel);
+  init(ndim, natom, dt, mass, pos, vel);
 
   // clean up
 
@@ -173,9 +169,9 @@ void vv::set_up(const size_t ndim, const size_t natoms, const size_t nbead,
 
 //----------------------------------------------------------------------------//
 
-double vv::force(size_t ndim, size_t natoms, size_t nbeads, const double *x,
+double vv::force(size_t ndim, size_t natom, size_t nbeads, const double *x,
                  double *f) {
-  return m_potential->force(ndim, natoms, nbeads, x, f);
+  return m_potential->force(ndim, natom, nbeads, x, f);
 }
 
 //----------------------------------------------------------------------------//

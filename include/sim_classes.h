@@ -11,7 +11,7 @@
 
 #include "vv_base.h"
 
-#include "pot-definition.h"
+#include "pot_definition.h"
 
 //
 // units are au
@@ -34,7 +34,7 @@ public:
       // std::cerr << "rpmd::~rpmd()" << std::endl;
   };
 
-  void set_up(const size_t ndim, const size_t natoms, const size_t nbeads,
+  void set_up(const size_t ndim, const size_t natom, const size_t nbeads,
               const double beta, const double dt, double *crd = nullptr,
               double *vel = nullptr);
   double force(size_t, size_t, size_t, const double *, double *);
@@ -85,7 +85,7 @@ struct vv : public parts::vv_base {
     std::cerr << "vv::vv()" << std::endl;
   };
 
-  void set_up(const size_t ndim, const size_t natoms, const size_t nbead,
+  void set_up(const size_t ndim, const size_t natom, const size_t nbead,
               const double beta, const double dt, double *crd = nullptr,
               double *vel = nullptr);
   double force(size_t, size_t, size_t, const double *, double *);
