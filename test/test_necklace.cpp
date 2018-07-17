@@ -15,7 +15,7 @@ TEST(necklace, setup) {
   const int ndof(ndim * natom);
 
   parts::necklace necklace;
-  necklace.setup(ndof, nbead);
+  necklace.setup(ndim, natom, nbead);
 
   EXPECT_NEAR(necklace.m_lambda[0], 0.0, tol);
   EXPECT_NEAR(necklace.m_lambda[1], 15.999999999999998, tol);
@@ -35,7 +35,7 @@ TEST(necklace, normal_mode_transformations) {
   double dt(1.0);
   double mass(2000);
   parts::necklace necklace;
-  necklace.setup(ndof, nbead);
+  necklace.setup(ndim, natom, nbead);
 
   necklace.m_pos_cart[0 + 0 * ndof] = 1.1;
   necklace.m_pos_cart[0 + 1 * ndof] = 1.15;

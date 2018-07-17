@@ -29,7 +29,6 @@ public:
 
   void print_state_params();
 
-private:
   double Gamma;
   double dt;
   double beta;
