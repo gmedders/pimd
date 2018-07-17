@@ -29,7 +29,7 @@ private:
   size_t m_ndofs;
   size_t m_nbeads;
 
-protected:
+public:
   double m_dt;
 
   double m_beta;

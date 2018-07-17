@@ -98,10 +98,6 @@ TEST(nhc, test_advance) {
   EXPECT_NEAR(all_aa[0], 0.99985927371848149, 1.0E-8);
   EXPECT_NEAR(all_aa[1], 1.0001060115130245, 1.0E-8);
 
-  for (size_t i = 0; i < all_aa.size(); ++i) {
-    std::cout << "all_aa[" << i << "] = " << all_aa[i] << std::endl;
-  }
-
   EXPECT_NEAR(m_thermostats[4], 0.00014073773847819479, 1.0E-8);
   EXPECT_NEAR(m_thermostats[5], -0.00014923867549715387, 1.0E-8);
   EXPECT_NEAR(m_thermostats[9], -4.3497416049379006e-09, 1.0E-8);
