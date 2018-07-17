@@ -6,6 +6,8 @@
 #include "rpmd_necklace.h"
 #include "gtest/gtest.h"
 
+const double tol(1.0E-8);
+
 TEST(rpmd_necklace, setup) {
   const int nbead(2);
   const int ndim(1);
@@ -18,28 +20,26 @@ TEST(rpmd_necklace, setup) {
   parts::rpmd_necklace necklace;
   necklace.setup(ndof, nbead, beta, dt, mass);
 
-  EXPECT_NEAR(necklace.m_cart_to_nm(0, 0), 0.70710678118654757, 1.0E-8);
-  EXPECT_NEAR(necklace.m_cart_to_nm(0, 1), 0.70710678118654757, 1.0E-8);
-  EXPECT_NEAR(necklace.m_cart_to_nm(1, 0), 0.70710678118654757, 1.0E-8);
-  EXPECT_NEAR(necklace.m_cart_to_nm(1, 1), -0.70710678118654757, 1.0E-8);
+  EXPECT_NEAR(necklace.m_cart_to_nm(0, 0), 0.70710678118654757, tol);
+  EXPECT_NEAR(necklace.m_cart_to_nm(0, 1), 0.70710678118654757, tol);
+  EXPECT_NEAR(necklace.m_cart_to_nm(1, 0), 0.70710678118654757, tol);
+  EXPECT_NEAR(necklace.m_cart_to_nm(1, 1), -0.70710678118654757, tol);
 
-  EXPECT_NEAR(necklace.m_omega_k(0), 0.0, 1.0E-8);
-  EXPECT_NEAR(necklace.m_omega_k(1), 0.00390625, 1.0E-8);
+  EXPECT_NEAR(necklace.m_omega_k(0), 0.0, tol);
+  EXPECT_NEAR(necklace.m_omega_k(1), 0.00390625, tol);
 
-  EXPECT_NEAR(necklace.m_freerp_propagator(0, 0, 0), 1.0, 1.0E-8);
+  EXPECT_NEAR(necklace.m_freerp_propagator(0, 0, 0), 1.0, tol);
   EXPECT_NEAR(necklace.m_freerp_propagator(0, 1, 0), 0.00050000000000000001,
-              1.0E-8);
-  EXPECT_NEAR(necklace.m_freerp_propagator(1, 0, 0), 0.0, 1.0E-8);
-  EXPECT_NEAR(necklace.m_freerp_propagator(1, 1, 0), 1.0, 1.0E-8);
+              tol);
+  EXPECT_NEAR(necklace.m_freerp_propagator(1, 0, 0), 0.0, tol);
+  EXPECT_NEAR(necklace.m_freerp_propagator(1, 1, 0), 1.0, tol);
 
-  EXPECT_NEAR(necklace.m_freerp_propagator(0, 0, 1), 0.99999237061516999,
-              1.0E-8);
+  EXPECT_NEAR(necklace.m_freerp_propagator(0, 0, 1), 0.99999237061516999, tol);
   EXPECT_NEAR(necklace.m_freerp_propagator(0, 1, 1), 0.0004999987284352149,
-              1.0E-8);
+              tol);
   EXPECT_NEAR(necklace.m_freerp_propagator(1, 0, 1), -0.030517500514844659,
-              1.0E-8);
-  EXPECT_NEAR(necklace.m_freerp_propagator(1, 1, 1), 0.99999237061516999,
-              1.0E-8);
+              tol);
+  EXPECT_NEAR(necklace.m_freerp_propagator(1, 1, 1), 0.99999237061516999, tol);
 }
 
 // This function will test the transformation of the positions and momenta
@@ -71,32 +71,28 @@ TEST(rpmd_necklace, normal_mode_transformations) {
   arma::mat orig_mom_cart(necklace.m_mom_cart);
 
   necklace.pos_c2n();
-  EXPECT_NEAR(necklace.m_pos_nmode(0, 0), 1.5909902576697319, 1.0E-8);
-  EXPECT_NEAR(necklace.m_pos_nmode(0, 1), -0.035355339059327195, 1.0E-8);
-  EXPECT_NEAR(necklace.m_pos_nmode(1, 0), 0.72831998462214398, 1.0E-8);
-  EXPECT_NEAR(necklace.m_pos_nmode(1, 1), -0.70003571337468218, 1.0E-8);
+  EXPECT_NEAR(necklace.m_pos_nmode(0, 0), 1.5909902576697319, tol);
+  EXPECT_NEAR(necklace.m_pos_nmode(0, 1), -0.035355339059327195, tol);
+  EXPECT_NEAR(necklace.m_pos_nmode(1, 0), 0.72831998462214398, tol);
+  EXPECT_NEAR(necklace.m_pos_nmode(1, 1), -0.70003571337468218, tol);
 
   // Make sure that pos_n2c() is actually doing something by zeroing out the
   // m_pos_cart matrix and testing that it is not equal to orig_pos_cart
   necklace.m_pos_cart.zeros();
-  EXPECT_FALSE(
-      approx_equal(orig_pos_cart, necklace.m_pos_cart, "absdiff", 1.0E-8));
+  EXPECT_FALSE(arma::norm(orig_pos_cart - necklace.m_pos_cart, "inf") < tol);
   necklace.pos_n2c();
-  EXPECT_TRUE(
-      approx_equal(orig_pos_cart, necklace.m_pos_cart, "absdiff", 1.0E-8));
+  EXPECT_TRUE(arma::norm(orig_pos_cart - necklace.m_pos_cart, "inf") < tol);
 
   necklace.mom_c2n();
-  EXPECT_NEAR(necklace.m_mom_nmode(0, 0), 0.17677669529663689, 1.0E-8);
-  EXPECT_NEAR(necklace.m_mom_nmode(0, 1), -0.035355339059327362, 1.0E-8);
-  EXPECT_NEAR(necklace.m_mom_nmode(1, 0), -0.049497474683058332, 1.0E-8);
-  EXPECT_NEAR(necklace.m_mom_nmode(1, 1), -0.063639610306789288, 1.0E-8);
+  EXPECT_NEAR(necklace.m_mom_nmode(0, 0), 0.17677669529663689, tol);
+  EXPECT_NEAR(necklace.m_mom_nmode(0, 1), -0.035355339059327362, tol);
+  EXPECT_NEAR(necklace.m_mom_nmode(1, 0), -0.049497474683058332, tol);
+  EXPECT_NEAR(necklace.m_mom_nmode(1, 1), -0.063639610306789288, tol);
 
   // Make sure that mom_n2c() is actually doing something by zeroing out the
   // m_mom_cart matrix and testing that it is not equal to orig_mom_cart
   necklace.m_mom_cart.zeros();
-  EXPECT_FALSE(
-      approx_equal(orig_mom_cart, necklace.m_mom_cart, "absdiff", 1.0E-8));
+  EXPECT_FALSE(arma::norm(orig_mom_cart - necklace.m_mom_cart, "inf") < tol);
   necklace.mom_n2c();
-  EXPECT_TRUE(
-      approx_equal(orig_mom_cart, necklace.m_mom_cart, "absdiff", 1.0E-8));
+  EXPECT_TRUE(arma::norm(orig_mom_cart - necklace.m_mom_cart, "inf") < tol);
 }
