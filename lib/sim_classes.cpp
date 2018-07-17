@@ -1,6 +1,6 @@
-#include "sim_classes.h"
+#include <random>
 
-#include "mt19937.h"
+#include "sim_classes.h"
 
 namespace parts {
 
@@ -161,14 +161,16 @@ void rpmd::set_up_new_init_cond(const size_t nbead, const size_t ndim,
                                 const double dt, double *pos) {
   std::vector<double> all_bead_vel;
 
-  parts::mt19937 prg(27606);
-
   size_t ndofs = ndim * natom;
   double kT = 1.0 / beta;
 
+  std::random_device rd{};
+  std::mt19937 prng(rd());
+  std::normal_distribution<> rand_01{0, 1};
+
   for (size_t i = 0; i < nbead * ndofs; ++i) {
     const double sigma = std::sqrt(kT / atm_mass);
-    double v = sigma * randn(0, 1);
+    double v = sigma * rand_01(prng);
     all_bead_vel.push_back(v);
   }
   set_up(nbead, ndim, natom, beta, dt, pos, &all_bead_vel[0]);
@@ -251,14 +253,16 @@ void vv::set_up_new_init_cond(const size_t nbead, const size_t ndim,
                               const double dt, double *pos) {
   std::vector<double> all_vel;
 
-  parts::mt19937 prg(27606);
-
   size_t ndofs = ndim * natom;
   double kT = 1.0 / beta;
 
+  std::random_device rd{};
+  std::mt19937 prng(rd());
+  std::normal_distribution<> rand_01{0, 1};
+
   for (size_t i = 0; i < ndofs; ++i) {
     const double sigma = std::sqrt(kT / atm_mass);
-    double v = sigma * randn(0, 1);
+    double v = sigma * rand_01(prng);
     all_vel.push_back(v);
   }
   set_up(nbead, ndim, natom, beta, dt, pos, &all_vel[0]);

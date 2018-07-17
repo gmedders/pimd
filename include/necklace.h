@@ -33,7 +33,7 @@ private:
   fftw_plan m_plan_cart2nmode;
   fftw_plan m_plan_nmode2cart;
 
-protected:
+public:
   void setup(size_t ndof, size_t nbead);
 
   void pos_c2n();

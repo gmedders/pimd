@@ -2,6 +2,7 @@
 #include <cmath>
 
 #include <algorithm>
+#include <random>
 
 #include "rpmd_nhc.h"
 
@@ -36,7 +37,8 @@ void rpmd_nhc::init(size_t ndof, size_t nbead, const double &kT,
   const size_t th_size = nhc::size(nchain);
   m_thermostats = new double[ndof * nbead * th_size];
 
-  mt19937 prg(27606);
+  std::mt19937 prng;
+  prng.seed(19107);
 
   m_omega_M = kT / hbar;
   m_tau = 2 * M_PI / m_omega_M;
@@ -44,7 +46,7 @@ void rpmd_nhc::init(size_t ndof, size_t nbead, const double &kT,
   for (size_t b = 0; b < nbead; ++b)
     for (size_t i = 0; i < ndof; ++i) {
       const size_t j = i + b * ndof;
-      nhc::initialize(nchain, m_thermostats + th_size * j, m_tau, prg);
+      nhc::initialize(nchain, m_thermostats + th_size * j, m_tau, prng);
     }
 }
 

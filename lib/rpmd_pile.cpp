@@ -43,10 +43,11 @@ void rpmd_pile::init(size_t ndof, size_t nbead, const double &kT,
 
   for (size_t k = 0; k < nbead; ++k) {
     double gamma(0);
-    if (k == 0)
+    if (k == 0) {
       gamma = gamma_centroid;
-    else
+    } else {
       gamma = 2.0 * m_omega_k(k);
+    }
 
     c1(k) = std::exp(-0.5 * dt * gamma);
     c2(k) = std::sqrt(1.0 - c1(k) * c1(k));
@@ -56,9 +57,14 @@ void rpmd_pile::init(size_t ndof, size_t nbead, const double &kT,
   saved_mom = arma::mat(ndof, nbead);
 #endif
 
+  std::random_device rd{};
+  pile_prng.seed(rd());
+
   // std::cerr << "<<< Thermostatting ( tau = " << 1.0/gamma_centroid
   //          << " ) >>>"<<std::endl;
 }
+
+void rpmd_pile::seed_pile_prng(int my_seed) { pile_prng.seed(my_seed); }
 
 //----------------------------------------------------------------------------//
 
@@ -71,7 +77,7 @@ void rpmd_pile::step(const double &dt) {
   for (size_t i = 0; i < ndofs(); ++i) {
     double fac = m_sqrt_mass(i) / sqrt_beta_n;
     for (size_t k = 0; k < nbeads(); ++k) {
-      double rand_gaussian = randn(0, 1);
+      double rand_gaussian = rand_01(pile_prng);
       m_mom_nmode(i, k) =
           m_mom_nmode(i, k) * c1(k) + fac * c2(k) * rand_gaussian;
     }
@@ -86,7 +92,7 @@ void rpmd_pile::step(const double &dt) {
   for (size_t i = 0; i < ndofs(); ++i) {
     double fac = m_sqrt_mass(i) / sqrt_beta_n;
     for (size_t k = 0; k < nbeads(); ++k) {
-      double rand_gaussian = randn(0, 1);
+      double rand_gaussian = rand_01(pile_prng);
       m_mom_nmode(i, k) =
           m_mom_nmode(i, k) * c1(k) + fac * c2(k) * rand_gaussian;
     }
