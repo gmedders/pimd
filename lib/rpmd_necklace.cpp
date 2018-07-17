@@ -13,7 +13,6 @@ rpmd_necklace::rpmd_necklace() : m_ndofs(0), m_nbeads(0) {}
 
 void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta, double dt,
                           double mass) {
-  // assert(ndof == 1);
   assert(nbead > 0);
   assert(nbead % 2 == 0 || nbead == 1);
 
@@ -21,19 +20,6 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta, double dt,
   m_nbeads = nbead;
 
   m_dt = dt;
-
-  // m_pos_cart = arma::mat(nbead, ndof);
-  // m_pos_nmode = arma::mat(nbead, ndof);
-
-  // m_mom_cart = arma::mat(nbead, ndof);
-  // m_mom_nmode = arma::mat(nbead, ndof);
-
-  // m_frc_cart = arma::mat(nbead, ndof);
-
-  // m_cart_to_nm = arma::mat(nbead, nbead);
-  // m_freerp_propagator = arma::cube(2, 2, nbead);
-
-  // m_omega_k = arma::vec(nbead);
 
   m_pos_cart = arma::mat(ndof, nbead);
   m_pos_nmode = arma::mat(ndof, nbead);
@@ -74,7 +60,6 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta, double dt,
   }
 
   // omega_k
-
   m_beta_n = beta / nbead;
   m_omega_n = 1.0 / (m_beta_n * hbar);
 

@@ -10,7 +10,7 @@ namespace parts {
 
 //
 // rpmd_necklace for RPMD; manages memory for cartesian/normal mode
-// positions, momocities, forces and handles the transforms
+// positions and momenta and handles the transforms
 //
 
 struct rpmd_necklace {
@@ -19,8 +19,6 @@ struct rpmd_necklace {
 
   inline size_t ndofs() const;
   inline size_t nbeads() const;
-
-  //    inline const double& lambda(size_t) const;
 
 private:
   rpmd_necklace(const rpmd_necklace &);
@@ -43,8 +41,6 @@ public:
 
   void mom_c2n();
   void mom_n2c();
-
-  void frc_c2n();
 
   // layout is bead1, bead2, ..., beadN, where
   // each bead consists of ndofs elements
