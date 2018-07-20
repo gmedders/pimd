@@ -62,7 +62,7 @@ TEST(rpmd_pile, make_one_step_no_centroid_thermostatting) {
   double dt(1.0);
 
   parts::rpmd sim;
-  sim.set_up(nbead, ndim, natom, beta, dt, pos, vel);
+  sim.set_up(ndim, natom, nbead, beta, dt, pos, vel);
   sim.seed_pile_prng(19107);
 
   EXPECT_EQ(sim.ndofs(), 1);

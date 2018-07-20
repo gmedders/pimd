@@ -11,15 +11,15 @@ namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if 0
+#if 1
 // SHO
 typedef pot::sho potential_type;
-static double omega(0.001); // omega
+static double omega(0.001);   // omega
 static double atm_mass(2000); // au
 static double params[] = {omega, atm_mass};
 #endif
 
-#if 1
+#if 0
 // pot_2d
 typedef pot::pot_2d potential_type;
 static double A0 = 0.011;

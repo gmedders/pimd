@@ -26,13 +26,8 @@ class rpmd : public parts::rpmd_pile {
   // struct rpmd : public parts::rpmd_nhc {
 
 public:
-  rpmd()
-      : m_potential(new potential_type()){
-            // std::cerr << "rpmd::rpmd()" << std::endl;
-        };
-  ~rpmd(){
-      // std::cerr << "rpmd::~rpmd()" << std::endl;
-  };
+  rpmd() : m_potential(new potential_type()){};
+  ~rpmd(){};
 
   void set_up(const size_t ndim, const size_t natom, const size_t nbeads,
               const double beta, const double dt, double *crd = nullptr,
@@ -81,9 +76,7 @@ private:
 
 struct vv : public parts::vv_base {
 
-  vv() : m_potential(new potential_type()) {
-    std::cerr << "vv::vv()" << std::endl;
-  };
+  vv() : m_potential(new potential_type()){};
 
   void set_up(const size_t ndim, const size_t natom, const size_t nbead,
               const double beta, const double dt, double *crd = nullptr,
