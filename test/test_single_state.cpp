@@ -43,7 +43,7 @@ TEST(single_state, avg_active_state) {
   pot::sho my_pot;
   my_pot.set_all_bead_states(init_state, nbead);
 
-  EXPECT_EQ(my_pot.avg_active_state(), 0);
+  EXPECT_EQ(my_pot.avg_active_state(), 1);
 }
 
 TEST(single_state, sum_active_state) {
@@ -53,5 +53,5 @@ TEST(single_state, sum_active_state) {
   pot::sho my_pot;
   my_pot.set_all_bead_states(init_state, nbead);
 
-  EXPECT_EQ(my_pot.sum_active_state(), 0);
+  EXPECT_EQ(my_pot.sum_active_state(), 2);
 }
