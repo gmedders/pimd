@@ -33,7 +33,8 @@ pimd_base::~pimd_base() {
 //----------------------------------------------------------------------------//
 
 void pimd_base::init(size_t ndim, size_t natom, size_t nbead, const double &kT,
-                     const double *mass, const double *cartpos) {
+                     const double *mass, const double *cartpos,
+                     double *cartvel) {
   assert(ndim * natom > 0 && nbead > 0);
   assert(nbead % 2 == 0 || nbead == 1);
   assert(kT > 0.0 && mass != 0 && cartpos != 0);
@@ -81,7 +82,6 @@ void pimd_base::init(size_t ndim, size_t natom, size_t nbead, const double &kT,
 #endif
 
   // initialize cartesian positions
-
   for (size_t b = 0; b < nbead; ++b)
     for (size_t i = 0; i < ndof; ++i)
       m_pos_cart[i + b * ndof] = cartpos[i];
@@ -91,27 +91,37 @@ void pimd_base::init(size_t ndim, size_t natom, size_t nbead, const double &kT,
   // initialize normal mode velocities
   std::normal_distribution<> rand_01{0, 1};
 
-  m_Ekin_fict = 0.0;
-  for (size_t b = 0; b < nbead; ++b)
+  // Generate initial velocities, if needed
+  if (cartvel == nullptr) {
+    std::random_device rd{};
+    std::mt19937 prng(rd());
+    std::normal_distribution<> rand_01{0, 1};
+
+    for (size_t b = 0; b < nbead; ++b) {
+      for (size_t i = 0; i < ndof; ++i) {
+        const size_t j = i + b * ndof;
+        const double sigma = std::sqrt(kT / m_fict_mass[i + b * ndof]);
+        m_vel_nmode[j] = sigma * rand_01(prng);
+      }
+    }
+  } else {
+    for (size_t b = 0; b < nbead; ++b) {
+      for (size_t i = 0; i < ndof; ++i) {
+        const size_t j = i + b * ndof;
+        m_vel_nmode[j] = cartvel[j];
+      }
+    }
+  }
+
+  m_Ekin = 0.0;
+  for (size_t b = 0; b < nbead; ++b) {
     for (size_t i = 0; i < ndof; ++i) {
       const size_t j = i + b * ndof;
-      const double sigma = std::sqrt(kT / m_fict_mass[j]);
-      m_vel_nmode[j] = sigma * rand_01(prng);
-      m_Ekin_fict += m_fict_mass[j] * m_vel_nmode[j] * m_vel_nmode[j];
+      m_Ekin += m_fict_mass[j] * m_vel_nmode[j] * m_vel_nmode[j];
     }
+  }
 
-  m_Ekin_fict /= 2;
-
-  //// scale kinetic energy to the target temperature
-
-  // const double scale_factor = std::sqrt(0.5*kT*nbead*ndof/m_Ekin_fict);
-  // for (size_t b = 0; b < nbead; ++b)
-  //    for (size_t i = 0; i < ndof; ++i)
-  //        m_vel_nmode[i + b*ndof] *= scale_factor;
-
-  // m_Ekin_fict *= scale_factor*scale_factor;
-
-  // compute forces
+  m_Ekin /= 2;
 
   pimd_force();
 }
@@ -187,7 +197,7 @@ void pimd_base::step(const double &dt) {
 
   // 3. advance velocities and thermostats by dt/2
 
-  m_Ekin_fict = 0.0;
+  m_Ekin = 0.0;
 
   for (size_t b = 0; b < nbeads(); ++b) {
     for (size_t i = 0; i < ndofs(); ++i) {
@@ -201,16 +211,15 @@ void pimd_base::step(const double &dt) {
                                      Ekin2 / m_kT, dt2);
 
       m_vel_nmode[j] *= aa;
-      m_Ekin_fict += Ekin2 * aa * aa;
+      m_Ekin += Ekin2 * aa * aa;
 #else
-      m_Ekin_fict += Ekin2;
+      m_Ekin += Ekin2;
 #endif
     }
   }
 
-  m_Ekin_fict /= 2;
-  m_temp_kT =
-      m_Ekin_fict * 2.0 / ndofs() / nbeads(); // not actual temperature, kT
+  m_Ekin /= 2;
+  m_temp_kT = m_Ekin * 2.0 / ndofs() / nbeads(); // not actual temperature, kT
 }
 
 //----------------------------------------------------------------------------//
@@ -226,7 +235,7 @@ double pimd_base::invariant() const {
 #endif
 
   // Epot is in kcal/mol already
-  return (m_Ekin_fict + m_Espring + m_kT * accu) / engunit + m_Epot_sum;
+  return (m_Ekin + m_Espring + m_kT * accu) / engunit + m_Epot_sum;
 }
 
 //----------------------------------------------------------------------------//
