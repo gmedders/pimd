@@ -12,7 +12,6 @@ TEST(necklace, setup) {
   const int nbead(4);
   const int ndim(1);
   const int natom(1);
-  const int ndof(ndim * natom);
 
   parts::necklace necklace;
   necklace.setup(ndim, natom, nbead);
@@ -31,9 +30,6 @@ TEST(necklace, normal_mode_transformations) {
   const int natom(1);
   const int ndof(ndim * natom);
 
-  double beta(1024);
-  double dt(1.0);
-  double mass(2000);
   parts::necklace necklace;
   necklace.setup(ndim, natom, nbead);
 

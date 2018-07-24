@@ -24,9 +24,9 @@ void explicit_bath::set_bath_params(size_t ndim, size_t nBathModes,
 
     double domega = omega_max / nBathModes;
 
-    for (int i = 0; i < nBathModes; ++i) {
+    for (size_t i = 0; i < nBathModes; ++i) {
       double omega = (i + 0.5) * domega;
-      double J = gamma * omega * std::exp(-omega / cutoff);
+      // double J = gamma * omega * std::exp(-omega / cutoff);
 
       omega_iMode[i] = omega;
       c_iMode[i] = std::sqrt(gamma * omega * omega * m_mass);

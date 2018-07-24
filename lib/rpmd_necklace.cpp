@@ -75,7 +75,6 @@ void rpmd_necklace::setup(size_t ndim, size_t natom, size_t nbead, double beta,
   // Propagator for the free ring polymer hamiltonian
   { // k = 0
     size_t k = 0;
-    double mw = mass * m_omega_k(k);
 
     m_freerp_propagator(0, 0, k) = 1.0;
     m_freerp_propagator(1, 0, k) = 0.0;

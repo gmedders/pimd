@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     std::vector<double> all_crd;
     std::vector<double> all_vel;
     int count(0);
-    for (int i = 0; i < nbead * ndim * natom; ++i) {
+    for (size_t i = 0; i < nbead * ndim * natom; ++i) {
       // all_vel.push_back(0.0);
       if (count == nx)
         count = 0;

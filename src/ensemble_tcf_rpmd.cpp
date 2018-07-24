@@ -143,10 +143,8 @@ int main(int argc, char **argv) {
       traj_sum_state.push_back(0.0);
     }
   }
-  const size_t tcf_max_nsteps = time.size();
 
   int iframe(0);
-
   while (!ifs.eof()) {
 
     // Read this frame of the input file

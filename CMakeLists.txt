@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.8)
 set(PROJECT_NAME_STR pimd)
 project(${PROJECT_NAME_STR})
 
-set( CMAKE_VERBOSE_MAKEFILE on )
+#set( CMAKE_VERBOSE_MAKEFILE on )
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 --std=c++11")

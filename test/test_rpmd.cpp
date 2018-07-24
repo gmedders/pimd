@@ -65,7 +65,8 @@ TEST(rpmd_pile, make_one_step_no_centroid_thermostatting) {
   sim.set_up(ndim, natom, nbead, beta, dt, pos, vel);
   sim.seed_pile_prng(19107);
 
-  EXPECT_EQ(sim.ndofs(), 1);
+  const size_t ndof(1);
+  EXPECT_EQ(sim.ndofs(), ndof);
 
   EXPECT_DOUBLE_EQ(sim.invariant(), 0.32503376645507814);
   EXPECT_DOUBLE_EQ(sim.Ep(), 2.6900000000000003e-05);

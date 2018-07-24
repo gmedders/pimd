@@ -18,7 +18,7 @@ public:
   double bath_force(const double *, double *);
 
 private:
-  int m_nBathModes;
+  size_t m_nBathModes;
   double m_mass;
 
   double *c_iMode;

@@ -31,11 +31,6 @@ int main(int argc, char **argv) {
   double all_bead_crd[] = {1.0, 1.1, 2.0, 2.1};
   double all_bead_vel[] = {0.5, 0.6, 0.7, 0.8};
 
-  int active_state(0);
-
-  const size_t nsteps = 2;
-  const size_t nprint = 1;
-
   // 2. Set up GCMC simulation object
   parts::gcmc sim;
 

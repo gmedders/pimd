@@ -24,7 +24,6 @@ double surface_hopping::force(size_t ndim, size_t natom, size_t nbead,
   double Eactive(0);
   double fAA[ndof];
   double fBB[ndof];
-  double dF[ndof];
   for (size_t n = 0; n < nbead; ++n) {
     std::fill(fAA, fAA + ndof, 0.0);
     std::fill(fBB, fBB + ndof, 0.0);

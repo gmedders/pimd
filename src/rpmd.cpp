@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   size_t ndim = 1;
   size_t natom = 2;
 
-  int nbead = parts::parse_to_int(argv[1]);
+  const size_t nbead = parts::parse_to_int(argv[1]);
   double beta = parts::parse_to_double(argv[2]);
   double dt = parts::parse_to_double(argv[3]);
   double GammaEl = parts::parse_to_double(argv[4]);
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
     std::vector<double> all_crd;
     std::vector<double> all_vel;
     int count(0);
-    for (int i = 0; i < nbead * ndim * natom; ++i) {
+    for (size_t i = 0; i < nbead * ndim * natom; ++i) {
       all_vel.push_back(0.0);
       if (count == nx)
         count = 0;
@@ -120,12 +120,12 @@ int main(int argc, char **argv) {
     // Center the ring polymer
 
     double avg(0);
-    for (int i = 0; i < nbead; ++i) {
+    for (size_t i = 0; i < nbead; ++i) {
       avg += all_crd[i];
     }
     avg /= nbead;
 
-    for (int i = 0; i < nbead; ++i) {
+    for (size_t i = 0; i < nbead; ++i) {
       all_crd[i] -= avg + 1.6;
     }
 

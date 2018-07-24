@@ -158,12 +158,7 @@ void rpmd_base::step(const double &dt) {
 
 //----------------------------------------------------------------------------//
 
-double rpmd_base::invariant() const {
-  double accu(0);
-
-  // Epot is in kcal/mol already
-  return m_Ekin + m_Espring + m_Epot_sum;
-}
+double rpmd_base::invariant() const { return m_Ekin + m_Espring + m_Epot_sum; }
 
 //----------------------------------------------------------------------------//
 

@@ -73,7 +73,6 @@ void rpmd_pile::seed_pile_prng(int my_seed) { pile_prng.seed(my_seed); }
 //----------------------------------------------------------------------------//
 
 void rpmd_pile::step(const double &dt) {
-  const double dt2 = dt / 2;
   const double sqrt_beta_n = std::sqrt(m_beta_n);
 
   // 1. Advance thermostats dt2

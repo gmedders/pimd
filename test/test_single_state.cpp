@@ -11,7 +11,7 @@
 // child of single_state, to test.
 
 TEST(single_state, set_all_bead_states) {
-  const int nbead(2);
+  const size_t nbead(2);
   const int init_state(0);
 
   pot::sho my_pot;
@@ -25,13 +25,13 @@ TEST(single_state, set_all_bead_states) {
 
 TEST(single_state, set_individual_bead_states) {
   std::vector<int> state_ids = {0, 1};
-  const int nbead = state_ids.size();
+  const size_t nbead = state_ids.size();
 
   pot::sho my_pot;
   my_pot.set_individual_bead_states(state_ids);
 
   EXPECT_EQ(my_pot.state_id.size(), nbead);
-  for (int i = 0; i < nbead; ++i) {
+  for (size_t i = 0; i < nbead; ++i) {
     EXPECT_EQ(my_pot.state_id[i], state_ids[i]);
   }
 }
