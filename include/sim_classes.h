@@ -38,8 +38,6 @@ public:
   inline double Ep() const { return m_Epot_sum; }
   inline double Ek() const { return m_Ekin; }
   inline double temp_kT() const { return m_temp_kT; }
-  inline double temp_kT_centroid() const { return m_temp_kT_centroid; }
-  inline double temp_kT_higherNM() const { return m_temp_kT_higherNM; }
   double avg_cart_pos() {
     calc_pos_stats();
     return m_avg_cart_pos;

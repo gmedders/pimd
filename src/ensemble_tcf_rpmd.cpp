@@ -106,15 +106,11 @@ int main(int argc, char **argv) {
   std::vector<double> sum_pos;
   std::vector<double> sum_pos_L2;
   std::vector<double> sum_temp;
-  std::vector<double> sum_temp_centroid;
-  std::vector<double> sum_temp_higherNM;
   std::vector<double> sum_state;
 
   std::vector<double> traj_pos;
   std::vector<double> traj_pos_L2;
   std::vector<double> traj_temp;
-  std::vector<double> traj_temp_centroid;
-  std::vector<double> traj_temp_higherNM;
   std::vector<double> traj_temp_count;
   std::vector<double> traj_state_count;
   std::vector<double> traj_sum_state;
@@ -129,15 +125,11 @@ int main(int argc, char **argv) {
       sum_pos.push_back(0.0);
       sum_pos_L2.push_back(0.0);
       sum_temp.push_back(0.0);
-      sum_temp_centroid.push_back(0.0);
-      sum_temp_higherNM.push_back(0.0);
       sum_state.push_back(0.0);
 
       traj_pos.push_back(0.0);
       traj_pos_L2.push_back(0.0);
       traj_temp.push_back(0.0);
-      traj_temp_centroid.push_back(0.0);
-      traj_temp_higherNM.push_back(0.0);
       traj_temp_count.push_back(0.0);
       traj_state_count.push_back(0.0);
       traj_sum_state.push_back(0.0);
@@ -261,8 +253,6 @@ int main(int argc, char **argv) {
         }
 
         traj_temp[count] = sim.temp_kT(); // kT
-        traj_temp_centroid[count] = sim.temp_kT_centroid();
-        traj_temp_higherNM[count] = sim.temp_kT_higherNM();
         traj_temp_count[count] += 1.0;
 
         ++count;
@@ -291,8 +281,6 @@ int main(int argc, char **argv) {
       sum_pos[i] += traj_pos[i];
       sum_pos_L2[i] += traj_pos_L2[i];
       sum_temp[i] += traj_temp[i];
-      sum_temp_centroid[i] += traj_temp_centroid[i];
-      sum_temp_higherNM[i] += traj_temp_higherNM[i];
       sum_state[i] += traj_sum_state[i];
       // std::cerr << time[i] << ' ' << sum_state[i]/iframe << std::endl;
     }
@@ -305,10 +293,6 @@ int main(int argc, char **argv) {
                 MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
 
   MPI_Allreduce(MPI_IN_PLACE, &sum_temp[0], sum_temp.size(),
-                MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
-  MPI_Allreduce(MPI_IN_PLACE, &sum_temp_centroid[0], sum_temp_centroid.size(),
-                MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
-  MPI_Allreduce(MPI_IN_PLACE, &sum_temp_higherNM[0], sum_temp_higherNM.size(),
                 MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &traj_temp_count[0], traj_temp_count.size(),
                 MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD);
@@ -328,8 +312,6 @@ int main(int argc, char **argv) {
                 << sum_state[i] / traj_state_count[i]
                 //<< std::setw(20) << sum_state[i]/iframe
                 << std::setw(20) << sum_temp[i] / traj_temp_count[i]
-                << std::setw(20) << sum_temp_centroid[i] / traj_temp_count[i]
-                << std::setw(20) << sum_temp_higherNM[i] / traj_temp_count[i]
                 << std::setw(20) << sum_pos[i] / iframe << std::setw(20)
                 << sum_pos_L2[i] / iframe << std::setw(20)
                 << traj_state_count[i] << std::endl;

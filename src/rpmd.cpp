@@ -160,9 +160,7 @@ int main(int argc, char **argv) {
                 << ' '
                 //<< sim.Ek() << ' '
                 << sim.m_potential->avg_active_state() << ' ' << sim.Ep() << ' '
-                << sim.temp_kT() << ' ' << sim.temp_kT_centroid() << ' '
-                << sim.temp_kT_higherNM() << ' ' << sim.avg_cart_pos()
-                << std::endl;
+                << sim.temp_kT() << ' ' << sim.avg_cart_pos() << std::endl;
 
       sim.dump_1D_frame(of_cart_traj);
     }
