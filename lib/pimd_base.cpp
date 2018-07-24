@@ -84,7 +84,7 @@ void pimd_base::init(size_t ndim, size_t natom, size_t nbead, const double &kT,
   // initialize cartesian positions
   for (size_t b = 0; b < nbead; ++b)
     for (size_t i = 0; i < ndof; ++i)
-      m_pos_cart[i + b * ndof] = cartpos[i];
+      m_pos_cart[i + b * ndof] = cartpos[b * ndof + i];
 
   pos_c2n(); // cart -> nmode
 

@@ -9,8 +9,11 @@ namespace parts {
 // Do this only for the first atom and first dimension
 void pimd::calc_pos_stats(void) {
   m_avg_cart_pos = 0;
-  for (size_t n = 0; n < nbeads(); ++n)
+  for (size_t n = 0; n < nbeads(); ++n) {
     m_avg_cart_pos += m_pos_cart[n * ndofs()];
+    std::cout << " for n[" << n << "], " << m_pos_cart[n * ndofs()]
+              << std::endl;
+  }
   m_avg_cart_pos /= nbeads();
 
   m_Linf_cart_pos = 0;
