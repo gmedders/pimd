@@ -176,9 +176,9 @@ void pimd_base::step(const double &dt) {
     for (size_t i = 0; i < ndofs(); ++i) {
       const size_t j = b * ndofs() + i;
       const double mass = m_fict_mass[j];
-      const double Ekin2 = mass * m_vel_nmode[j] * m_vel_nmode[j];
 
 #ifdef DO_NHC
+      const double Ekin2 = mass * m_vel_nmode[j] * m_vel_nmode[j];
       const double aa = nhc::advance(nchain, m_thermostats + j * th_size, m_tau,
                                      Ekin2 / m_kT, dt2);
 #else
