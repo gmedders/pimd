@@ -75,10 +75,6 @@ int main(int argc, char **argv) {
   double hop_params[] = {GammaEl, dt, beta / nbead, voltage};
   sim.m_potential->set_hopping_params(hop_params);
 
-  sim.m_potential->set_bath_params(ndim, natom - 1, sim.m_gamma,
-                                   2 * 0.9 * sim.m_potential->get_w(),
-                                   sim.m_potential->get_m());
-
   try {
     // 64 bead example starting configuration. take slices from it to seed
     // lower-number beads

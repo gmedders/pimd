@@ -7,7 +7,6 @@
 #include <armadillo>
 
 #include "bead_states.h"
-#include "explicit_bath.h"
 
 #include "lj.h"
 
@@ -15,7 +14,7 @@ namespace pot {
 
 typedef lj pot_2B;
 
-class single_state : public explicit_bath, public bead_states {
+class single_state : public bead_states {
 
 public:
   // single_state() {std::cerr << "single_state::single_state()" << std::endl;

@@ -6,11 +6,10 @@
 #include <armadillo>
 
 #include "bead_states.h"
-#include "explicit_bath.h"
 
 namespace pot {
 
-class surface_hopping : public explicit_bath, public bead_states {
+class surface_hopping : public bead_states {
 
 public:
   bool init_pot = false;
