@@ -26,32 +26,6 @@ TEST(surface_hopping, hopping_params) {
   EXPECT_EQ(my_pot.voltage, voltage);
 }
 
-TEST(surface_hopping, set_all_bead_states) {
-  const size_t nbead(2);
-  const int init_state(0);
-
-  pot::double_well my_pot;
-  my_pot.set_all_bead_states(init_state, nbead);
-
-  EXPECT_EQ(my_pot.state_id.size(), nbead);
-  for (auto &id : my_pot.state_id) {
-    EXPECT_EQ(id, init_state);
-  }
-}
-
-TEST(surface_hopping, set_individual_bead_states) {
-  std::vector<int> state_ids = {0, 1};
-  const size_t nbead = state_ids.size();
-
-  pot::double_well my_pot;
-  my_pot.set_individual_bead_states(state_ids);
-
-  EXPECT_EQ(my_pot.state_id.size(), nbead);
-  for (size_t i = 0; i < nbead; ++i) {
-    EXPECT_EQ(my_pot.state_id[i], state_ids[i]);
-  }
-}
-
 TEST(surface_hopping, fermi_function) {
   double mu(-0.02);
   double dE(0.001);
