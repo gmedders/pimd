@@ -8,11 +8,7 @@
 
 #include "bead_states.h"
 
-#include "lj.h"
-
 namespace pot {
-
-typedef lj pot_2B;
 
 class single_state : public bead_states {
 
@@ -30,9 +26,6 @@ public:
   void set_hopping_params(double *){};
 
   void print_state_params();
-
-private:
-  pot_2B m_pot_2B;
 };
 
 } // namespace pot

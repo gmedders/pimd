@@ -43,17 +43,6 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
       // double EBath = bath_force(crd + ndof*n + m, f + ndof*n + m);
       // E += EBath;
     }
-
-    // Evaluate the inter-particle interation
-    for (size_t i = 0; i < natom; ++i) {
-      const size_t ind_i = ind_bead + i * ndim;
-
-      for (size_t j = i + 1; j < natom; j++) {
-        const size_t ind_j = ind_bead + j * ndim;
-
-        E += m_pot_2B.V2B(ndim, crd + ind_i, crd + ind_j, f + ind_i, f + ind_j);
-      }
-    }
   }
 
   return E;
@@ -62,7 +51,6 @@ double single_state::force(size_t ndim, size_t natom, size_t nbead,
 //----------------------------------------------------------------------------//
 
 void single_state::print_state_params() {
-  m_pot_2B.print_params();
   std::cout << "# single_state_dynamics" << std::endl;
 }
 
