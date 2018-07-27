@@ -11,11 +11,15 @@ rpmd_necklace::rpmd_necklace() : m_ndofs(0), m_nbeads(0) {}
 
 //----------------------------------------------------------------------------//
 
-void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta, double dt,
-                          double mass) {
+void rpmd_necklace::setup(size_t ndim, size_t natom, size_t nbead, double beta,
+                          double dt, double mass) {
+  // assert(ndof == 1);
   assert(nbead > 0);
   assert(nbead % 2 == 0 || nbead == 1);
 
+  m_ndim = ndim;
+  m_natoms = natom;
+  size_t ndof = ndim * natom;
   m_ndofs = ndof;
   m_nbeads = nbead;
 
@@ -26,6 +30,8 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta, double dt,
 
   m_mom_cart = arma::mat(ndof, nbead);
   m_mom_nmode = arma::mat(ndof, nbead);
+
+  m_vel_cart = arma::mat(ndof, nbead);
 
   m_frc_cart = arma::mat(ndof, nbead);
 
@@ -69,7 +75,6 @@ void rpmd_necklace::setup(size_t ndof, size_t nbead, double beta, double dt,
   // Propagator for the free ring polymer hamiltonian
   { // k = 0
     size_t k = 0;
-    double mw = mass * m_omega_k(k);
 
     m_freerp_propagator(0, 0, k) = 1.0;
     m_freerp_propagator(1, 0, k) = 0.0;
@@ -105,6 +110,16 @@ void rpmd_necklace::mom_c2n() { m_mom_nmode = m_mom_cart * m_cart_to_nm; }
 //----------------------------------------------------------------------------//
 
 void rpmd_necklace::mom_n2c() { m_mom_cart = m_mom_nmode * m_cart_to_nm.t(); }
+
+//----------------------------------------------------------------------------//
+
+void rpmd_necklace::mom2vel() {
+  for (size_t n = 0; n < m_nbeads; ++n) {
+    for (size_t i = 0; i < ndofs(); ++i) {
+      m_vel_cart(i, n) = m_mom_cart(i, n) / m_mass(i);
+    }
+  }
+}
 
 //----------------------------------------------------------------------------//
 

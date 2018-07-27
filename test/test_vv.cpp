@@ -26,7 +26,8 @@ TEST(velocity_verlet, make_one_step) {
   parts::vv sim;
   sim.set_up(nbead, ndim, natom, beta, dt, pos, vel);
 
-  EXPECT_EQ(sim.ndofs(), 1);
+  size_t ndof(1);
+  EXPECT_EQ(sim.ndofs(), ndof);
 
   EXPECT_DOUBLE_EQ(sim.invariant(), 0.10001);
   EXPECT_DOUBLE_EQ(sim.Ep(), 1e-05);

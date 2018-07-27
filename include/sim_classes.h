@@ -1,6 +1,8 @@
 #ifndef SIM_CLASSES_H
 #define SIM_CLASSES_H
 
+#include <memory>
+
 #include "pimd_base.h"
 
 #include "rpmd_base.h"
@@ -9,10 +11,7 @@
 
 #include "vv_base.h"
 
-#include "ah.h"
-#include "anharmonic.h"
-#include "double_well.h"
-#include "sho.h"
+#include "pot_definition.h"
 
 //
 // units are au
@@ -22,132 +21,21 @@ namespace parts {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if 1
-// SHO
-typedef pot::sho potential_type;
-static double omega(0.001);   // omega
-static double atm_mass(2000); // au
-static double params[] = {omega, atm_mass};
-#endif
-
-#if 0
-// DOUBLE WELL
-typedef pot::double_well potential_type;
-static double omega(0.0009765625); // omega
-static double atm_mass(2000);      // au
-// static double param_g(4.4); // barrier = 3w
-static double param_g(3.9); // barrier = 2w
-static double dG(-0.003906252);
-static double params[] = {omega, atm_mass, param_g, dG};
-//
-//////static double omega(2.0e-4); // omega
-//////static double atm_mass(2000); // au
-//////static double param_g(20.6097);
-//////static double dG(-0.0038);
-//////
-//////static double omega(0.001); // omega
-//////static double atm_mass(2000); // au
-//////static double param_g(3.1);
-//////static double dG(-0.004);
-//////
-//////
-//////static double omega(0.006132813); // omega
-//////static double atm_mass(2000); // au
-//////static double param_g(0.62);
-//////static double dG(-0.003906252);
-//////
-#endif
-
-#if 0
-// Anderson-Holstein
-typedef pot::ah potential_type;
-static double omega(0.003);
-static double atm_mass(2000);
-static double param_g(0.02);
-static double param_Ed_bar(0.1333333);
-//static double omega(0.3);
-//static double atm_mass(2000);
-//static double param_g(0.75);
-//static double param_Ed_bar(0.0);
-static double params[] = {omega, atm_mass, param_g, param_Ed_bar};
-#endif
-
-#if 0
-// ANHARMONIC OSCILLATOR
-typedef pot::anharmonic potential_type;
-static double atm_mass(1); // au
-static double param_a(0.0);
-static double param_b(0.0);
-static double param_c(0.25);
-//static double param_a(1.0/2.0);
-//static double param_b(1.0/10.0);
-//static double param_c(1.0/100.0);
-static double params[] = {param_a, param_b, param_c, atm_mass};
-#endif
-
-////////////////////////////////////////////////////////////////////////////////
-
 struct pimd : public parts::pimd_base {
 
-  ~pimd();
+public:
+  pimd() : m_potential(new potential_type()){};
+  ~pimd(){};
 
-  void set_up(const size_t, const size_t, const size_t, const double);
-  double force(const double *, double *);
-
-  inline double Espring() const { return m_Espring; }
-  inline double Ep() const { return m_Epot_sum; }
-  inline double Ek() const { return m_Ekin_fict; }
-  inline double temp_kT() const { return m_temp_kT; }
-  double avg_cart_pos() {
-    calc_pos_stats();
-    return m_avg_cart_pos;
-  };
-  double L1_cart_pos() const { return m_L1_cart_pos; };
-  double L2_cart_pos() const { return m_L2_cart_pos; };
-  double Linf_cart_pos() const { return m_Linf_cart_pos; };
-  void calc_pos_stats(void);
-
-  void dump_1D_frame(std::ofstream &);
-  void print_params();
-
-  potential_type m_potential;
-
-private:
-  size_t m_natom;
-  size_t m_ndim;
-  size_t m_ndofs;
-  size_t m_nbead;
-
-  double m_beta;
-
-  double m_avg_cart_pos;
-  double m_L1_cart_pos;
-  double m_L2_cart_pos;
-  double m_Linf_cart_pos;
-
-  double *pos;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-// struct rpmd : public parts::rpmd_base {
-struct rpmd : public parts::rpmd_pile {
-  // struct rpmd : public parts::rpmd_nhc {
-
-  void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                            const double, const double);
-  void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                            const double, const double, double *);
-  void set_up(const size_t, const size_t, const size_t, const double,
-              const double, double *, double *);
-  double force(const double *, double *);
+  void set_up(const size_t ndim, const size_t natom, const size_t nbeads,
+              const double beta, const double dt, double *crd = nullptr,
+              double *vel = nullptr);
+  double force(size_t, size_t, size_t, const double *, double *);
 
   inline double Espring() const { return m_Espring; }
   inline double Ep() const { return m_Epot_sum; }
   inline double Ek() const { return m_Ekin; }
   inline double temp_kT() const { return m_temp_kT; }
-  inline double temp_kT_centroid() const { return m_temp_kT_centroid; }
-  inline double temp_kT_higherNM() const { return m_temp_kT_higherNM; }
   double avg_cart_pos() {
     calc_pos_stats();
     return m_avg_cart_pos;
@@ -158,12 +46,62 @@ struct rpmd : public parts::rpmd_pile {
   double Linf_cart_pos() const { return m_Linf_cart_pos; };
   void calc_pos_stats(void);
 
-  void set_gammaTh(double);
+  const double *get_crd() { return m_pos_cart; }
+  const double *get_vel() { return m_vel_cart; }
 
-  void dump_1D_frame(std::ofstream &);
+  void set_gammaTh(const double &, double);
+
+  void dump_1D_frame(std::ostream &);
   void print_params();
 
-  potential_type m_potential;
+  std::unique_ptr<potential_type> m_potential;
+
+private:
+  double m_avg_cart_pos;
+  double m_L1_cart_pos;
+  double m_L2_cart_pos;
+  double m_Linf_cart_pos;
+};
+
+// struct rpmd : public parts::rpmd_base {
+class rpmd : public parts::rpmd_pile {
+  // struct rpmd : public parts::rpmd_nhc {
+
+public:
+  rpmd() : m_potential(new potential_type()){};
+  ~rpmd(){};
+
+  void set_up(const size_t ndim, const size_t natom, const size_t nbeads,
+              const double beta, const double dt, double *crd = nullptr,
+              double *vel = nullptr);
+  double force(size_t, size_t, size_t, const double *, double *);
+
+  inline double Espring() const { return m_Espring; }
+  inline double Ep() const { return m_Epot_sum; }
+  inline double Ek() const { return m_Ekin; }
+  inline double temp_kT() const { return m_temp_kT; }
+  double avg_cart_pos() {
+    calc_pos_stats();
+    return m_avg_cart_pos;
+  };
+  // double avg_cart_pos() const { return m_avg_cart_pos; };
+  double L1_cart_pos() const { return m_L1_cart_pos; };
+  double L2_cart_pos() const { return m_L2_cart_pos; };
+  double Linf_cart_pos() const { return m_Linf_cart_pos; };
+  void calc_pos_stats(void);
+
+  const double *get_crd() { return m_pos_cart.memptr(); }
+  const double *get_vel() {
+    mom2vel();
+    return m_vel_cart.memptr();
+  }
+
+  void set_gammaTh(const double &, double);
+
+  void dump_1D_frame(std::ostream &);
+  void print_params();
+
+  std::unique_ptr<potential_type> m_potential;
 
   double m_gamma = 0.0;
 
@@ -172,52 +110,39 @@ private:
   double m_L1_cart_pos;
   double m_L2_cart_pos;
   double m_Linf_cart_pos;
-
-  size_t m_natom;
-  size_t m_ndim;
-  size_t m_ndofs;
-  size_t m_nbead;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
 struct vv : public parts::vv_base {
 
-  void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                            const double, const double);
-  void set_up_new_init_cond(const size_t, const size_t, const size_t,
-                            const double, const double, double *);
-  void set_up(const size_t, const size_t, const size_t, const double,
-              const double, double *, double *);
-  double force(const double *, double *);
+  vv() : m_potential(new potential_type()){};
+
+  void set_up(const size_t ndim, const size_t natom, const size_t nbead,
+              const double beta, const double dt, double *crd = nullptr,
+              double *vel = nullptr);
+  double force(size_t, size_t, size_t, const double *, double *);
 
   inline double Espring() const { return 0.0; }
   inline double Ep() const { return m_Epot; }
   inline double Ek() const { return m_Ekin; }
   inline double temp_kT() const { return m_temp_kT; }
+
   double avg_cart_pos() {
     calc_pos_stats();
     return m_avg_cart_pos;
   };
-  // double avg_cart_pos() const { return m_avg_cart_pos; };
-  double L1_cart_pos() const { return m_L1_cart_pos; };
-  double L2_cart_pos() const { return m_L2_cart_pos; };
-  double Linf_cart_pos() const { return m_Linf_cart_pos; };
+  double L1_cart_pos() const { return 0.0; };
+  double L2_cart_pos() const { return 0.0; };
+  double Linf_cart_pos() const { return 0.0; };
   void calc_pos_stats(void);
 
   void print_params();
 
-  potential_type m_potential;
+  std::unique_ptr<potential_type> m_potential;
 
 private:
   double m_avg_cart_pos;
-  double m_L1_cart_pos;
-  double m_L2_cart_pos;
-  double m_Linf_cart_pos;
-
-  size_t m_natom;
-  size_t m_ndim;
-  size_t m_ndofs;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

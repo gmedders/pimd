@@ -7,15 +7,16 @@ namespace parts {
 
 //----------------------------------------------------------------------------//
 
-necklace::necklace() : m_ndofs(0), m_nbeads(0) {}
+necklace::necklace() : m_ndim(0), m_natom(0), m_ndofs(0), m_nbeads(0) {}
 
 //----------------------------------------------------------------------------//
 
-necklace::~necklace() { setup(0, 0); }
+necklace::~necklace() { setup(0, 0, 0); }
 
 //----------------------------------------------------------------------------//
 
-void necklace::setup(size_t ndof, size_t nbead) {
+void necklace::setup(size_t ndim, size_t natom, size_t nbead) {
+  size_t ndof = ndim * natom;
   if (ndof == m_ndofs && nbead == m_nbeads)
     return;
 
@@ -41,6 +42,8 @@ void necklace::setup(size_t ndof, size_t nbead) {
     assert(ndof > 0 && nbead > 0);
     assert(nbead % 2 == 0 || nbead == 1);
 
+    m_ndim = ndim;
+    m_natom = natom;
     m_ndofs = ndof;
     m_nbeads = nbead;
 

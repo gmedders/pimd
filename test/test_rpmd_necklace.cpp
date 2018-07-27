@@ -12,13 +12,12 @@ TEST(rpmd_necklace, setup) {
   const int nbead(2);
   const int ndim(1);
   const int natom(1);
-  const int ndof(ndim * natom);
 
   double beta(1024);
   double dt(1.0);
   double mass(2000);
   parts::rpmd_necklace necklace;
-  necklace.setup(ndof, nbead, beta, dt, mass);
+  necklace.setup(ndim, natom, nbead, beta, dt, mass);
 
   EXPECT_NEAR(necklace.m_cart_to_nm(0, 0), 0.70710678118654757, tol);
   EXPECT_NEAR(necklace.m_cart_to_nm(0, 1), 0.70710678118654757, tol);
@@ -48,13 +47,12 @@ TEST(rpmd_necklace, normal_mode_transformations) {
   const int nbead(2);
   const int ndim(2);
   const int natom(1);
-  const int ndof(ndim * natom);
 
   double beta(1024);
   double dt(1.0);
   double mass(2000);
   parts::rpmd_necklace necklace;
-  necklace.setup(ndof, nbead, beta, dt, mass);
+  necklace.setup(ndim, natom, nbead, beta, dt, mass);
 
   // ndof is first index, nbead is second
   necklace.m_pos_cart(0, 0) = 1.1;

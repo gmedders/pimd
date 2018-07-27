@@ -10,6 +10,10 @@ namespace pot {
 
 //----------------------------------------------------------------------------//
 
+void anharmonic::assert_ndim(int ndim) { assert(ndim == 1); }
+
+//----------------------------------------------------------------------------//
+
 double anharmonic::VAA(const double *crd, double *f) {
   double x = crd[0];
   double x2 = x * x;
@@ -19,7 +23,7 @@ double anharmonic::VAA(const double *crd, double *f) {
   double e = a * x2 + b * x3 + c * x4;
   double dedx = 2.0 * a * x + 3.0 * b * x2 + 4.0 * c * x3;
 
-  f[0] = -dedx;
+  f[0] += -dedx;
 
   return e;
 }

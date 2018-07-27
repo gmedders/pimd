@@ -10,10 +10,11 @@ struct pimd_base : public necklace {
   pimd_base();
   ~pimd_base();
 
-  virtual double force(const double *, double *) = 0;
+  virtual double force(const size_t, const size_t, const size_t, const double *,
+                       double *) = 0;
 
-  void init(size_t ndof, size_t nbead, const double &kT, const double *mass,
-            const double *cartpos); // 1 bead
+  void init(size_t ndim, size_t natom, size_t nbead, const double &kT,
+            const double *mass, const double *cartpos, double *cartvel);
 
   void step(const double &);
   double invariant() const;
@@ -39,7 +40,7 @@ protected:
 
   double m_Espring;
   double m_Epot_sum;
-  double m_Ekin_fict;
+  double m_Ekin;
   double m_temp_kT;
 
   void pimd_force();

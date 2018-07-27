@@ -7,8 +7,9 @@
 
 namespace pot {
 
-struct ah : public surface_hopping {
+class ah : public surface_hopping {
 
+public:
   double VAA(const double *x, double *f);
   double VBB(const double *x, double *f);
 

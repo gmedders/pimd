@@ -13,7 +13,7 @@ double ah::VAA(const double *crd, double *f) {
 
   double e = a * x * x;
   double dedx = 2.0 * a * x;
-  f[0] = -dedx;
+  f[0] += -dedx;
 
   return e;
 }
@@ -25,7 +25,7 @@ double ah::VBB(const double *crd, double *f) {
 
   double e = a * x * x + b * x + Ed;
   double dedx = 2.0 * a * x + b;
-  f[0] = -dedx;
+  f[0] += -dedx;
 
   return e;
 }

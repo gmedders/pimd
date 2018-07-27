@@ -7,9 +7,12 @@
 
 namespace pot {
 
-struct anharmonic : public single_state {
+class anharmonic : public single_state {
 
+public:
   double VAA(const double *crd, double *f);
+
+  void assert_ndim(int);
 
   void set_params(double *);
 
