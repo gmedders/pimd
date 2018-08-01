@@ -1,5 +1,5 @@
 # OS image
-FROM gmedders/cpp_scientific_libraries:v0.1.3
+FROM gmedders/cpp_scientific_libraries:v0.2.0
 
 MAINTAINER gmedders "https://github.com/gmedders"
 
