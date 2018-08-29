@@ -1,5 +1,5 @@
-#ifndef SIM_CLASSES_H
-#define SIM_CLASSES_H
+#ifndef EOM_H
+#define EOM_H
 
 #include <memory>
 
@@ -66,4 +66,4 @@ protected:
 
 } // namespace parts
 
-#endif // SIM_CLASSES_H
+#endif // EOM_H
